@@ -164,9 +164,7 @@ input_boolean:
     name: "House Guest Mode"
     icon: "mdi:account-multiple-plus"
 
-  audible_notifications:
-    name: meldingen
-    icon: mdi:speaker-message
+
 
   vacation_mode:
     name: vacation mode

@@ -16,6 +16,10 @@ input_boolean:
   text_notify_parents:
     name: text notify parents
 
+  audible_notifications:
+    name: meldingen
+    icon: mdi:speaker-message
+
 notify:
   - name: ruben
     platform: group
@@ -32,12 +36,15 @@ notify:
       - service: mobile_app_iphone_van_marit
 
 script:
+  ###############################################################################
+  # Txt Notify
+  ###############################################################################
   text_debug:
     sequence:
       - condition: state
         entity_id: input_boolean.debug_texts
         state: "on"
-      - service: notify.ruben
+      - action: notify.ruben
         data_template:
           message: >
             {{ message }}

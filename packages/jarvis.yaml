@@ -6,21 +6,7 @@
 ###############################################################################
 
 
-## last use of Jarvis
-template:
-  - binary_sensor:
-    - name: jarvis
-      delay_off:
-        seconds: 5
-      state: >
-        {{ (expand(label_entities('Jarvis')) | selectattr('state', 'eq', 'on') | sort(attribute='last_changed') |
-                map(attribute='entity_id') | list| count) > 0
-              }}
-      attributes:
-        last_jarvis: >
-          {{ expand(label_entities('Jarvis')) | sort(attribute='last_changed') |
-                map(attribute='entity_id') | list| last | area_id()
-              }}
+
 
 
 
