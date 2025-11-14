@@ -1,0 +1,34 @@
+###############################################################################
+#   @author         :   Ruben
+#   @date           :   14-11-2025
+#   @package        :   Announcements
+#   @description    :   Daily Announcements. 
+###############################################################################
+
+###############################
+# input_datetime - So the time report automation fires can be set in the UI
+###############################
+input_datetime:
+  morning_report:
+    name: Morning Report
+    has_date: false
+    has_time: true
+  nightly_report:
+    name: Nightly Report
+    has_date: false
+    has_time: true
+  daily_report:
+    name: Daily Report
+    has_date: false
+    has_time: true
+
+
+
+automation:
+- alias: Master Bedroom Report
+  triggers:
+    - at: "6:45"
+      trigger: time
+  conditions: []
+  actions:
+    - action: script.morning_wakeup_report

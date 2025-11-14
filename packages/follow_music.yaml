@@ -1,0 +1,64 @@
+input_boolean:
+  follow_music:
+    name: Follow Music
+    initial: off
+
+input_select:
+  music_controller:
+    name: Music Controller
+    options:
+      - woonkamer
+      - werkkamer
+      - keuken
+      - music
+    initial: music
+
+script:
+  sonos_group_motion:
+    alias: sonos group motion
+    sequence:
+      - condition: template
+        value_template:
+          "{% if target_player is not none and target_player != false and
+          target_player != '' %}\n  true\n{% else %}\n  false\n{% endif %}\n"
+      - condition: template
+        value_template:
+          "{% if states(target_player) != 'playing' %}\n  true\n{% else
+          %}\n  false\n{% endif %}\n"
+      - service: media_player.volume_set
+        data_template:
+          entity_id:
+            "{% if target_player is not none %}\n  {{ target_player }}\n{% endif
+            %}\n"
+          volume_level:
+            "{% for state in states.media_player if state.entity_id == 'media_player.'
+            + states('input_select.music_controller') %}\n  {{state.attributes.volume_level
+            }}\n{% endfor %}\n"
+      - service: media_player.join
+        data_template:
+          entity_id: media_player.{{ states('input_select.music_controller') }}
+          group_members:
+            "{% if target_player is not none %}\n  {{ target_player }}\n{%
+            endif %}\n"
+    description: ""
+  sonos_ungroup_motion:
+    alias: Sonos Ungroup Motion
+    sequence:
+      - condition: template
+        value_template:
+          "{% if target_player is not none and target_player != false and
+          target_player != '' %}\n  true\n{% else %}\n  false\n{% endif %}\n"
+      - condition: template
+        value_template:
+          "{% if states(target_player) == 'playing' %}\n  true\n{% else
+          %}\n  false\n{% endif %}\n"
+      - condition: template
+        value_template:
+          "{% if target_player != 'media_player.' + states('input_select.music_controller')
+          %}\n  true\n{% else %}\n  false\n{% endif %}\n"
+      - service: media_player.unjoin
+        data_template:
+          entity_id:
+            "{% if target_player is not none %}\n  {{ target_player }}\n{% endif
+            %}\n"
+    description: ""

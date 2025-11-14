@@ -1,0 +1,118 @@
+type: custom:mod-card
+card_mod:
+  style: |
+
+    @media (min-width:180px) {
+      ha-card {
+        z-index:6;
+        position: fixed;
+        background: var(--gray800);
+        bottom: 10px;
+        left: 10px;
+        padding: 10px;
+        border-radius: 100px;
+        width: calc(100% - 20px);
+      }
+    }
+
+    @media (min-width:801px)  {
+      ha-card {
+        left: calc(20% + 43px);
+        width: calc(60% - 30px);
+      }
+    }
+card:
+  type: grid
+  square: false
+  columns: 5
+  cards:
+    - type: custom:button-card
+      icon: mdi:wifi
+      show_label: false
+      show_state: false
+      show_name: false
+      tap_action:
+        action: navigate
+        navigation_path: "#wifi"
+      styles:
+        icon:
+          - width: 24px
+          - color: var(--gray000)
+        img_cell:
+          - width: 50px
+          - height: 50px
+        card:
+          - background: none
+          - padding: 0
+    - type: custom:button-card
+      icon: mdi:power-plug-outline
+      show_label: false
+      show_state: false
+      show_name: false
+      tap_action:
+        action: navigate
+        navigation_path: "#Energie"
+      styles:
+        icon:
+          - width: 24px
+          - color: var(--gray000)
+        img_cell:
+          - width: 50px
+          - height: 50px
+        card:
+          - background: none
+          - padding: 0
+    - type: custom:button-card
+      icon: mdi:music
+      show_label: false
+      show_state: false
+      show_name: false
+      tap_action:
+        action: navigate
+        navigation_path: "#media_player"
+      styles:
+        icon:
+          - width: 24px
+          - color: var(--gray000)
+        img_cell:
+          - width: 50px
+          - height: 50px
+        card:
+          - background: none
+          - padding: 0
+    - type: custom:button-card
+      icon: mdi:server-outline
+      show_label: false
+      show_state: false
+      show_name: false
+      tap_action:
+        action: navigate
+        navigation_path: "#server"
+      styles:
+        icon:
+          - width: 24px
+          - color: var(--gray000)
+        img_cell:
+          - width: 50px
+          - height: 50px
+        card:
+          - background: none
+          - padding: 0
+    - type: custom:button-card
+      icon: mdi:tune-variant
+      show_label: false
+      show_state: false
+      show_name: false
+      tap_action:
+        action: navigate
+        navigation_path: "#settings"
+      styles:
+        icon:
+          - width: 24px
+          - color: var(--gray000)
+        img_cell:
+          - width: 50px
+          - height: 50px
+        card:
+          - background: none
+          - padding: 0

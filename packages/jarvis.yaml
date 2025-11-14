@@ -1,0 +1,243 @@
+###############################################################################
+#   @author         :   Ruben
+#   @date           :   11-14-2025
+#   @package        :   Jarvis
+#   @description    :   Bringing some Jarvis to Home Assistant
+###############################################################################
+
+
+## last use of Jarvis
+template:
+  - binary_sensor:
+    - name: jarvis
+      delay_off:
+        seconds: 5
+      state: >
+        {{ (expand(label_entities('Jarvis')) | selectattr('state', 'eq', 'on') | sort(attribute='last_changed') |
+                map(attribute='entity_id') | list| count) > 0
+              }}
+      attributes:
+        last_jarvis: >
+          {{ expand(label_entities('Jarvis')) | sort(attribute='last_changed') |
+                map(attribute='entity_id') | list| last | area_id()
+              }}
+
+
+
+
+
+script:
+  get_tts_greetings:
+    sequence:
+      - variables:
+          general: >
+            {% if now().hour < 12 %}
+            {{ ["Goede morgen ",
+                "Morge "
+             ] | random }}
+            {% elif now().hour >= 12 and now().hour < 17 %}
+            {{ ["Goede middag ",
+                "Middag ",
+             ] | random }}
+            {% else %}
+            {{ ["Goede avond ",
+                "Avond ",
+             ] | random }}
+            {% endif %}
+          jarvis_morning: >
+            {{ [
+              'Is het al tijd om aan het werk te gaan?',
+              'Ik ben online en gereed.',
+              'Klaar om aan het werk te gaan?'
+              ''
+            ] | random }}
+          jarvis_welcome: >
+            {{ [
+              general ~ 'Welkom terug',
+              'Welkom thuis.',
+              'Blij dat je weer terug bent.',
+              'Kijk wie terug is van weg geweest'
+            ] | random }}
+          event: >
+            {{ [
+              'You have an event coming up.',
+              'Just a quick update on the calendar.',
+              'In case you forgot.',
+              'I wanted to remind you.',
+              'You may already be aware.',
+              'Do not forget.',
+              'I wanted to remind you.'
+            ] | random }}
+          announcement: >
+            {{ 
+              ['Pardon me. ',
+              'Excuse me. ',
+              'I beg your pardon. ',
+              'I do not mean to intrude. ',
+              'I am sorry to intrude, but. ',
+              'Listen. Didn you know? '] 
+              | random }}
+          ruben: >
+            {{ 
+                ['Pap ',
+                'Ruben.',
+                'Ruub.'
+                ] | random }}
+          marit: >
+            {{ 
+                ["Mam.",
+                "Marit.",
+                "Marit."
+                 ] | random }}
+          alert: >
+            {{ [
+              'Emergency Protocol initiated.',
+              'Emergency Response Initiated. ',
+              'My emergency protocols have been activated.',
+              'I have detected a potential threat to your safety.'
+              ] | random }}
+          weather_warning: >-
+            {{ [
+              'Ik heb een waarschuwing van het KNMI binnengekregen:',
+              'Er is momenteel een waarschuwing van het KNMI: ',
+              'Momenteel is er een weer alarm'
+              ] | random }}
+          confirmation: >
+            {{ [
+              'Okay.', 
+              'If you insist.',
+              'I am afraid I can not do that,, I am kidding,',
+              'Leave it to me.',
+              'Alright, Lets do this.',
+              'I am on it.',
+              'No Problem.',
+              'Will do.',
+              'I think I can handle that.',
+              'Working on it now.',
+              ',, Oh, you were talking to me. Let me take care of that.'
+              'Why not. It is not like I ever sleep.',
+              'I am not even supposed to be here today. But whatever.',
+              'You did not say the magic word. , Oh forget it. I will take care of it.',
+              'Funny, I was just about to do that.',
+              'What was I thinking. You are usually so discreet.'
+              'There are still terabytes of calculations required before I can., Oh, whatever. '
+              ] | random }}
+      - service: script.cleanup_text
+        data:
+          message: >
+            {{ announcement }}
+        response_variable: "cleaned_annc_greeting"
+      - service: script.cleanup_text
+        data:
+          message: >
+            {{ jarvis_morning }}
+        response_variable: "cleaned_jarvis_morning"
+      - variables:
+          greetings: >
+            {"general":"{{general}}",
+            "announcement":"{{cleaned_annc_greeting.text}}",
+            "ruben_morning":"{{cleaned_jarvis_morning.text}}",
+            "ruben_welcome":"{{jarvis_welcome}}",
+            "ruben":"{{ruben}}",
+            "marit":"{{marit}}",
+            "alert":"{{alert}}",
+            "event":"{{event}}",
+            "weather_warning":"{{weather_warning}}"}
+      - stop: "ok, Im done."
+        response_variable: "greetings"
+
+  speech_engine:
+    sequence:
+      - response_variable: greetings
+        action: script.get_tts_greetings
+        data: {}
+      - variables:
+          type: |
+            {% if type is defined and type != 'none' %}
+              {{ type }}
+            {% else %}
+              normal
+            {% endif %}
+          summary: |-
+            {% if msg_summary %}
+              {{ msg_summary }}
+            {% else %}
+              none
+            {% endif %}
+          room: |
+            {% if who is defined %}
+              {{ who }}
+            {% elif room is defined %}
+              {{ room }}
+            {% else %}
+              NA
+            {% endif %}
+          greeting: |
+            {% if room == 'ruben' %}
+              {{ greetings.ruben }}
+            {% elif room == 'marit' %}
+              {{ greetings.marit }}
+            {% elif type == 'weather_alert' %}
+              {{ greetings.weather_warning }}
+            {% elif type == 'alert' %}
+              {{ greetings.alert }}
+            {% else %}
+              
+            {% endif %}
+          briefing_greeting: |
+            {% if type == 'briefing' %}
+              {{ greetings.general }}
+            {% else %}
+            {% endif %}
+      - service: script.cleanup_text
+        data:
+          message: >
+            {{ briefing }}
+            {{ greeting }}
+            {{ message }}
+        response_variable: cleaned_message
+      - condition: state
+        entity_id: input_boolean.family_home
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.vacation_mode
+        state: "off"
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: input_boolean.audible_notifications
+                state: "on"
+            sequence:
+              - action: tts.speak
+                data:
+                  media_player_entity_id: media_player.{{room}}
+                  message: "{{cleaned_message.text}}"
+                target:
+                  entity_id: tts.google_translate_nl_nl
+        default:
+          - data:
+              notification_id: house_notification
+            action: persistent_notification.dismiss
+          - data:
+              notification_id: house_notification
+              message: "{{ message }}"
+              title: From Jarvis
+            action: persistent_notification.create
+    description: ""
+
+  get_weather_info:
+    sequence:
+      - variables:
+          current_temp: >
+            {{state_attr('weather.buienradar','temperature')| round}}
+          current_humidity: >
+            {{ state_attr('weather.buienradar','temperature') | round }}
+          current_conditions: >
+            {{ [
+              "met ",
+              "en ",
+              ] | random }}
+      - stop: "Alright. Im done."
+        response_variable: "weather" 
+          ##TODO hele case when
+

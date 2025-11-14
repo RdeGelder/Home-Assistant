@@ -1,0 +1,777 @@
+kiosk_mode:
+  non_admin_settings:
+    hide_header: false
+    ignore_entity_settings: true
+  entity_settings:
+    - entity:
+        input_boolean.kiosk_mode: "on"
+      hide_header: true
+    - entity:
+        input_boolean.kiosk_mode: "off"
+
+button_card_templates: !include_dir_merge_named generic/templates/button_card_templates/
+
+views:
+  - title: Home
+    header:
+      card:
+        type: markdown
+        text_only: true
+        content: >-
+          # Hallo {{ user }}
+
+          Het is {{states("sensor.datetimes")}}, het weer is
+          {{states("weather.buienradar")}} met 
+          {{state_attr("weather.buienradar", "temperature")}}°C.
+
+          Het alarm is {{state_translated("alarm_control_panel.home_alarm")}}.
+        visibility:
+          - condition: screen
+            media_query: "(min-width: 768px)"
+      layout: responsive
+      badges_position: bottom
+      badges_wrap: scroll
+
+    type: sections
+    max_columns: 3
+    path: home
+    cards: []
+    dense_section_placement: false
+    subview: false
+    theme: rounded-bubble
+    ################################################################################
+    #################################### Badges ####################################
+    ################################################################################
+    badges:
+      - type: entity
+        show_name: false
+        show_state: true
+        show_icon: true
+        entity: alarm_control_panel.home_alarm
+      - type: custom:mushroom-template-badge
+        entity: input_boolean.evi_slaapt      
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
+        content: |
+          {{relative_time(states.input_boolean.evi_slaapt.last_changed)}}
+        icon: |
+          {% if is_state('input_boolean.evi_slaapt', 'on') %}
+            mdi:sleep
+          {% elif is_state('input_boolean.evi_slaapt', 'off') %}
+            mdi:baby
+          {% else %}
+            mdi:baby
+          {% endif %}
+        color: |
+          {% if is_state('input_boolean.evi_slaapt', 'on') %}
+            blue
+          {% elif is_state('input_boolean.evi_slaapt', 'off') %}
+            black
+          {% else %}
+            black
+          {% endif %}
+      - type: entity
+        show_name: true
+        show_state: true
+        show_icon: true
+        entity: person.ruben
+        show_entity_picture: true
+        visibility:
+          - condition: screen
+            media_query: "(min-width: 768px)"
+      - type: entity
+        show_name: true
+        show_state: true
+        show_icon: true
+        entity: person.marit
+        show_entity_picture: true
+        visibility:
+          - condition: screen
+            media_query: "(min-width: 768px)"
+      - type: custom:mushroom-template-badge
+        content: |-
+          {% if is_state('input_select.dishwasher_status', 'Running') %}
+            {{ 100 - state_attr('input_select.dishwasher_timer','remaining_perc') | round(0) }}%
+          {% elif is_state('input_select.dishwasher_status', 'Clean') %}
+            Clean
+          {% elif is_state('input_select.dishwasher_status', 'Dirty') %}
+            Dirty
+          {% else %}
+            Off
+          {% endif %}
+        icon: |
+          {% if is_state('input_select.dishwasher_status', 'Running') %}
+            mdi:dishwasher
+          {% elif is_state('input_select.dishwasher_status', 'Clean') %}
+            mdi:dishwasher-alert
+          {% elif is_state('input_select.dishwasher_status', 'Dirty') %}
+            mdi:dishwasher
+          {% else %}
+            mdi:dishwasher-off
+          {% endif %}
+        color: |-
+          {% if is_state('input_select.dishwasher_status', 'Running') %}
+            blue
+          {% elif is_state('input_select.dishwasher_status', 'Clean') %}
+            green
+          {% elif is_state('input_select.dishwasher_status', 'Dirty') %}
+            yellow
+          {% else %}
+            grey
+          {% endif %}
+        entity: sensor.dishwasher_status
+        label: ""
+        double_tap_action:
+          action: perform-action
+          perform_action: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.chores_dishwasher
+          data: {}
+        visibility:
+          - condition: state
+            entity: input_select.dishwasher_status
+            state_not: "Off"
+
+      - type: entity
+        show_name: false
+        show_state: true
+        show_icon: true
+        entity: sensor.lights
+    #########################################################################
+    ############################ Main dashboard #############################
+    #########################################################################
+    sections:
+      - type: grid
+        column_span: 2
+        visibility:
+          - condition: screen
+            media_query: "(min-width: 768px)"
+        cards:
+          - type: vertical-stack
+            grid_options:
+              columns: full
+              rows: auto
+            cards:
+              - type: custom:button-card
+                styles:
+                  grid:
+                    - grid-template-areas: "'item1 item3 item2 item4 item6'"
+                    - grid-template-columns: 1fr 1fr 1fr 1fr 1fr
+                  card:
+                    - padding: 5px 0px
+                    - background: none
+                  custom_fields:
+                    item1:
+                      - justify-self: center
+                    item2:
+                      - justify-self: center
+                    item3:
+                      - justify-self: center
+                    item4:
+                      - justify-self: center
+                    item6:
+                      - justify-self: center
+                custom_fields:
+                  item1:
+                    card:
+                      type: custom:button-card
+                      icon: |
+                        [[[
+                          if (states['sensor.ecodan_heatpump_status_bedrijf'].state == "verwarmen") return "mdi:fire";
+                          else if (states['sensor.ecodan_heatpump_status_bedrijf'].state == "koelen") return "mdi:snowflake";
+                          else if (states['sensor.ecodan_heatpump_status_bedrijf'].state == "off") return "mdi:thermometer";
+                          else return "mdi:thermostat";
+                        ]]]
+                      name: temperature
+                      label: >-
+                        [[[ return states["number.ecodan_heatpump_auto_adaptief_terugkoppeling_huidige_kamertemperatuur_z1"].state +
+                        "°C" ]]]
+                      show_label: true
+                      styles:
+                        card:
+                          - border-radius: 0px
+                          - box-shadow: none
+                          - padding-right: 5px
+                          - background: none
+                        grid:
+                          - grid-template-areas: "'i n' 'i l'"
+                          - grid-template-columns: min-content
+                          - column-gap: 10px
+                        icon:
+                          - width: 20px
+                          - color: |
+                              [[[
+                                if (states['sensor.ecodan_heatpump_status_bedrijf'].state == "verwarmen") return "var(--red)";
+                                else if (states['sensor.ecodan_heatpump_status_bedrijf'].state == "koelen") return "var(--blue)";
+                                else if (states['sensor.ecodan_heatpump_status_bedrijf'].state == "off") return "var(--green)";
+                                else return "var(--contrast10)";
+                              ]]]
+                        img_cell:
+                          - width: 20px
+                        name:
+                          - justify-self: start
+                          - font-size: 10px
+                          - font-weight: 500
+                          - color: var(--contrast14)
+                        label:
+                          - justify-self: start
+                          - font-size: 15px
+                          - font-weight: 700
+                      tap_action:
+                        action: navigate
+                        navigation_path: "#climate"
+                  item2:
+                    card:
+                      type: custom:button-card
+                      icon: mdi:lightning-bolt
+                      name: Energy
+                      label: >-
+                        [[[ return
+                        states["sensor.p1_meter_vermogen"].state +
+                        "W" ]]]
+                      show_label: true
+                      styles:
+                        card:
+                          - border-radius: 0px
+                          - box-shadow: none
+                          - padding-right: 5px
+                          - background: none
+                        grid:
+                          - grid-template-areas: "'i n' 'i l'"
+                          - grid-template-columns: min-content
+                          - column-gap: 10px
+                        icon:
+                          - width: 20px
+                          - color: var(--yellow)
+                        img_cell:
+                          - width: 20px
+                        name:
+                          - justify-self: start
+                          - font-size: 10px
+                          - font-weight: 500
+                          - color: var(--contrast14)
+                        label:
+                          - justify-self: start
+                          - font-size: 15px
+                          - font-weight: 700
+                      tap_action:
+                        action: navigate
+                        navigation_path: energy
+                  item3:
+                    card:
+                      type: custom:button-card
+                      icon: mdi:water-percent
+                      name: Humidity
+                      label: >-
+                        [[[ return states["sensor.buitenmeter_voor_luchtvochtigheid"].state +
+                        "%"]]]
+                      show_label: true
+                      styles:
+                        card:
+                          - border-radius: 0px
+                          - box-shadow: none
+                          - padding-right: 5px
+                          - background: none
+                        grid:
+                          - grid-template-areas: "'i n' 'i l'"
+                          - grid-template-columns: min-content
+                          - column-gap: 10px
+                        icon:
+                          - width: 20px
+                          - color: |
+                              [[[
+                                if (states['sensor.buitenmeter_voor_luchtvochtigheid'].state > "70") return "var(--red)";
+                                else return "var(--blue)";
+                              ]]]
+                        img_cell:
+                          - width: 20px
+                        name:
+                          - justify-self: start
+                          - font-size: 10px
+                          - font-weight: 500
+                          - color: var(--contrast14)
+                        label:
+                          - justify-self: start
+                          - font-size: 15px
+                          - font-weight: 700
+                      tap_action:
+                        action: navigate
+                        navigation_path: "#climate"
+                  item4:
+                    card:
+                      type: custom:button-card
+                      entity: binary_sensor.is_alarm_on
+                      icon: mdi:alarm-off
+                      name: Alarm
+                      label: '[[[ return states["sensor.ruben_mobiel_next_alarm"].state ]]]'
+                      show_label: true
+                      state:
+                        - value: "on"
+                          icon: mdi:alarm
+                      styles:
+                        card:
+                          - border-radius: 0px
+                          - box-shadow: none
+                          - padding-right: 5px
+                          - background: none
+                        grid:
+                          - grid-template-areas: "'i n' 'i l'"
+                          - grid-template-columns: min-content
+                          - column-gap: 10px
+                        icon:
+                          - width: 20px
+                          # check if alarm is on
+                          - color: |
+                              [[[
+                                if ("on" == "on") return "var(--yellow)";
+                                else return "var(--contrast10)";
+                              ]]]
+                        img_cell:
+                          - width: 20px
+                        name:
+                          - justify-self: start
+                          - font-size: 10px
+                          - font-weight: 500
+                          - color: var(--contrast14)
+                        label:
+                          - justify-self: start
+                          - font-size: 15px
+                          - font-weight: 700
+                      tap_action:
+                        action: navigate
+                        navigation_path: "#alarm"
+                  item6:
+                    card:
+                      type: custom:button-card
+                      entity: weather.forecast_thuis
+                      name: Berlin
+                      show_label: true
+                      show_state: true
+                      show_name: false
+                      label: >-
+                        [[[ return
+                        states["weather.forecast_thuis"].attributes.temperature + "°C"
+                        ]]]
+                      styles:
+                        card:
+                          - border-radius: 0px
+                          - box-shadow: none
+                          - padding-right: 5px
+                          - background: none
+                        grid:
+                          - grid-template-areas: "'i s' 'i l'"
+                          - grid-template-columns: min-content
+                          - column-gap: 10px
+                        icon:
+                          - width: 20px
+                          - color: |
+                              [[[
+                                if (states['weather.forecast_thuis'].state == "partlycloudy") return "var(--contrast15)";
+                                else if (states['weather.forecast_thuis'].state == "sunny") return "var(--yellow)";
+                                else return "var(--blue)";
+                              ]]]
+                        img_cell:
+                          - width: 20px
+                        state:
+                          - justify-self: start
+                          - font-size: 10px
+                          - font-weight: 500
+                          - color: var(--contrast14)
+                        label:
+                          - justify-self: start
+                          - font-size: 15px
+                          - font-weight: 700
+                      tap_action:
+                        action: navigate
+                        navigation_path: "#weather"
+                      double_tap_action:
+                        action: more-info
+
+      - type: grid
+        column_span: 2
+        visibility:
+          - condition: screen
+            media_query: "(min-width: 768px)"
+        cards:
+          - type: vertical-stack
+            cards:
+              - type: heading
+                icon: mdi:star
+                heading: Favorites
+                heading_style: title
+              - square: true
+                type: grid
+                cards:
+                  - type: custom:button-card
+                    entity: light.woonkamer_olielamp
+                    template: light_rgb
+                    section_mode: true
+                    grid_options:
+                      rows: 2
+                      columns: 6
+                  - type: custom:button-card
+                    entity: light.woonkamer_kleurenspot
+                    template: light_rgb
+                    section_mode: true
+                    grid_options:
+                      rows: 2
+                      columns: 6
+                  - type: custom:button-card
+                    entity: switch.solar_optimizer_test
+                    template: light_rgb
+                    section_mode: true
+                    grid_options:
+                      rows: 2
+                      columns: 6
+                  - type: custom:button-card
+                    entity: switch.solar_optimizer_test
+                    template: light_rgb
+                    section_mode: true
+                    grid_options:
+                      rows: 2
+                      columns: 6
+                columns: 4
+            grid_options:
+              columns: full
+
+      ################################################################################
+      ############################ Mobile ############################################
+      ################################################################################
+      - type: grid
+        visibility:
+          - condition: screen
+            media_query: "(min-width: 0px) and (max-width: 767px)"
+
+        cards:
+          - type: vertical-stack
+            cards:
+              - type: custom:button-card
+                template: custom_card_user
+              - type: custom:bubble-card
+                card_type: empty-column
+          - type: vertical-stack
+            cards:
+
+          - type: vertical-stack
+            cards:
+              - type: heading
+                heading: Map
+                heading_style: title
+                icon: mdi:map-marker-account
+                badges:
+                  - type: entity
+                    show_state: false
+                    show_icon: true
+                    entity: person.ruben
+                    icon: mdi:face-agent
+                    color: green
+                    tap_action:
+                      action: more-info
+                  - type: entity
+                    show_state: false
+                    show_icon: true
+                    entity: person.marit
+                    icon: mdi:face-woman
+                    color: purple
+                    tap_action:
+                      action: more-info
+                  - type: entity
+                    show_state: false
+                    show_icon: true
+                    entity: person.evi
+                    icon: mdi:dog
+                    color: brown
+                    tap_action:
+                      action: more-info
+                  - type: entity
+                    show_state: false
+                    show_icon: true
+                    entity: person.evi
+                    icon: mdi:dog-side
+                    color: white
+                    tap_action:
+                      action: more-info
+                  - type: entity
+                    show_state: false
+                    show_icon: true
+                    entity: person.guest
+                    icon: mdi:account-group
+                    color: orange
+                    tap_action:
+                      action: more-info
+            grid_options:
+              columns: full
+              rows: auto
+      ################################################################################
+      ################################# nav bar ######################################
+      ################################################################################
+      - !include generic/footer/navbar.yaml
+  - title: Music
+    icon: mdi:music
+    type: sections
+    max_columns: 3
+    path: Music
+    dense_section_placement: false
+    subview: false
+    theme: rounded-bubble
+    sections:
+      - type: grid
+        column_span: 2
+        visibility:
+          - condition: screen
+            media_query: "(min-width: 768px)"
+        cards:
+          - type: vertical-stack
+            grid_options:
+              columns: full
+            cards:
+              - type: custom:button-card
+                entity: media_player.werkkamer
+                template: media_player
+      - type: grid
+        column_span: 1
+        visibility:
+          - condition: screen
+            media_query: "(min-width: 768px)"
+        cards:
+          - type: vertical-stack
+            grid_options:
+              columns: full
+            cards:
+              - type: heading
+                heading: Music
+                heading_style: title
+                icon: mdi:music
+              - type: vertical-stack
+                cards:
+                  - card:
+                    type: custom:button-card
+                    name: Woonkamer
+                    entity: media_player.woonkamer
+                    template: volume_slider_small
+                    conditions:
+                      - condition: state
+                        entity: media_player.woonkamer
+                        state_not: idle
+                      - condition: state
+                        entity: media_player.woonkamer
+                        state_not: "off"
+                  - card:
+                    type: custom:button-card
+                    name: Keuken
+                    entity: media_player.keuken
+                    template: volume_slider_small
+                    conditions:
+                      - condition: state
+                        entity: media_player.keuken
+                        state_not: idle
+                      - condition: state
+                        entity: media_player.keuken
+                        state_not: "off"
+                  - card:
+                    type: custom:button-card
+                    name: Werkkamer
+                    entity: media_player.werkkamer
+                    template: volume_slider_small
+                    conditions:
+                      - condition: state
+                        entity: media_player.werkkamer
+                        state_not: idle
+                      - condition: state
+                        entity: media_player.werkkamer
+                        state_not: "off"
+              - type: heading
+                heading: Playlist
+                heading_style: title
+                icon: mdi:playlist-music
+              - square: true
+                type: grid
+                cards:
+                  - type: custom:button-card
+                    name: t koffiehuis
+                    show_entity_picture: true
+                    entity_picture: /local/images/spotify_playlists/koffiehuis.jpg
+                    show_name: false
+                    show_state: false
+                    aspect_ratio: 1/1
+                    tap_action:
+                      action: call-service
+                      service: script.set_playlist_and_play
+                      data:
+                        playlist: spotify:playlist:37i9dQZF1DWYPwGkJoztcR
+                    styles:
+                      card:
+                        - border-radius: 20px
+                        - padding: 0
+                        - box-shadow: none
+                      entity_picture:
+                        - object-fit: cover
+                      img_cell:
+                        - height: 100%
+                        - width: 100%
+                        - border-radius: 20px
+                      icon:
+                        - height: 100%
+                        - width: 100%
+                  - type: custom:button-card
+                    name: Love Coffee, Love Jesus
+                    show_entity_picture: true
+                    entity_picture: /local/images/spotify_playlists/LoveCofeeLoveJesus.jpg
+                    show_name: false
+                    show_state: false
+                    aspect_ratio: 1/1
+                    tap_action:
+                      action: call-service
+                      service: script.set_playlist_and_play
+                      data:
+                        playlist: spotify:playlist:6o2E9vkewAblL79cIi4aiB
+                    styles:
+                      card:
+                        - border-radius: 20px
+                        - padding: 0
+                        - box-shadow: none
+                      entity_picture:
+                        - object-fit: cover
+                      img_cell:
+                        - height: 100%
+                        - width: 100%
+                        - border-radius: 20px
+                      icon:
+                        - height: 100%
+                        - width: 100%
+                  - type: custom:button-card
+                    name: Good People Good Music
+                    show_entity_picture: true
+                    entity_picture: /local/images/spotify_playlists/GoodPeopleGoodMusic.jpg
+                    show_name: false
+                    show_state: false
+                    aspect_ratio: 1/1
+                    tap_action:
+                      action: call-service
+                      service: script.set_playlist_and_play
+                      data:
+                        playlist: spotify:playlist:37i9dQZF1DWZy0j22jjWNA
+                    styles:
+                      card:
+                        - border-radius: 20px
+                        - padding: 0
+                        - box-shadow: none
+                      entity_picture:
+                        - object-fit: cover
+                      img_cell:
+                        - height: 100%
+                        - width: 100%
+                        - border-radius: 20px
+                      icon:
+                        - height: 100%
+                        - width: 100%
+                  - type: custom:button-card
+                    name: Daily Drive
+                    show_entity_picture: true
+                    entity_picture: /local/images/spotify_playlists/JouwDaily.jpeg
+                    show_name: false
+                    show_state: false
+                    aspect_ratio: 1/1
+                    tap_action:
+                      action: call-service
+                      service: script.set_playlist_and_play
+                      data:
+                        playlist: spotify:playlist:37i9dQZF1EfOmkAi3kSqLL
+                    styles:
+                      card:
+                        - border-radius: 20px
+                        - padding: 0
+                        - box-shadow: none
+                      entity_picture:
+                        - object-fit: cover
+                      img_cell:
+                        - height: 100%
+                        - width: 100%
+                        - border-radius: 20px
+                      icon:
+                        - height: 100%
+                        - width: 100%
+                  - type: custom:button-card
+                    name: Matthijn Radio
+                    show_entity_picture: true
+                    entity_picture: /local/images/spotify_playlists/MatthijnRadio.jpg
+                    show_name: false
+                    show_state: false
+                    aspect_ratio: 1/1
+                    tap_action:
+                      action: call-service
+                      service: script.set_playlist_and_play
+                      data:
+                        playlist: spotify:playlist:37i9dQZF1E4BTKDo02No92
+                    styles:
+                      card:
+                        - border-radius: 20px
+                        - padding: 0
+                        - box-shadow: none
+                      entity_picture:
+                        - object-fit: cover
+                      img_cell:
+                        - height: 100%
+                        - width: 100%
+                        - border-radius: 20px
+                      icon:
+                        - height: 100%
+                        - width: 100%
+                  - type: custom:button-card
+                    name: Sela Radio
+                    show_entity_picture: true
+                    entity_picture: /local/images/spotify_playlists/SelaRadio.jpg
+                    show_name: false
+                    show_state: false
+                    aspect_ratio: 1/1
+                    tap_action:
+                      action: call-service
+                      service: script.set_playlist_and_play
+                      data:
+                        playlist: spotify:playlist:37i9dQZF1E4sZLoCBiZh4D
+                    styles:
+                      card:
+                        - border-radius: 20px
+                        - padding: 0
+                        - box-shadow: none
+                      entity_picture:
+                        - object-fit: cover
+                      img_cell:
+                        - height: 100%
+                        - width: 100%
+                        - border-radius: 20px
+                      icon:
+                        - height: 100%
+                        - width: 100%
+                  - type: custom:button-card
+                    name: Christian Coffee House
+                    show_entity_picture: true
+                    entity_picture: /local/images/spotify_playlists/ChristianCoffeeHouse.jpg
+                    show_name: false
+                    show_state: false
+                    aspect_ratio: 1/1
+                    tap_action:
+                      action: call-service
+                      service: script.set_playlist_and_play
+                      data:
+                        playlist: spotify:playlist:37i9dQZF1DWXKWi9FunemC
+                    styles:
+                      card:
+                        - border-radius: 20px
+                        - padding: 0
+                        - box-shadow: none
+                      entity_picture:
+                        - object-fit: cover
+                      img_cell:
+                        - height: 100%
+                        - width: 100%
+                        - border-radius: 20px
+                      icon:
+                        - height: 100%
+                        - width: 100%
+      ################################################################################
+      ################################# nav bar ######################################
+      ################################################################################
+      - !include generic/footer/navbar.yaml

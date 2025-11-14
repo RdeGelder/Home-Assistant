@@ -1,0 +1,596 @@
+toggle_card:
+  variables:
+    var_entity: null
+    var_name: null
+    var_icon_on: mdi:toggle-switch
+    var_icon_off: mdi:toggle-switch-off
+  name:
+  show_icon: true
+  icon: "[[[variables.var_icon_on ]]]"
+  tap_action:
+    action: toggle
+  state:
+    - value: "off"
+      icon: "[[[variables.var_icon_off ]]]"
+      styles:
+        card:
+          - background: black
+        icon:
+          - color: white
+        name:
+          - color: white
+        custom_fields:
+          state:
+            - color: white
+  styles:
+    grid:
+      - grid-template-areas: '"i i""n n ""state icon"'
+      - grid-template-columns: 1fr 1fr
+      - grid-template-rows: 1fr min-content min-content
+    card:
+      - padding: 20px
+    name:
+      - justify-self: start
+      - font-size: 14px
+      - color: black
+      - capacity: "0.7"
+      - padding: 2px 0px
+    icon:
+      - width: 24px
+      - color: black
+    img_cell:
+      - justify-self: start
+      - width: 24px
+      - height: 24px
+      - padding-bottom: 18px
+    custom_fields:
+      icon:
+        - justify-self: end
+        - margin-top: "-9px"
+      state:
+        - justify-self: start
+        - font-size: 16px
+        - font-weitht: 500
+        - color: black
+        - margin-top: "-9px"
+  custom_fields:
+    icon: |
+      [[[
+        var state = entity.state;
+        if(state == "on")
+          return '<ha-icon icon= "mdi:toggle-switch" style = "color: #99BC85 ; width:50px; height:50p">'
+        else
+          return '<ha-icon icon= "mdi:toggle-switch-off" style = "color: white ; width:50px; height:50p">'
+      ]]]
+    state: |
+      [[[
+        var state = entity.state;
+        if(state == "on")
+          return 'on';     
+        else
+          return 'off';
+      ]]]
+weather_hour:
+  variables:
+    var_cond: "[[[ return entity.attributes.forc1d_condition ]]]"
+    var_hum: "[[[ return entity.attributes.forc1d_humidity ]]]"
+    var_prec: "[[[ return entity.attributes.forc1d_precipitation]]]"
+    var_day: "[[[ return entity.attributes.forc1d_datetime]]]"
+    var_temp: "[[[ return entity.attributes.forc1d_temp]]]"
+    var_feels_like: "[[[ return entity.attributes.forc1d_feels_like]]]"
+    var_wind_bft: "[[[ return entity.attributes.forc1d_wind_bft]]]"
+    var_wind_dir: "[[[ return entity.attributes.forc1d_wind_dir]]]"
+    var_icon: "[[[ return entity.attributes.forc1d_icon]]]"
+  entity: sensor.detailed_weather
+  show_icon: false
+  show_name: false
+  show_label: false
+  custom_fields:
+    cond: |
+      [[[ 
+        return variables.var_cond
+      ]]]
+    hum: |
+      [[[
+        return 'Hum: '+variables.var_hum +
+        '%' 
+      ]]]
+    prec: |
+      [[[
+        return variables.var_prec + 'mm'
+      ]]]
+    day: |
+      [[[
+        return helpers.formatTimeWeekday(variables.var_day)
+      ]]]
+    temp: |
+      [[[ 
+        return variables.var_temp + 
+        '°<span style="font-size: 0.3em">' +
+        variables.var_feels_like+ '°' 
+      ]]]
+    icon: |
+      [[[ 
+        return '<img src = "' + variables.var_icon
+        +  '" width="70" height="70" />' 
+      ]]]
+    wind: |
+      [[[ 
+        return '<img src = "' 
+        + '/local/weather/wind/wind-beaufort-'
+        + variables.var_wind_bft
+        +'.svg" width="70" height="70" />' 
+      ]]]
+    wind_dir: |
+      [[[
+        return variables.var_wind_dir
+      ]]]
+  styles:
+    grid:
+      - grid-template-areas: >-
+          "day day day day day day" "temp temp temp wind . icon" "temp temp
+          temp wind . icon" "hum prec prec wind_dir cond cond"
+      - grid-template-columns: 1fr min-content min-content min-content
+    card:
+      - padding: 14px
+      - margin-bottom: 12px
+      - background: var(--popupBG)
+      - box-shadow: none !important
+    custom_fields:
+      day:
+        - justify-self: start
+      temp:
+        - justify-self: start
+        - font-size: 2.5em
+        - font_weight: 400
+      feels_like:
+        - jutify-self: start
+      icon:
+        - justify-self: end
+      wind:
+        - justify-self: end
+      hum:
+        - justify-self: start
+      prec:
+        - justify-self: start
+  columns: 1
+weather_day:
+  variables:
+    var_cond: "[[[ return entity.attributes.forc1d_condition ]]]"
+    var_hum: "[[[ return entity.attributes.forc1d_humidity ]]]"
+    var_prec: "[[[ return entity.attributes.forc1d_precipitation]]]"
+    var_day: "[[[ return entity.attributes.forc1d_datetime]]]"
+    var_temp: "[[[ return entity.attributes.forc1d_temp]]]"
+    var_feels_like: "[[[ return entity.attributes.forc1d_feels_like]]]"
+    var_wind_bft: "[[[ return entity.attributes.forc1d_wind_bft]]]"
+    var_wind_dir: "[[[ return entity.attributes.forc1d_wind_dir]]]"
+    var_icon: "[[[ return entity.attributes.forc1d_icon]]]"
+  entity: sensor.detailed_weather
+  show_icon: false
+  show_name: false
+  show_label: false
+  custom_fields:
+    cond: |
+      [[[ 
+        return variables.var_cond
+      ]]]
+    hum: |
+      [[[
+        return 'Hum: '+variables.var_hum +
+        '%' 
+      ]]]
+    prec: |
+      [[[
+        return variables.var_prec + 'mm'
+      ]]]
+    day: |
+      [[[
+        return helpers.formatDateWeekdayDay(variables.var_day)
+      ]]]
+    temp: |
+      [[[ 
+        return variables.var_temp + 
+        '°<span style="font-size: 0.3em">' +
+        variables.var_feels_like+ '°' 
+      ]]]
+    icon: |
+      [[[ 
+        return '<img src = "' + variables.var_icon
+        +  '" width="70" height="70" />' 
+      ]]]
+    wind: |
+      [[[ 
+        return '<img src = "' 
+        + '/local/weather/wind/wind-beaufort-'
+        + variables.var_wind_bft
+        +'.svg" width="70" height="70" />' 
+      ]]]
+    wind_dir: |
+      [[[
+        return variables.var_wind_dir
+      ]]]
+  styles:
+    grid:
+      - grid-template-areas: >-
+          "day day day day day day" "temp temp temp wind . icon" "temp temp
+          temp wind . icon" "hum prec prec wind_dir cond cond"
+      - grid-template-columns: 1fr min-content min-content min-content
+    card:
+      - padding: 14px
+      - margin-bottom: 12px
+      - background: var(--popupBG)
+      - box-shadow: none !important
+    custom_fields:
+      day:
+        - justify-self: start
+      temp:
+        - justify-self: start
+        - font-size: 2.5em
+        - font_weight: 400
+      feels_like:
+        - jutify-self: start
+      icon:
+        - justify-self: end
+      wind:
+        - justify-self: end
+      hum:
+        - justify-self: start
+      prec:
+        - justify-self: start
+  columns: 1
+room_conditions:
+  variables:
+    background: var(--popupBG)
+    entity: null
+    temp: >
+      [[[ return
+      Math.round((states['sensor.temperatur_stue_temperature'].state) * 10)/10
+      + '°' + '<span style="font-size:0.3em">' +
+      Math.round((states['sensor.temperatur_stue_humidity'].state) * 10)/10 +
+      '%']]]
+  show_icon: false
+  show_name: false
+  show_label: true
+  custom_fields:
+    temp: "[[[ return variables.temp ]]]"
+    graph:
+      card:
+        type: custom:mini-graph-card
+        entities:
+          - entity: "[[[ return variables.entity ]]]"
+            color: var(--red)
+        line_width: 0
+        height: 100
+        show:
+          icon: false
+          name: false
+          state: false
+          legend: false
+          labels: false
+        card_mod:
+          style: |
+            ha-card {
+              border-style: none;
+              background: none;
+            }
+  styles:
+    grid:
+      - grid-template-areas: '"temp"'
+      - grid-template-columns: 1fr
+      - grid-template-rows: min-content
+    card:
+      - padding: 24px
+      - background: "[[[ return variables.background ]]]"
+    custom_fields:
+      temp:
+        - justify-self: start
+        - text-align: left
+        - font-size: 66px
+        - color: var(--gray800)
+        - line-height: 66px
+        - font-weight: 300
+        - padding: 12px 0 0 0
+      graph:
+        - position: absolute
+        - width: 100%
+        - left: 0
+        - bottom: 0
+chips_small:
+  variables:
+    icon: null
+  icon: "[[[ return variables.icon ]]]"
+  show_name: false
+  styles:
+    card:
+      - padding: 13px
+      - border-radius: 50%
+      - background: var(--gray800)
+    img_cell:
+      - width: 22px
+      - height: 22px
+    icon:
+      - width: 22px
+      - height: 22px
+      - color: var(--gray000)
+chips_small_active:
+  variables:
+    icon: null
+  icon: "[[[ return variables.icon ]]]"
+  show_name: false
+  styles:
+    card:
+      - padding: 13px
+      - border-radius: 50%
+      - background: var(--active-small)
+    img_cell:
+      - width: 22px
+      - height: 22px
+    icon:
+      - width: 22px
+      - height: 22px
+      - color: var(--black)
+sensor_big:
+  variables:
+    name: var_name
+    label: var_label
+    icon: var_icon
+    background: var(--popupBG)
+  icon: "[[[ return variables.icon ]]]"
+  label: >
+    [[[  return '<marquee behavior="alternate" scrollamount="2">' +
+    variables.label + '<\marquee>' ]]]
+  name: "[[[ return variables.name ]]]"
+  show_label: true
+  styles:
+    card:
+      - padding: 20px
+      - height: 180px
+      - background: "[[[ return variables.background ]]]"
+    grid:
+      - grid-template-areas: '"i" "l" "n"'
+    img_cell:
+      - justify-self: end
+      - align-self: start
+      - background: rgba(var(--highlight))
+      - padding: 14px
+      - border-radius: 50%
+      - margin: "-16px -16px 0 0"
+      - width: 30px
+      - height: 30px
+    icon:
+      - width: 30px
+      - height: 30px
+      - color: var(--gray800)
+    label:
+      - justify-self: start
+      - font-size: 2em
+      - font-weight: 300
+      - color: var(--gray800)
+    name:
+      - justify-self: start
+      - font-size: 14px
+      - color: var(--gray800)
+      - opacity: "0.7"
+room_card:
+  variables:
+    name: Stue
+    icon: mdi:unicorn
+    path: "#stue_nede"
+    state: null
+    background: var(--gray000)
+    color: var(--green)
+    text: var(--gray800)
+    radius: 36px 36px 6px 36px
+  icon: "[[[ return variables.icon ]]]"
+  name: "[[[ return variables.name ]]]"
+  tap_action:
+    action: navigate
+    navigation_path: "[[[ return variables.path ]]]"
+  custom_fields:
+    temp: "[[[ return variables.state ]]]"
+  styles:
+    card:
+      - padding: 8px
+      - height: 100%
+      - border-radius: "[[[ return variables.radius ]]]"
+      - background: "[[[ return variables.background ]]]"
+    grid:
+      - grid-template-areas: '"n i" "temp temp"'
+      - grid-template-rows: 1fr min-content
+      - grid-template-columns: min-content 1fr
+    icon:
+      - width: 28px
+      - color: var(--black)
+    img_cell:
+      - justify-self: end
+      - background: "[[[ return variables.color ]]]"
+      - border-radius: 100%
+      - align-self: start
+      - width: 60px
+      - height: 60px
+    name:
+      - justify-self: start
+      - align-self: start
+      - text-align: left
+      - font-size: 1em
+      - font-weight: 500
+      - color: "[[[ return variables.text ]]]"
+      - padding: 14px
+    custom_fields:
+      temp:
+        - justify-self: start
+        - font-size: 3em
+        - line-height: 1em
+        - font-weight: 300
+        - color: "[[[ return variables.text ]]]"
+        - padding: 0 0 6px 14px
+sensor_big_2columns:
+  variables:
+    name: var_name
+    label: var_label
+    icon: var_icon
+    background: var(--popupBG)
+    state: var_state
+  icon: "[[[ return variables.icon ]]]"
+  label: >
+    [[[  return '<marquee behavior="alternate" scrollamount="2">' +
+    variables.label + '<\marquee>' ]]]
+  name: "[[[ return variables.name ]]]"
+  show_label: true
+  custom_fields:
+    state: "[[[ return variables.state ]]]"
+  styles:
+    card:
+      - padding: 20px
+      - height: 180px
+      - background: "[[[ return variables.background ]]]"
+    grid:
+      - grid-template-areas: '"i i" "l state" "n n"'
+    img_cell:
+      - justify-self: end
+      - align-self: start
+      - background: rgba(var(--highlight))
+      - padding: 14px
+      - border-radius: 50%
+      - margin: "-16px -16px 0 0"
+      - width: 30px
+      - height: 30px
+    icon:
+      - width: 30px
+      - height: 30px
+      - color: var(--gray800)
+    label:
+      - justify-self: start
+      - font-size: 2em
+      - font-weight: 300
+      - color: var(--gray800)
+    name:
+      - justify-self: start
+      - font-size: 14px
+      - color: var(--gray800)
+      - opacity: "0.7"
+    custom_fields:
+      state:
+        - font-size: 14px
+        - color: var(--gray800)
+        - opacity: "0.7"
+        - margin-bottom: "-5px"
+chips_big_active:
+  variables:
+    name: null
+    entity: null
+    icon: null
+  entity: "[[[ return variables.entity ]]]"
+  icon: "[[[ return variables.icon ]]]"
+  name: "[[[ return variables.name ]]]"
+  styles:
+    card:
+      - padding: 4px
+      - background: var(--active-big)
+    grid:
+      - grid-template-areas: |
+          "i n"
+    img_cell:
+      - width: 22px
+      - height: 22px
+      - padding: 9px
+      - background: var(--white)
+      - border-radius: 100%
+    icon:
+      - width: 22px
+      - height: 22px
+      - color: var(--black)
+    name:
+      - padding: 0 10px
+      - font-size: 14px
+      - color: var(--black)
+chips_big:
+  variables:
+    name: null
+    entity: null
+    icon: null
+  entity: "[[[ return variables.entity ]]]"
+  icon: "[[[ return variables.icon ]]]"
+  name: "[[[ return variables.name ]]]"
+  styles:
+    card:
+      - padding: 4px
+      - background: var(--gray800)
+    grid:
+      - grid-template-areas: |
+          "i n"
+      - grid-template-columns: min-content 1fr
+    img_cell:
+      - justify-self: start
+      - width: 22px
+      - height: 22px
+      - padding: 9px
+      - background: var(--gray000)
+      - border-radius: 100%
+    icon:
+      - width: 22px
+      - height: 22px
+      - color: var(--gray800)
+    name:
+      - justify-self: start
+      - padding: 0 10px
+      - font-size: 14px
+      - color: var(--gray000)
+chips_medium_active:
+  variables:
+    name: null
+    icon: null
+  icon: "[[[ return variables.icon ]]]"
+  name: "[[[ return variables.name ]]]"
+  styles:
+    card:
+      - padding: 10px 16px 10px 12px
+      - background: var(--active-small)
+    grid:
+      - grid-template-areas: '"i n"'
+      - grid-template-columns: min-content 1fr
+    img_cell:
+      - justify-self: start
+      - align-self: center
+      - width: 20px
+      - height: 20px
+      - background: none
+    icon:
+      - width: 20px
+      - height: 20px
+      - margin-top: "-1px"
+      - color: var(--black)
+    name:
+      - justify-self: start
+      - font-size: 14px
+      - padding-left: 4px
+      - color: var(--black)
+chips_medium:
+  variables:
+    name: null
+    icon: null
+  icon: "[[[ return variables.icon ]]]"
+  name: "[[[ return variables.name ]]]"
+  styles:
+    card:
+      - padding: 10px 16px 10px 12px
+      - background: var(--gray800)
+    grid:
+      - grid-template-areas: '"i n"'
+      - grid-template-columns: min-content 1fr
+    img_cell:
+      - justify-self: start
+      - align-self: center
+      - width: 20px
+      - height: 20px
+      - background: none
+    icon:
+      - width: 20px
+      - height: 20px
+      - margin-top: "-1px"
+      - color: var(--gray000)
+    name:
+      - justify-self: start
+      - font-size: 14px
+      - padding-left: 4px
+      - color: var(--gray000)

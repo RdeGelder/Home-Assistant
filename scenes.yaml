@@ -1,0 +1,489 @@
+- id: '1754223322626'
+  name: Keuken_nacht
+  entities:
+    light.keuken_spotjes:
+      supported_color_modes:
+      - brightness
+      color_mode: brightness
+      brightness: 8
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Keuken spotjes
+      supported_features: 40
+      state: 'on'
+    light.keuken_ledstrip:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - 'off'
+      - colorloop
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect: 'off'
+      color_mode: color_temp
+      brightness: 61
+      color_temp_kelvin: 2000
+      color_temp: 500
+      hs_color:
+      - 30.601
+      - 94.547
+      rgb_color:
+      - 255
+      - 137
+      - 14
+      xy_color:
+      - 0.598
+      - 0.383
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Keuken ledstrip
+      supported_features: 44
+      state: 'on'
+  metadata: {}
+  icon: mdi:moon-waning-crescent
+- id: '1754223570654'
+  name: keuken_dag
+  entities:
+    light.keuken_spotjes:
+      supported_color_modes:
+      - brightness
+      color_mode: brightness
+      brightness: 254
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Keuken spotjes
+      supported_features: 40
+      state: 'on'
+    light.keuken_ledstrip:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - 'off'
+      - colorloop
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect: 'off'
+      color_mode: color_temp
+      brightness: 153
+      color_temp_kelvin: 2732
+      color_temp: 366
+      hs_color:
+      - 28.327
+      - 64.71
+      rgb_color:
+      - 255
+      - 168
+      - 90
+      xy_color:
+      - 0.522
+      - 0.387
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Keuken ledstrip
+      supported_features: 44
+      state: 'on'
+  metadata: {}
+  icon: mdi:weather-sunny
+- id: '1756833002497'
+  name: Woonkamer nacht
+  entities:
+    light.woonkamer_houtspot:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      min_mireds: 250
+      max_mireds: 454
+      supported_color_modes:
+      - color_temp
+      color_mode: color_temp
+      brightness: 128
+      color_temp_kelvin: 2717
+      color_temp: 368
+      hs_color:
+      - 28.358
+      - 65.183
+      rgb_color:
+      - 255
+      - 167
+      - 89
+      xy_color:
+      - 0.524
+      - 0.387
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Woonkamer houtspot
+      supported_features: 40
+      state: 'on'
+    light.woonkamer_kleurenspot:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      min_mireds: 250
+      max_mireds: 454
+      effect_list:
+      - 'off'
+      - colorloop
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect: 'off'
+      color_mode: color_temp
+      brightness: 128
+      color_temp_kelvin: 2564
+      color_temp: 390
+      hs_color:
+      - 28.711
+      - 70.253
+      rgb_color:
+      - 255
+      - 162
+      - 76
+      xy_color:
+      - 0.539
+      - 0.389
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Woonkamer kleurenspot
+      supported_features: 44
+      state: 'on'
+    light.woonkamer_olielamp:
+      supported_color_modes:
+      - brightness
+      color_mode: brightness
+      brightness: 51
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Woonkamer olielamp
+      supported_features: 40
+      state: 'on'
+    light.woonkamer_servieskast:
+      supported_color_modes:
+      - brightness
+      color_mode: brightness
+      brightness: 41
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Woonkamer servieskast
+      supported_features: 40
+      state: 'on'
+  metadata: {}
+- id: '1756833050091'
+  name: Woonkamer dag
+  entities:
+    light.woonkamer_houtspot:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      min_mireds: 250
+      max_mireds: 454
+      supported_color_modes:
+      - color_temp
+      color_mode: color_temp
+      brightness: 254
+      color_temp_kelvin: 2717
+      color_temp: 368
+      hs_color:
+      - 28.358
+      - 65.183
+      rgb_color:
+      - 255
+      - 167
+      - 89
+      xy_color:
+      - 0.524
+      - 0.387
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Woonkamer houtspot
+      supported_features: 40
+      state: 'on'
+    light.woonkamer_kleurenspot:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      min_mireds: 250
+      max_mireds: 454
+      effect_list:
+      - 'off'
+      - colorloop
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect: 'off'
+      color_mode: color_temp
+      brightness: 254
+      color_temp_kelvin: 2564
+      color_temp: 390
+      hs_color:
+      - 28.711
+      - 70.253
+      rgb_color:
+      - 255
+      - 162
+      - 76
+      xy_color:
+      - 0.539
+      - 0.389
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Woonkamer kleurenspot
+      supported_features: 44
+      state: 'on'
+    light.woonkamer_olielamp:
+      supported_color_modes:
+      - brightness
+      color_mode: brightness
+      brightness: 254
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Woonkamer olielamp
+      supported_features: 40
+      state: 'on'
+    light.woonkamer_servieskast:
+      supported_color_modes:
+      - brightness
+      color_mode: brightness
+      brightness: 181
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Woonkamer servieskast
+      supported_features: 40
+      state: 'on'
+    switch.woonkamer_pompoen:
+      friendly_name: Woonkamer pompoen
+      state: 'on'
+  metadata: {}
+- id: '1756904456054'
+  name: nacht
+  entities:
+    light.werkkamer_links:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      min_mireds: 250
+      max_mireds: 454
+      supported_color_modes:
+      - color_temp
+      color_mode: color_temp
+      brightness: 84
+      color_temp_kelvin: 2702
+      color_temp: 370
+      hs_color:
+      - 28.391
+      - 65.659
+      rgb_color:
+      - 255
+      - 167
+      - 88
+      xy_color:
+      - 0.524
+      - 0.388
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Werkkamer links
+      supported_features: 40
+      state: 'on'
+    light.werkkamer_midden:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      min_mireds: 250
+      max_mireds: 454
+      supported_color_modes:
+      - color_temp
+      color_mode: color_temp
+      brightness: 76
+      color_temp_kelvin: 2702
+      color_temp: 370
+      hs_color:
+      - 28.391
+      - 65.659
+      rgb_color:
+      - 255
+      - 167
+      - 88
+      xy_color:
+      - 0.524
+      - 0.388
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Werkkamer midden
+      supported_features: 40
+      state: 'on'
+    light.werkkamer_rechts:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      min_mireds: 250
+      max_mireds: 454
+      supported_color_modes:
+      - color_temp
+      color_mode: color_temp
+      brightness: 76
+      color_temp_kelvin: 2702
+      color_temp: 370
+      hs_color:
+      - 28.391
+      - 65.659
+      rgb_color:
+      - 255
+      - 167
+      - 88
+      xy_color:
+      - 0.524
+      - 0.388
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Werkkamer rechts
+      supported_features: 40
+      state: 'on'
+  metadata: {}
+- id: '1756904482441'
+  name: dag
+  entities:
+    light.werkkamer_links:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      min_mireds: 250
+      max_mireds: 454
+      supported_color_modes:
+      - color_temp
+      color_mode: color_temp
+      brightness: 254
+      color_temp_kelvin: 3144
+      color_temp: 318
+      hs_color:
+      - 27.604
+      - 53.118
+      rgb_color:
+      - 255
+      - 182
+      - 120
+      xy_color:
+      - 0.482
+      - 0.38
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Werkkamer links
+      supported_features: 40
+      state: 'on'
+    light.werkkamer_midden:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      min_mireds: 250
+      max_mireds: 454
+      supported_color_modes:
+      - color_temp
+      color_mode: color_temp
+      brightness: 254
+      color_temp_kelvin: 3144
+      color_temp: 318
+      hs_color:
+      - 27.604
+      - 53.118
+      rgb_color:
+      - 255
+      - 182
+      - 120
+      xy_color:
+      - 0.482
+      - 0.38
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Werkkamer midden
+      supported_features: 40
+      state: 'on'
+    light.werkkamer_rechts:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      min_mireds: 250
+      max_mireds: 454
+      supported_color_modes:
+      - color_temp
+      color_mode: color_temp
+      brightness: 237
+      color_temp_kelvin: 3144
+      color_temp: 318
+      hs_color:
+      - 27.604
+      - 53.118
+      rgb_color:
+      - 255
+      - 182
+      - 120
+      xy_color:
+      - 0.482
+      - 0.38
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Werkkamer rechts
+      supported_features: 40
+      state: 'on'
+  metadata: {}
+- id: '1757516357848'
+  name: Raam open
+  entities:
+    light.werkkamer_links:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      min_mireds: 250
+      max_mireds: 454
+      supported_color_modes:
+      - color_temp
+      color_mode:
+      brightness:
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      rgb_color:
+      xy_color:
+      off_with_transition: false
+      off_brightness: 254
+      friendly_name: Werkkamer links
+      supported_features: 40
+      state: 'off'
+    light.werkkamer_midden:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      min_mireds: 250
+      max_mireds: 454
+      supported_color_modes:
+      - color_temp
+      color_mode:
+      brightness:
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      rgb_color:
+      xy_color:
+      off_with_transition: false
+      off_brightness: 3
+      friendly_name: Werkkamer midden
+      supported_features: 40
+      state: 'off'
+    light.werkkamer_rechts:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      min_mireds: 250
+      max_mireds: 454
+      supported_color_modes:
+      - color_temp
+      color_mode: color_temp
+      brightness: 128
+      color_temp_kelvin: 2202
+      color_temp: 454
+      hs_color:
+      - 29.79
+      - 84.553
+      rgb_color:
+      - 255
+      - 146
+      - 39
+      xy_color:
+      - 0.579
+      - 0.388
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Werkkamer rechts
+      supported_features: 40
+      state: 'on'
+  metadata: {}

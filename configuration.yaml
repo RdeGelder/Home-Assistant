@@ -1,0 +1,342 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# {# state_attr('sensor.solcast_pv_forecast_forecast_today', 'detailedForecast')#}
+# {%- set values = state_attr('sensor.solcast_pv_forecast_forecast_today', 'detailedForecast')  + state_attr('sensor.solcast_pv_forecast_forecast_tomorrow', 'detailedForecast')%}
+# {%- set opwek = namespace(numbers=[]) %}
+# {%- for a in values -%}
+# {%- set opwek.numbers = opwek.numbers +  [a.pv_estimate] %}
+# {%- endfor %}
+# {{opwek}}
+# {% set kwh_pattern = [0.16, 0.04, 0.01, 0.03, 0.02, 2.0] %}
+# {% set resolution_in_minutes = 5 %}
+# {# create the whole hour #}
+# {% set start_time = now().replace(minute=0).replace(second=0).replace(microsecond=0) %}
+# {% set list = namespace(expected_costs=[], solar=[], totalenergy = [], time=start_time) %}
+# {# Calculating until 20:30 #}
+# {%- set amount_of_calculations = (24) * (60 // resolution_in_minutes) -%}
+# {%- for _ in range(0, amount_of_calculations) -%}
+#   {%- set time_loop = list.time -%}
+#   {%- set ns = namespace(costs=0, solar=0, time=time_loop) %}
+#   {%- for kwh in kwh_pattern %}
+#     {# {%- set ns.costs = ns.costs + (kwh-opwek[1]) * 0.9 %} #}
+#     {# {%- set ns.solar = ns.solar + kwh - opwek[(ns.time.minute/5)|round(0)] -%} #}
+#     {%- set ns.time = ns.time + timedelta(minutes=resolution_in_minutes) %}
+#   {%- endfor %}
+#   {%- set start_time = time_loop %}
+#   {%- set add_item = {'start': start_time, 'solar': ns.solar, 'costs': ns.costs | round(2)} %}
+#   {%- set list.expected_costs = list.expected_costs + [add_item] %}
+#   {%- set list.time = list.time + timedelta(minutes=resolution_in_minutes) %}
+# {% endfor %}
+# {% set sorted_list = list.expected_costs | sort(attribute='costs') %}
+# {{sorted_list}}
+
+homeassistant:
+  name: Martinbaan
+  latitude: !secret lat
+  longitude: !secret lon
+  elevation: !secret elev
+  #  internal_url: !secret internal_url
+  #  external_url: !secret external_url
+  unit_system: metric
+  currency: EUR
+  country: NL
+  temperature_unit: C
+
+  packages: !include_dir_named packages
+
+lovelace_gen:
+  rooms_most_used:
+    - woonkamer
+    - keuken
+    - werkkamer
+    - slaapkamer
+  rooms_all:
+    - keuken
+    - wc
+    - woonkamer
+    - badkamer
+    - overloop
+    - slaapkamer
+    - werkkamer
+    - berging
+    - home
+    - meterkast
+  rooms_bg:
+    - woonkamer
+    - keuken
+    - warmtepomp
+    - wc
+    - meterkast
+  rooms_1ste:
+    - slaapkamer
+    - babykamer
+    - badkamer
+    - overloop
+  rooms_2de:
+    - werkkamer
+    - logeerkamer
+    - technischeruimte
+
+lovelace:
+  mode: yaml
+  dashboards:
+    lovelace-generated: # Needs to contain a hyphen (-)
+      mode: yaml
+      filename: lovelace/ui-lovelace.yaml
+      title: Home
+    dashboard-bubble: # Needs to contain a hyphen (-)
+      mode: yaml
+      filename: lovelace/test.yaml
+      title: rounded-bubble
+  resources:
+    [
+      { url: /local/community/Bubble-Card/bubble-card.js, type: module },
+      { url: /local/community/button-card/button-card.js, type: module },
+      { url: /local/community/my-cards/my-slider-v2.js, type: module },
+      { url: /local/community/kiosk-mode/kiosk-mode.js, type: module },
+      { url: /local/community/swipe-card/swipe-card.js, type: module },
+      {
+        url: /hacsfiles/lovelace-paper-buttons-row/paper-buttons-row.js,
+        type: module,
+      },
+      { url: /local/community/stack-in-card/stack-in-card.js, type: module },
+      {
+        url: /local/community/Home-Assistant-Lovelace-Local-Conditional-card/local-conditional-card.js,
+        type: module,
+      },
+
+      { url: /local/community/lovelace-card-mod/card-mod.js, type: module },
+      {
+        url: /local/community/ha-sankey-chart/ha-sankey-chart.js,
+        type: module,
+      },
+      {
+        url: /local/community/lovelace-layout-card/layout-card.js,
+        type: module,
+      },
+      {
+        url: /local/community/lovelace-expander-card/expander-card.js,
+        type: module,
+      },
+      {
+        url: local/community/lovelace-auto-entities/auto-entities.js,
+        type: module,
+      },
+      {
+        url: /local/community/decluttering-card/decluttering-card.js,
+        type: module,
+      },
+      {
+        url: /local/community/lovelace-big-slider-card/big-slider-card.js,
+        type: module,
+      },
+      {
+        url: /local/community/mini-graph-card/mini-graph-card-bundle.js,
+        type: module,
+      },
+      { url: /local/community/lovelace-mushroom/mushroom.js, type: module },
+      {
+        url: /hacsfiles/lovelace-plotly-graph-card/plotly-graph-card.js,
+        type: module,
+      },
+      { url: /hacsfiles/apexcharts-card/apexcharts-card.js, type: module },
+      { url: /hacsfiles/lovelace-navbar-card/navbar-card.js, type: module },
+    ]
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+input_boolean:
+  debug_rounded:
+    name: Debug Rounded
+    icon: mdi:view-dashboard-edit
+
+  house_eco_mode:
+    name: "House Eco Mode"
+    icon: "mdi:leaf"
+
+  house_guest_mode:
+    name: "House Guest Mode"
+    icon: "mdi:account-multiple-plus"
+
+  audible_notifications:
+    name: meldingen
+    icon: mdi:speaker-message
+
+  vacation_mode:
+    name: vacation mode
+  family_home:
+    name: family home
+
+binary_sensor:
+  ################################################################################
+  # TIME BASED BINARY_SENSORS                                                    #
+  ################################################################################
+  # time of day
+  - platform: tod
+    name: Day
+    after: sunrise
+    before: sunset
+  - platform: tod
+    name: night_time
+    after: sunset
+    after_offset: -00:15
+    before: sunrise
+    before_offset: 00:05
+  # Quiet time
+  - platform: tod
+    name: Quiet time
+    after: "22:00"
+    before: "06:00"
+  # Ochtend
+  - platform: tod
+    name: Morning
+    after: "00:00"
+    before: "12:00"
+  # Middag
+  - platform: tod
+    name: Midday
+    after: "12:00"
+    before: "18:00"
+  # Avond
+  - platform: tod
+    name: Evening
+    after: "18:00"
+    before: "00:00"
+
+#{% set T, RH = states('sensor.temperatuur'), states('sensor.luchtvochtigheid') %}
+#{% if (T == 'unknown')  or (RH == 'unknown') %}
+#  'unknown'
+#{%- else %}
+#  {% set T = T | float %}
+#  {% set RH = RH | float %}
+#  {% set a = 6.1121 | float %}
+#  {% set b = 18.678 | float %}
+#  {% set c = 257.14 | float %}
+#  {% set d = 234.5 | float %}
+#  {% set e = 2.71828 | float %}
+#
+#  {% set P = a*e**((b-T/d)*(T/(c+T))) | float %}
+#  {% set gamma = log((RH / 100)*e**((b-T/d)*(T/(c+T)))) | float %}
+#  {% set dew_temp = ((c * gamma) / (b - gamma))|round(3) %}
+#  {{ dew_temp}}
+#{% endif %}
+template:
+  - sensor:
+      - name: powerload
+        unique_id: powerload
+        unit_of_measurement: "W"
+        device_class: power
+        state: >
+          {{states('sensor.solis_ac_output_total_power')|float + states('sensor.p1_meter_vermogen')|float}}
+      - name: "AirQuality"
+        unique_id: "airquality"
+        state: >
+          {% set co2_value = states('sensor.klimaat_sensor_kooldioxide') | float(default=4500) %}
+          {% set temp_value = states('sensor.klimaat_sensor_temperatuur') | float(default=21) %}
+          {% set humidity_value = states('sensor.werkkamerklimaat_sensor_luchtvochtigheid') | float(default=45) %}
+
+          {# CO2 Score calculation #}
+          {% if co2_value >= 4500 %}
+            {% set co2_score = 0 %}
+          {% elif co2_value <= 400 %}
+            {% set co2_score = 100 %}
+          {% else %}
+            {% set co2_score = ((4500 - co2_value) / (4500 - 400)) * 100 %}
+          {% endif %}
+
+          {# Temperature scoring #}
+          {% set ideal_temp = 21 %}
+          {% set temp_deviation = (temp_value - ideal_temp) | abs %}
+          {% if temp_deviation >= 10 %}
+            {% set temp_score = 0 %}
+          {% else %}
+            {% set temp_score = 100 - (temp_deviation * 10) %}
+          {% endif %}
+
+          {# Humidity scoring #}
+          {% if humidity_value < 30 %}
+            {% set humidity_score = (humidity_value / 30) * 100 %}
+          {% elif humidity_value > 60 %}
+            {% set humidity_score = ((100 - humidity_value) / 40) * 100 %}
+          {% else %}
+            {% set humidity_score = 100 %}
+          {% endif %}
+
+          {# Final weighted score - adjusted weights to include VOC #}
+          {{ ((co2_score * 0.25 +  temp_score * 0.125 + humidity_score * 0.125) | round(1)) }}
+
+      - name: "AirQuality Alt"
+        unique_id: "airquality_alt"
+        state: >
+          {% set co2 = states('sensor.klimaat_sensor_kooldioxide') | float %}
+
+          {% set scores = [] %}
+
+          {# CO2 Score #}
+          {% if co2 <= 599 %}
+            {% set scores = scores + [90] %}
+          {% elif co2 <= 999 %}
+            {% set scores = scores + [70] %}
+          {% elif co2 <= 1499 %}
+            {% set scores = scores + [50] %}
+          {% elif co2 <= 2499 %}
+            {% set scores = scores + [30] %}
+          {% else %}
+            {% set scores = scores + [10] %}
+          {% endif %}
+
+          {{ (scores | sum / scores | length) | round(1) }}
+
+      ################################################################################
+      ##################################### ENERGY ###################################
+      ################################################################################
+      - name: Import Power
+        unit_of_measurement: "W"
+        device_class: power
+        state: >
+          {% set vermogen = states('sensor.p1_meter_vermogen')|float %}
+          {% if vermogen >= 0 -%}
+              {{vermogen}}
+            {% else %}
+              0
+            {% endif%}
+      - name: Export Power
+        unit_of_measurement: "W"
+        device_class: power
+        state: >
+          {% set vermogen = states('sensor.p1_meter_vermogen')|float %}
+          {% if vermogen < 0 -%}
+              {{vermogen * -1}}
+            {% else %}
+              0
+            {% endif%}
+
+      - name: lights_on_count
+        unique_id: lightsoncount
+        state: >
+          {% set lights_on = states.light 
+            | selectattr('state', 'eq', 'on') 
+            | list 
+            | count %}
+          {{ lights_on }}
+media_player:
+  - platform: universal
+    name: music
+    unique_id: musicuniversal
+    children:
+      - media_player.keuken
+      - media_player.werkkamer
+      - media_player.woonkamer
+
+input_text:
+  music_playlist:
+    name: Music Playlist
+    initial: "20"
+    min: 0
+    max: 200

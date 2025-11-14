@@ -1,0 +1,59 @@
+type: vertical-stack
+cards:
+  - type: custom:bubble-card
+    card_type: pop-up
+    name: settings
+    icon: mdi:cog
+    state: null
+    hash: "#settings"
+    is_sidebar_hidden: true
+    styles: >-
+      .bubble-pop-up-container {
+        --vertical-stack-card-gap: 0px!important;
+      } #header-container > div > div {
+        background: var(--popupBG)!important;
+      }     
+
+      #header-container > button {background: none;}    
+
+      .icon-container {background-color:var(--gray800)!important;} 
+
+      .icon-container > ha-icon
+      {color:var(--gray000)!important;opacity:1!important} 
+
+      .bubble-icon {
+        --mdc-icon-size: 24px !important;
+      }
+    bg_blur: "20"
+    shadow_opacity: "20"
+    bg_opacity: "88"
+    margin_top_mobile: 50px
+    margin_top_desktop: 50px
+    card_layout: large
+  - type: vertical-stack
+    cards:
+      - type: custom:gap-card
+        height: 12
+      - type: custom:bubble-card
+        card_type: separator
+        name: Notify
+        icon: mdi:message-badge
+        styles: |
+          .separator-container div:last-child {opacity: 1!important;}
+      - type: custom:gap-card
+        height: 12
+      - type: custom:button-card
+        template: toggle_card
+        entity: input_boolean.debug_texts
+        variables:
+          background: var(--popupBG)
+      - type: custom:button-card
+        template: toggle_card
+        entity: input_boolean.text_notify_marit
+        variables:
+          background: var(--popupBG)
+      - type: custom:button-card
+        template: toggle_card
+        entity: input_boolean.text_notify_ruben
+        variables:
+          background: var(--popupBG)

@@ -1,0 +1,45 @@
+# Mappen structuren
+
+# You can whitelist files/folders with !, these will not be ignored.
+!*.yaml
+!.gitignore
+!*.md
+
+# Ignore folders.
+.storage
+.cloud
+.google.token
+
+# Ensure these YAML files are ignored, otherwise your secret data/credentials will leak.
+ip_bans.yaml
+secrets.yaml
+#known_devices.yaml
+
+\blueprints
+\automations
+\custom_components
+\esphome
+\image
+#\themes
+\tts
+\www
+#\.storage
+
+# files
+secrets.yaml
+
+# extensions
+*.log.1
+*.fault
+*.log
+*.db
+*.storage
+*.HA_VERSION
+*.db-shm
+*.db-wal
+.ssh
+.cloud
+.google.token
+home-assistant.log*
+id_rsa*
+solcast*

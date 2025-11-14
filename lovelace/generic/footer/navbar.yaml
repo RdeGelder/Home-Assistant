@@ -1,0 +1,210 @@
+type: custom:navbar-card
+desktop:
+  position: left
+  show_labels: true
+  show_popup_label_backgrounds: false
+  min_width: 768
+mobile:
+  show_labels: true
+routes:
+  - icon: mdi:home-outline
+    icon_selected: mdi:home-assistant
+    url: /dashboard-bubble/home
+    label: Home
+    selected: |
+      [[[
+        if (location.hash == '#living-room') return false;
+        else if (location.hash == '#bedroom') return false;
+        else if (location.hash == '#office') return false;
+        else if (location.hash == '#kitchen') return false;
+        else if (location.hash == '#bathroom') return false;
+        else if (location.hash == '#guest-room') return false;
+        else if (location.hash == '#corridor') return false;
+        else if (location.hash == '#remote') return false;
+        else if (location.hash == '#julian') return false;
+        else if (location.hash == '#anna') return false;
+        else return true;
+      ]]]
+  - icon: mdi:sofa-outline
+    icon_selected: mdi:sofa
+    label: Rooms
+    selected: |
+      [[[
+        if (location.hash == '#woonkamer') return true;
+        else if (location.hash == '#slaapkamer') return true;
+        else if (location.hash == '#werkkamer') return true;
+        else if (location.hash == '#keuken') return true;
+        else if (location.hash == '#badkamer') retn') return true;
+        else return false;
+      ]]]
+    badge:
+      show: |
+        [[[ return states['sensor.lights_on_count'].state > 2 ]]]
+      color: var(--yellow-color)
+      count: |
+        [[[ return states['sensor.lights_on_count'].state ]]]
+    tap_action:
+      action: open-popup
+    popup:
+      - icon: mdi:sofa-outline
+        url: /dashboard-bubble/home#living-room
+        label: Woonkamer
+      - icon: mdi:bed-king-outline
+        url: /dashboard-bubble/home#bedroom
+        label: Slaapkamer
+      - icon: mdi:monitor
+        url: /dashboard-bubble/home#office
+        label: Werkkkamer
+      - icon: mdi:silverware-variant
+        url: /dashboard-bubble/home#kitchen
+        label: Keuken
+      - icon: mdi:paper-roll-outline
+        url: /dashboard-bubble/home#bathroom
+        label: Badkamer
+  - icon: mdi:music
+    url: /dashboard-bubble/Music
+    label: Music
+    badge:
+      show: |
+        [[[ return states['media_player.music'].state === 'playing' ]]]
+      color: var(--green-color)
+    hidden: |
+      [[[
+        if (states['media_player.music'].state == "playing") return false;
+        else return true;
+      ]]]
+    hold_action:
+      action: open-popup
+    popup:
+      - icon: mdi:music
+        url: /dashboard-bubble/Music
+        label: Music
+      - icon: mdi:television
+        url: /dashboard-bubble/home#remote
+        label: TV
+  - icon: mdi:television
+    url: /dashboard-bubble/home#remote
+    label: TV
+    badge:
+      show: |
+        [[[ return states['media_player.tv_and_ps5'].state === 'playing' ]]]
+      color: var(--green-color)
+    hidden: |
+      [[[
+        if (states['media_player.music'].state == "playing") return true;
+        else if (states['remote.harmony_hub'].state == "on") return false;
+        else return true;
+      ]]]
+    selected: |
+      [[[
+        return location.hash == '#remote';
+      ]]]
+    hold_action:
+      action: open-popup
+    popup:
+      - icon: mdi:music
+        navigate: null
+        label: Music
+      - icon: mdi:television
+        url: /dashboard-bubble/home#remote
+        label: TV
+  - icon: mdi:shield-outline
+    icon_selected: mdi:security
+    url: /dashboard-bubble/security
+    label: Security
+    badge:
+      show: |
+        [[[ return states['binary_sensor.window_sensors'].state === 'on' ]]]
+      color: var(--red-color)
+      count: |
+        [[[ return states['sensor.window_open_count'].state ]]]
+  - url: home#profile
+    icon: mdi:cog
+    label: Settings
+    badge:
+      color: Red
+      show: true
+      count: "20"
+  - url: /dashboard-bubble/home#marit
+    image: "[[[return hass.states['person.marit'].attributes.entity_picture]]]"
+    label: Marit
+    selected: |
+      [[[
+        return location.hash == '#Marit';
+      ]]]
+    hidden: |
+      [[[ return user.name != "Marit" ]]]
+    badge:
+      color: Red
+      show: false
+  - url: /dashboard-bubble/home#ruben
+    image: "[[[return hass.states['person.ruben'].attributes.entity_picture]]]"
+    label: Marit
+    selected: |
+      [[[
+        return location.hash == '#Ruben';
+      ]]]
+    hidden: |
+      [[[ return user.name != "Ruben" ]]]
+  - icon: mdi:dots-horizontal
+    label: More
+    badge:
+      show: |
+        [[[
+          if (states['binary_sensor.monitored_entities'].state == "on") return true;
+          else if (states['binary_sensor.home_assistant_update'].state == "on") return true;
+          else if (states['binary_sensor.battery_health_attention'].state == "on") return true;
+          else return false;
+        ]]]
+      color: var(--red-color)
+    tap_action:
+      action: open-popup
+    popup:
+      - icon: mdi:server-outline
+        url: /dashboard-bubble/server
+        label: Server
+        hidden: |
+          [[[ return user.name != "Ruben" ]]]
+        badge:
+          show: |
+            [[[
+              if (states['binary_sensor.monitored_entities'].state == "on") return true;
+              else if (states['binary_sensor.battery_health_attention'].state == "on") return true;
+              else return false;
+            ]]]
+          color: var(--red-color)
+      - icon: mdi:cart
+        url: /dashboard-bring/home
+        label: Shopping List
+        badge:
+          show: |
+            [[[ return states['todo.shopping_list'].state > 0 ]]]
+          color: var(--red-color)
+          count: |
+            [[[ return states['todo.shopping_list'].state ]]]
+      - icon: mdi:bookshelf
+        url: /d5369777_music_assistant/ingress
+        label: Music Assistant
+      - icon: mdi:cog
+        url: /config/dashboard
+        label: Settings
+        badge:
+          show: >
+            [[[ return states['binary_sensor.home_assistant_update'].state ===
+            'on' ]]]
+          color: var(--red-color)
+        hidden: |
+          [[[ return user.name != "Ruben" ]]]
+      - icon: mdi:hammer
+        url: /developer-tools/yaml
+        label: Developer Tools
+        hidden: |
+          [[[ return user.name != "Ruben" ]]]
+styles: |-
+  .image {
+    border-radius: 16px !important;
+  }
+media_player:
+  entity: media_player.music
+  album_cover_background: true
+  show: "[[[]]]"

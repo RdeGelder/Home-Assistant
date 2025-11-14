@@ -1,0 +1,132 @@
+###############################################################################
+# Txt Notify
+###############################################################################
+input_boolean:
+  debug_texts:
+    name: debug texts
+    icon: mdi:message-alert
+
+  text_notifications:
+    name: text notifications
+    icon: mdi:chat
+  text_notify_ruben:
+    name: text notify ruben
+  text_notify_marit:
+    name: text notify marit
+  text_notify_parents:
+    name: text notify parents
+
+notify:
+  - name: ruben
+    platform: group
+    services:
+      - service: mobile_app_ruben_mobiel
+  - name: marit
+    platform: group
+    services:
+      - service: mobile_app_iphone_van_marit
+  - name: parents
+    platform: group
+    services:
+      - service: mobile_app_ruben_mobiel
+      - service: mobile_app_iphone_van_marit
+
+script:
+  text_debug:
+    sequence:
+      - condition: state
+        entity_id: input_boolean.debug_texts
+        state: "on"
+      - service: notify.ruben
+        data_template:
+          message: >
+            {{ message }}
+
+  text_notify:
+    fields:
+      who:
+        selector:
+          text:
+        name: who
+        required: true
+      title:
+        selector:
+          text:
+        name: title
+        required: false
+      message:
+        selector:
+          text:
+        name: message
+        required: true
+    sequence:
+      - condition: state
+        entity_id: input_boolean.text_notifications
+        state: "on"
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: '{{ who == "ruben"}}'
+              - condition: state
+                entity_id: input_boolean.text_notify_ruben
+                state: "on"
+            sequence:
+              - service: notify.ruben
+                data:
+                  title: "{{ title }}"
+                  message: "{{ message }}"
+          - conditions:
+              - condition: template
+                value_template: '{{ who == "marit"}}'
+              - condition: state
+                entity_id: input_boolean.text_notify_marit
+                state: "on"
+            sequence:
+              - service: notify.marit
+                data:
+                  title: "{{ title }}"
+                  message: "{{ message }}"
+          - conditions:
+              - condition: template
+                value_template: '{{ who == "parents"}}'
+              - condition: state
+                entity_id: input_boolean.text_notify_parents
+                state: "on"
+            sequence:
+              - service: notify.parents
+                data:
+                  title: "{{ title }}"
+                  message: "{{ message }}"
+
+  text_alert:
+    sequence:
+      - service: >
+          {% if who == 'ruben' %}
+            notify.ruben
+          {% elif who == 'marit' %}
+            notify.marit
+          {% else %}
+            notify.parents
+          {% endif %}
+        data:
+          title: "{{ title }}"
+          message: "{{ message }}"
+
+  text_alert_image:
+    sequence:
+      - service: >
+          {% if who == 'ruben' %}
+            notify.ruben
+          {% elif who == 'marit' %}
+            notify.marit
+          {% else %}
+            notify.all_ios
+          {% endif %}
+        data:
+          title: "{{ title }}"
+          message: "{{ message }}"
+          data:
+            attachment:
+              url: "{{ url }}"
+              content-type: "{{ content_type }}"
+              hide-thumbnail: false

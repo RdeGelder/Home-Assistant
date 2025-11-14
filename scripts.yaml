@@ -1,0 +1,114 @@
+blinds_set:
+  sequence:
+  - action: cover.set_cover_tilt_position
+    metadata: {}
+    data:
+      tilt_position: '{{target_pos}}'
+    target:
+      entity_id: '{{target_blind}}'
+  alias: Blinds set
+  fields:
+    target_pos:
+      description: The desired Blinds position
+      example: 80
+      required: true
+      selector:
+        number:
+          min: 1
+          max: 100
+      default: 80
+    target_blind:
+      required: true
+      selector:
+        entity: {}
+  description: description
+  mode: single
+play_favorite_playlist:
+  fields:
+    entity:
+      selector:
+        entity:
+          domain:
+          - media_player
+      default: media_player.woonkamer
+    playlist:
+      selector:
+        text:
+      default: https://open.spotify.com/playlist/1C4xhQw4BRYlK075PRUhzP
+      name: Playlist
+      description: Playlist Media ID for example a Spotify URI
+  sequence:
+  - action: input_text.set_value
+    metadata: {}
+    data:
+      value: '{{playlist}}'
+    target:
+      entity_id: input_text.music_playlist
+  - action: music_assistant.play_media
+    metadata: {}
+    data:
+      media_type: playlist
+      media_id: '{{states("input_text.music_playlist")| string}}
+
+        '
+    target:
+      entity_id: '{{entity}}'
+  alias: Play Favorite Playlist
+  description: ''
+set_playlist_and_play:
+  sequence:
+  - action: input_text.set_value
+    metadata: {}
+    data:
+      value: '{{playlist}}'
+    target:
+      entity_id: input_text.music_playlist
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: media_player.music
+        state: playing
+      sequence:
+      - action: music_assistant.play_media
+        metadata: {}
+        data:
+          media_type: playlist
+          media_id: '{{states("input_text.music_playlist")| string}}
+
+            '
+          enqueue: replace
+        target:
+          entity_id: '{{state_attr("media_player.music", "active_child")|string}}
+
+            '
+  fields:
+    playlist:
+      selector:
+        text:
+      default: https://open.spotify.com/playlist/1C4xhQw4BRYlK075PRUhzP
+      name: Playlist
+      description: Playlist Media ID for example a Spotify URI
+  alias: Set Playlist and Play
+  description: ''
+nieuw_script:
+  sequence:
+  - response_variable: greetings
+    action: script.get_tts_greetings
+  - variables:
+      message: '{{ greetings.general }}
+
+        '
+  - data:
+      message: '{{ message }}
+
+        '
+    response_variable: cleaned_briefing
+    action: script.cleanup_text
+  - data:
+      who: werkkamer
+      message: '{{ cleaned_briefing.text }}
+
+        '
+      msg_summary: the Morning Wakeup Report
+      type: briefing
+    action: script.speech_engine

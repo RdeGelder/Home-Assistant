@@ -1,0 +1,33 @@
+type: vertical-stack
+cards:
+  - type: custom:bubble-card
+    card_type: pop-up
+    name: Muziek
+    icon: mdi:music
+    state: null
+    hash: "#media_player"
+    is_sidebar_hidden: true
+    styles: >-
+      .bubble-pop-up-container {
+        --vertical-stack-card-gap: 0px!important;
+      } #header-container > div > div {
+        background: var(--popupBG)!important;
+      }     
+
+      #header-container > button {background: none;}    
+
+      .icon-container {background-color:var(--gray800)!important;} 
+
+      .icon-container > ha-icon
+      {color:var(--gray000)!important;opacity:1!important} 
+
+      .bubble-icon {
+        --mdc-icon-size: 24px !important;
+      }
+    bg_blur: "20"
+    shadow_opacity: "20"
+    bg_opacity: "88"
+    margin_top_mobile: 50px
+    margin_top_desktop: 50px
+    card_layout: large
+  - !include items/player.yaml

@@ -1,0 +1,378 @@
+# lovelace_gen
+
+###### popup
+type: vertical-stack
+cards:
+  - type: custom:bubble-card
+    card_type: pop-up
+    name: "{{room_name}}"
+    icon: "{{room_icon}}"
+    state: null
+    hash: "#{{room_name}}"
+    is_sidebar_hidden: true
+    margin_top_mobile: 50px
+    margin_top_desktop: 50px
+    card_layout: large
+    styles: >-
+      .bubble-pop-up-container {
+        --vertical-stack-card-gap: 0px!important;
+      } #header-container > div > div {
+        background: var(--popupBG)!important;
+      }  .icon-container {background-color:var(--{{room_color}})!important;} 
+
+      .icon-container > ha-icon
+      {color:var(--black)!important;opacity:1!important} 
+
+      .bubble-icon {
+        --mdc-icon-size: 24px !important;
+      }
+    bg_blur: "20"
+    shadow_opacity: "20"
+    bg_opacity: "88"
+
+  ## lights
+  - type: custom:expander-card
+    child-margin-top: 0px
+    padding: 0
+    title-card-button-overlay: true
+    title-card-clickable: true
+    expander-card-background: var(--gray200)
+    button-background: none
+    expander-card-background-expanded: var(--gray200)
+    header-color: var(--gray8000)
+    child-padding: 12px
+    title-card:
+      type: custom:button-card
+      name: lights
+      icon: mdi:lamp
+      styles:
+        grid:
+          - grid-template-areas: '"i n"'
+          - grid-template-columns: min-content 1fr
+        icon:
+          - color: var(--800gray)
+          - width: 22px
+          - padding-right: 12px
+          - padding-left: 12px
+        card:
+          - background: none
+          - padding: 12px 6px
+          - overflow: visible
+          - "--mdc-ripple-press-opacity": 0
+        name:
+          - color: var(--gray800)
+          - fon-size: 16px
+          - font-weight: 500
+          - justify-self: start
+          - allign-self: center
+    cards:
+      - type: custom:auto-entities
+        card:
+          type: grid
+          columns: 1
+          square: false
+        card_param: cards
+        filter:
+          include:
+            - options:
+                type: custom:decluttering-card
+                template: light_slider
+                variables:
+                  - entity: this.entity_id
+                  - name: null
+                  - icon: null
+              domain: light
+              area: "{{room_name}}"
+  ## Scenes #####################################################################
+  - type: custom:auto-entities
+    card:
+      type: grid
+      columns: 4
+      square: false
+    card_param: cards
+    filter:
+      include:
+        - options:
+            type: custom:button-card
+            icon: null
+            name: |-
+              [[[
+                return ''
+              ]]]
+            aspect_ratio: 1/1
+            tap_action:
+              action: call-service
+              service: scene.turn_on
+              haptic: medium
+              service_data:
+                entity_id: this.entity_id
+            styles:
+              card:
+                - border-radius: 24px
+                - background-color: var(--black)
+              icon:
+                - color: var(--white)
+          domain: scene
+          area: "{{room_name}}"
+      exclude: []
+
+  ## Blinds ######################################################################
+  - type: custom:expander-card
+    child-margin-top: 0px
+    padding: 0
+    title-card-button-overlay: false
+    title-card-clickable: false
+    expander-card-background: var(--gray200)
+    button-background: none
+    expander-card-background-expanded: var(--gray200)
+    header-color: var(--gray1000)
+    child-padding: 18px 12px
+    title-card:
+      type: custom:layout-card
+      layout_type: custom:grid-layout
+      layout:
+        grid-template-columns: 100px 1fr 50px
+        grid-template-rows: 46px
+        grid-template-areas: |
+          "one two three"
+      cards:
+        - type: custom:button-card
+          view_layout:
+            grid-area: one
+          name: Blinds
+          show_icon: false
+          styles:
+            card:
+              - background: none
+              - padding: 8px 14px
+              - overflow: visible
+              - "--mdc-ripple-press-opacity": 0
+            name:
+              - font-size: 14px
+              - font-weight: 500
+              - justify-self: start
+        - type: custom:my-slider-v2
+          view_layout:
+            grid-area: two
+          entity: "cover.{{room_name}}"
+          mode: tilt
+          allowTapping: false
+          allowSliding: true
+          vertical: false
+          flipped: false
+          styles:
+            container:
+              - overflow: visible
+              - margin-top: 12px
+            card:
+              - background: var(--gray100)
+              - border-radius: 4px
+              - height: 8px
+            progress:
+              - background: var(--active-big)
+              - border-radius: 4px
+            thumb:
+              - width: 18px
+              - height: 18px
+              - top: "-5px"
+              - margin-right: "-4px"
+              - border-radius: 50%
+              - background: var(--gray1000)
+            track:
+              - background: none
+        - type: custom:button-card
+          view_layout:
+            grid-area: three
+          entity: "cover.{{room_name}}"
+          name: >-
+            [[[ return 100-Math.floor(entity.attributes.current_tilt_position) + '%'
+            ]]]
+          show_icon: false
+          styles:
+            card:
+              - background: none
+              - padding: 8px 0px
+              - overflow: visible
+              - "--mdc-ripple-press-opacity": 0
+              - overflow: visible
+            name:
+              - font-size: 14px
+              - font-weight: 500
+              - justify-self: end
+    cards:
+      - type: grid
+        square: false
+        columns: 1
+        cards:
+          - type: grid
+            square: false
+            columns: 5
+            cards:
+              - type: custom:button-card
+                name: 0%
+                show_icon: false
+                tap_action:
+                  action: call-service
+                  service: script.blinds_set
+                  data:
+                    target_pos: 100
+                    target_blind: "cover.{{room_name}}"
+                styles:
+                  card:
+                    - padding: 8px 14px
+                    - margin-bottom: 6px
+                    - "--mdc-ripple-press-opacity": 0
+                  name:
+                    - font-size: 14px
+                    - font-weight: 500
+              - type: custom:button-card
+                name: 25%
+                show_icon: false
+                tap_action:
+                  action: call-service
+                  service: script.blinds_set
+                  data:
+                    target_pos: 75
+                    target_blind: "cover.{{room_name}}"
+                styles:
+                  card:
+                    - padding: 8px 14px
+                    - "--mdc-ripple-press-opacity": 0
+                  name:
+                    - font-size: 14px
+                    - font-weight: 500
+              - type: custom:button-card
+                name: 50%
+                show_icon: false
+                tap_action:
+                  action: call-service
+                  service: script.blinds_set
+                  data:
+                    target_pos: 50
+                    target_blind: "cover.{{room_name}}"
+                styles:
+                  card:
+                    - padding: 8px 14px
+                    - "--mdc-ripple-press-opacity": 0
+                  name:
+                    - font-size: 14px
+                    - font-weight: 500
+              - type: custom:button-card
+                name: 75%
+                show_icon: false
+                tap_action:
+                  action: call-service
+                  service: script.blinds_set
+                  data:
+                    target_pos: 25
+                    target_blind: "cover.{{room_name}}"
+                styles:
+                  card:
+                    - padding: 8px 14px
+                    - "--mdc-ripple-press-opacity": 0
+                  name:
+                    - font-size: 14px
+                    - font-weight: 500
+              - type: custom:button-card
+                name: 100%
+                show_icon: false
+                tap_action:
+                  action: call-service
+                  service: script.blinds_set
+                  data:
+                    target_pos: 0
+                    target_blind: "cover.{{room_name}}"
+                styles:
+                  card:
+                    - padding: 8px 14px
+                    - "--mdc-ripple-press-opacity": 0
+                  name:
+                    - font-size: 14px
+                    - font-weight: 500
+          - type: custom:auto-entities
+            card:
+              type: grid
+              columns: 1
+              square: false
+            card_param: cards
+            filter:
+              exclude:
+                - options: {}
+                  entity_id: "cover.{{room_name}}"
+              include:
+                - options:
+                    type: custom:layout-card
+                    layout_type: custom:grid-layout
+                    layout:
+                      grid-template-columns: 80px 1fr 50px
+                      grid-template-rows: 30px
+                      grid-template-areas: |
+                        "one two three"
+                    cards:
+                      - type: custom:button-card
+                        view_layout:
+                          grid-area: one
+                        name: null
+                        entity: this.entity_id
+                        show_icon: false
+                        styles:
+                          card:
+                            - background: none
+                            - padding: 8px
+                            - overflow: visible
+                            - "--mdc-ripple-press-opacity": 0
+                          name:
+                            - font-size: 14px
+                            - font-weight: 500
+                            - justify-self: start
+                      - type: custom:my-slider-v2
+                        view_layout:
+                          grid-area: two
+                        entity: this.entity_id
+                        mode: tilt
+                        allowTapping: false
+                        allowSliding: true
+                        vertical: false
+                        flipped: false
+                        styles:
+                          container:
+                            - overflow: visible
+                            - margin-top: 12px
+                          card:
+                            - background: var(--gray100)
+                            - border-radius: 4px
+                            - height: 8px
+                          progress:
+                            - background: var(--active-big)
+                            - border-radius: 4px
+                          thumb:
+                            - width: 18px
+                            - height: 18px
+                            - top: "-5px"
+                            - margin-right: "-4px"
+                            - border-radius: 50%
+                            - background: var(--gray1000)
+                          track:
+                            - background: none
+                      - type: custom:button-card
+                        view_layout:
+                          grid-area: three
+                        entity: this.entity_id
+                        name: >-
+                          [[[ return 100-Math.floor(entity.attributes.current_tilt_position)
+                          + '%' ]]]
+                        show_icon: false
+                        styles:
+                          card:
+                            - background: none
+                            - padding: 8px 0px
+                            - overflow: visible
+                            - "--mdc-ripple-press-opacity": 0
+                            - overflow: visible
+                          name:
+                            - font-size: 14px
+                            - font-weight: 500
+                            - justify-self: end
+                  domain: cover
+                  area: "{{room_name}}"
+  ###### scenes #################################################################

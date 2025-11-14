@@ -1,0 +1,197 @@
+light_slider:
+  card:
+    type: vertical-stack
+    cards:
+      - type: custom:button-card
+        entity: "[[entity]]"
+        name: "[[name]]"
+        icon: "[[icon]]"
+        tap_action:
+          action: none
+        styles:
+          grid:
+            - grid-template-columns: 64px 1fr
+            - grid-template-areas: '"i n"'
+          card:
+            - background: none
+            - height: 60px
+            - position: absolute
+            - z-index: 1
+            - padding: 8
+            - border-radius: 30px
+          img_cell:
+            - width: 22px
+            - height: 22px
+          icon:
+            - width: 22px
+            - color: var(--gray800)
+          name:
+            - justify-self: start
+            - font-size: 16px
+            - font-weight: 400
+            - color: var(--gray800)
+      - type: custom:my-slider-v2
+        entity: "[[entity]]"
+        allowTapping: false
+        allowSliding: true
+        marginOfError: 50
+        styles:
+          container:
+            - border-radius: 30px
+          card:
+            - height: 60px
+            - border-radius: 30px
+          progress:
+            - background: var(--active-light)
+          thumb:
+            - background: var(--gray800)
+            - width: 3px
+            - height: 36%
+            - top: 30%
+            - border-radus: 5px
+            - margin-right: 14px
+          track:
+            - background: var(--active-light-off)
+light_toggle:
+  card:
+    type: custom:button-card
+    entity: "[[entity]]"
+    #name: "[[name]]"
+    #icon: "[[icon]]"
+    show_label: true
+    state:
+      - value: "on"
+        label: Aan
+        styles:
+          card:
+            - background: var(--active-light)
+      - value: "off"
+        label: Uit
+        styles:
+          card:
+            - background: "[[background]]"
+          name:
+            - color: var(--gray800)
+          label:
+            - color: var(--gray800)
+          icon:
+            - color: var(--gray800)
+      - value: unavailable
+        label: Av
+        styles:
+          card:
+            - background: "[[background]]"
+          name:
+            - color: var(--gray800)
+          label:
+            - color: var(--gray800)
+          icon:
+            - color: var(--gray800)
+    styles:
+      grid:
+        - grid-template-columns: 54px 1fr
+        - grid-template-areas: '"i n" "i l"'
+      icon:
+        - width: 24px
+        - color: var(--black)
+      img_cell:
+        - justify-self: start
+        - width: 24px
+        - height: 24px
+        - padding: 0 6px
+      label:
+        - justify-self: start
+        - font-size: 16px
+        - font-weight: 500
+        - padding-top: 2px
+        - color: var(--black)
+      card:
+        - padding: 18px
+        - height: 75px
+        - margin-bottom: 12px
+      name:
+        - justify-self: start
+        - font-size: 14px
+        - color: var(--black)
+        - opacity: 0.7
+        - padding-bottom: 2px
+humidity_comparison_stack:
+  description: Indoor vs Outdoor humidity with chart
+  variables:
+    - indoor_entity
+    - outdoor_entity
+    - location: Indoor
+    - location_outdoor: Outdoor
+  card:
+    type: custom:stack-in-card
+    cards:
+      - type: grid
+        square: false
+        columns: 2
+        cards:
+          - type: custom:mushroom-template-card
+            entity: "[[indoor_entity]]"
+            primary: |
+              {{ states(entity) | round(1) }} %
+            secondary: "[[location]] Humidity"
+            icon: mdi:water-percent
+            name: Room Humidity
+            icon_color: |
+              {% set humidity = states('[[indoor_entity]]') | float %}
+              {% if humidity < 40 %} #99332d
+              {% elif humidity < 61 %} #228B22
+              {% else %} #99332d
+              {% endif %}
+            card_mod:
+              style: |
+                ha-card {
+                  border: none;
+                }
+          - type: custom:mushroom-template-card
+            entity: "[[outdoor_entity]]"
+            primary: |
+              {{ states(entity) | round(1) }} %
+            secondary: "[[location_outdoor]] Humidity"
+            icon: mdi:water-percent
+            name: Humidity
+            icon_color: grey
+            card_mod:
+              style: |
+                ha-card {
+                  border: none;
+                }
+      - type: custom:mini-graph-card
+        entities:
+          - entity: "[[outdoor_entity]]"
+            color: grey
+          - entity: "[[indoor_entity]]"
+            show_fill: true
+            state_adaptive_color: true
+        color_thresholds:
+          - value: 0
+            color: "#99332d"
+          - value: 40
+            color: "#228B22"
+          - value: 61
+            color: "#99332d"
+        hours_to_show: 24
+        points_per_hour: 2
+        line_width: 3
+        font_size: 50
+        animate: true
+        show:
+          name: false
+          icon: false
+          state: false
+          legend: false
+          fill: fade
+        card_mod:
+          style: |
+            ha-card {
+              border: none;
+            }
+    card_mod:
+      style: |
+        ha-card {
+          --stack-card-gap: 0;
+        }

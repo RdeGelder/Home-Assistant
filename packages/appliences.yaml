@@ -1,0 +1,32 @@
+input_select:
+  dishwasher_status:
+    name: Dishwasher Status
+    options:
+      - Dirty
+      - Running
+      - Drying
+      - Clean
+    initial: Dirty
+  washing_machine_status:
+    name: Washing Machine Status
+    options:
+      - Idle
+      - Running
+      - Finishing
+      - Clean
+    initial: Idle
+
+utility_meter:
+  washer_daily_kwh:
+    source: sensor.technische_ruimte_wasmachine_opsomming_afgeleverd
+    cycle: daily
+  washer_weekly_kwh:
+    source: sensor.technische_ruimte_wasmachine_opsomming_afgeleverd
+    cycle: weekly
+
+  dishwasher_daily_kwh:
+    source: sensor.keuken_vaatwasser_opsomming_afgeleverd
+    cycle: daily
+  dishwasher_weekly_kwh:
+    source: sensor.keuken_vaatwasser_opsomming_afgeleverd
+    cycle: weekly

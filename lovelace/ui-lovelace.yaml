@@ -1,0 +1,806 @@
+# lovelace_gen
+kiosk_mode: !include generic/templates/kiosk.yaml
+decluttering_templates: !include generic/templates/decluttering_templates.yaml
+button_card_templates: !include generic/templates/button_card_templates.yaml
+
+{% set rooms = {"woonkamer": {"icon":'mdi:sofa-outline', "color": 'yellow'},
+              "slaapkamer": {"icon":'mdi:bed-outline', "color": 'purple'},
+              "keuken": {"icon":'mdi:fridge-outline', "color": 'pink'},
+              "wc": {"icon":'mdi:toilet', "color": 'blue'},
+              "berging": {"icon":'mdi:toilet', "color": 'lime'},
+              "badkamer": {"icon":'mdi:toilet', "color": 'pink'},
+              "werkkamer": {"icon":'mdi:desk', "color": 'red'},
+              "gang": {"icon":'mdi:door-open', "color": 'yellow'},
+              "overloop": {"icon":'mdi:door-sliding-open', "color": 'yellow'}} %}
+              
+views:
+  - title: Home
+    icon: mdi:home
+    subview: false
+    theme: mysmarthome
+    cards:
+
+    ################################################################################
+    ######                         Meest gebruikt                              #####
+    ################################################################################
+    - type: custom:local-conditional-card
+      id: favo
+      default: show
+      card:
+        type: vertical-stack
+        cards:
+          - type: custom:layout-card
+            layout_type: custom:grid-layout
+            layout:
+              grid-template-columns: 1fr max-content max-content max-content
+              grid-template-rows: min-content
+              grid-template-areas: |
+                "favo begane 1ste 2de alles"
+            cards:
+              - type: custom:button-card
+                view_layout:
+                  grid-area: favo
+                name: Ruimte
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: show
+                      - begane: hide
+                      - 1ste: hide
+                      - 2de: hide
+                      - alles: hide
+                styles:
+                  card:
+                    - background: none
+                    - padding: 14px 0 15px 0
+                    - "--mdc-ripple-press-opacity": 0
+                  name:
+                    - font-size: 16px
+                    - font-weight: 500
+                    - justify-self: start
+                    - align-self: center
+              - type: custom:button-card
+                template: chips_big
+                view_layout:
+                  grid-area: alles
+                variables:
+                  name: alles
+                  icon: mdi:expand-all
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: hide
+                      - begane: hide
+                      - 1ste: hide
+                      - 2de: hide
+                      - alles: show
+              - type: custom:button-card
+                template: chips_small
+                view_layout:
+                  grid-area: begane
+                variables:
+                  icon: mdi:home-floor-0
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: hide
+                      - begane: show
+                      - 1ste: hide
+                      - 2de: hide
+                      - alles: hide
+              - type: custom:button-card
+                template: chips_small
+                view_layout:
+                  grid-area: 1ste
+                variables:
+                  icon: mdi:home-floor-1
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: hide
+                      - begane: hide
+                      - 1ste: show
+                      - 2de: hide
+                      - alles: hide
+              - type: custom:button-card
+                template: chips_small
+                view_layout:
+                  grid-area: 2de
+                variables:
+                  icon: mdi:home-floor-2
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: hide
+                      - begane: hide
+                      - 1ste: hide
+                      - 2de: show
+                      - alles: hide
+          #- type: custom:layout-card
+
+          - type: custom:layout-card
+            layout_type: custom:grid-layout
+            layout:
+              grid-template-columns: 1fr 1fr
+              grid-template-rows: 146px 70px 164px 70px
+              grid-template-areas: |
+                "z1 z2"
+                "z1 z3"
+                "z4 z3"
+                "z4 z5"
+            cards:
+              {% set len_1ste = (_global.rooms_1ste|list|count) %}
+              {% for room in _global.rooms_most_used %}
+              - type: custom:button-card
+                view_layout:
+                  grid-area: z{{loop.index}}
+                template: room_card
+                variables:
+                  name: |
+                    [[[ return '{{room}}']]]
+                  icon: |
+                    [[[return hass.areas['{{room}}'].icon]]]
+                  path: "#{{room}}"
+                  state: |
+                    [[[
+                      var temp = states['sensor.gang_beweging_licht'].state;
+                      var hum = states['sensor.gang_beweging_licht'].state;
+                      return `
+                      ${parseFloat(temp).toFixed(0)}°<span style="font-size:
+                    0.3em;opacity:0.7">${parseFloat(hum).toFixed(0)} Lux</span>
+                      `
+                    ]]]
+                  background: var(--gray000)
+                  color: var(--{{rooms[room].color if room in rooms else 'blue' }})
+                  text: var(--gray800)
+                  {% if loop.index == 1 %}
+                  radius: 36px 36px 6px 36px
+                  {% elif loop.index == 2 %}
+                  radius: 36px 36px 36px 6px
+                  {% elif loop.index == len_1ste-1 %}
+                  radius: 6px 36px 36px 36px
+                  {% elif loop.index == len_1ste %}
+                  radius: 36px 6px 36px 36px
+                  {% else %}
+                  radius: 36px 36px 36px 36px
+                  {% endif %}
+              {% endfor %}
+    ################################################################################
+    ######                              ALLES                                  #####
+    ################################################################################
+    - type: custom:local-conditional-card
+      id: alles
+      default: hide
+      card:
+        type: vertical-stack
+        cards:
+          - type: custom:layout-card
+            layout_type: custom:grid-layout
+            layout:
+              grid-template-columns: 1fr max-content max-content max-content
+              grid-template-rows: min-content
+              grid-template-areas: |
+                "favo begane 1ste 2de alles"
+            cards:
+              - type: custom:button-card
+                view_layout:
+                  grid-area: favo
+                name: Ruimte
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: show
+                      - begane: hide
+                      - 1ste: hide
+                      - 2de: hide
+                      - alles: hide
+                styles:
+                  card:
+                    - background: none
+                    - padding: 14px 0 15px 0
+                    - "--mdc-ripple-press-opacity": 0
+                  name:
+                    - font-size: 16px
+                    - font-weight: 500
+                    - justify-self: start
+                    - align-self: center
+              - type: custom:button-card
+                template: chips_big_active
+                view_layout:
+                  grid-area: alles
+                variables:
+                  name: alles
+                  icon: mdi:expand-all
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: hide
+                      - begane: hide
+                      - 1ste: hide
+                      - 2de: hide
+                      - alles: show
+              - type: custom:button-card
+                template: chips_small
+                view_layout:
+                  grid-area: begane
+                variables:
+                  icon: mdi:home-floor-0
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: hide
+                      - begane: show
+                      - 1ste: hide
+                      - 2de: hide
+                      - alles: hide
+              - type: custom:button-card
+                template: chips_small
+                view_layout:
+                  grid-area: 1ste
+                variables:
+                  icon: mdi:home-floor-1
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: hide
+                      - begane: hide
+                      - 1ste: show
+                      - 2de: hide
+                      - alles: hide
+              - type: custom:button-card
+                template: chips_small
+                view_layout:
+                  grid-area: 2de
+                variables:
+                  icon: mdi:home-floor-2
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: hide
+                      - begane: hide
+                      - 1ste: hide
+                      - 2de: show
+                      - alles: hide
+            {% set n_rooms = (_global.rooms_all|list|count) %}
+          - type: custom:layout-card
+            layout_type: custom:grid-layout
+            layout:
+              grid-template-columns: 1fr 1fr
+              grid-template-rows: 146px 70px 146px 70px 146px 70px 146px 70px 146px
+              grid-template-areas: |
+                "z1 z2" "z1 z3" "z4 z3" "z4 z5" "z6 z5" 
+                "z6 z7" "z8 z7" "z8 z9" "z10 z9" "z10 z11"
+            cards:
+              {% set n_rooms = (_global.rooms_all|list|count) %}
+              {% for room in _global.rooms_all %}
+              - type: custom:button-card
+                view_layout:
+                  grid-area: z{{loop.index}}
+                template: room_card
+                variables:
+                  name: |
+                    [[[ return '{{room}}']]]
+                  icon: |
+                    [[[return hass.areas['{{room}}'].icon]]]
+                  path: "#{{room}}"
+                  state: |
+                    [[[
+                      var temp = states['sensor.gang_beweging_licht'].state;
+                      var hum = states['sensor.gang_beweging_licht'].state;
+                      return `
+                      ${parseFloat(temp).toFixed(0)}°<span style="font-size:
+                    0.3em;opacity:0.7">${parseFloat(hum).toFixed(0)} Lux</span>
+                      `
+                    ]]]
+                  background: var(--gray000)
+                  color: var(--{{rooms[room].color if room in rooms else 'blue' }})
+                  text: var(--gray800)
+                  {% if loop.index == 1 %}
+                  radius: 36px 36px 6px 36px
+                  {% elif loop.index == 2 %}
+                  radius: 36px 36px 36px 6px
+                  {% elif (loop.index % 2) == 0 and (loop.index == n_rooms or loop.index == n_rooms-1)%}
+                  radius: 36px 6px 36px 36px
+                  {% elif (loop.index % 2) == 1 and (loop.index == n_rooms or loop.index == n_rooms-1)%}
+                  radius: 6px 36px 36px 36px
+                  {% elif (loop.index % 2) == 0 %}
+                  radius: 36px 6px 6px 36px
+                  {% elif (loop.index % 2) == 1 %}
+                  radius: 6px 36px 36px 6px
+                  {% else %}
+                  radius: 36px 36px 36px 36px
+                  {% endif %}
+              {% endfor %}
+    ################################################################################
+    ######                              Beganegrond                                  #####
+    ################################################################################
+    - type: custom:local-conditional-card
+      id: begane
+      default: hide
+      card:
+        type: vertical-stack
+        cards:
+          - type: custom:layout-card
+            layout_type: custom:grid-layout
+            layout:
+              grid-template-columns: 1fr max-content max-content max-content
+              grid-template-rows: min-content
+              grid-template-areas: |
+                "favo begane 1ste 2de alles"
+            cards:
+              - type: custom:button-card
+                view_layout:
+                  grid-area: favo
+                name: Ruimte
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: show
+                      - begane: hide
+                      - 1ste: hide
+                      - 2de: hide
+                      - alles: hide
+                styles:
+                  card:
+                    - background: none
+                    - padding: 14px 0 15px 0
+                    - "--mdc-ripple-press-opacity": 0
+                  name:
+                    - font-size: 16px
+                    - font-weight: 500
+                    - justify-self: start
+                    - align-self: center
+              - type: custom:button-card
+                template: chips_big
+                view_layout:
+                  grid-area: alles
+                variables:
+                  name: alles
+                  icon: mdi:expand-all
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: hide
+                      - begane: hide
+                      - 1ste: hide
+                      - 2de: hide
+                      - alles: show
+              - type: custom:button-card
+                template: chips_small_active
+                view_layout:
+                  grid-area: begane
+                variables:
+                  icon: mdi:home-floor-0
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: hide
+                      - begane: show
+                      - 1ste: hide
+                      - 2de: hide
+                      - alles: hide
+              - type: custom:button-card
+                template: chips_small
+                view_layout:
+                  grid-area: 1ste
+                variables:
+                  icon: mdi:home-floor-1
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: hide
+                      - begane: hide
+                      - 1ste: show
+                      - 2de: hide
+                      - alles: hide
+              - type: custom:button-card
+                template: chips_small
+                view_layout:
+                  grid-area: 2de
+                variables:
+                  icon: mdi:home-floor-2
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: hide
+                      - begane: hide
+                      - 1ste: hide
+                      - 2de: show
+                      - alles: hide
+          - type: custom:layout-card
+            layout_type: custom:grid-layout
+            layout:
+              grid-template-columns: 1fr 1fr
+              grid-template-rows: 146px 70px 164px 70px
+              grid-template-areas: |
+                "z1 z2"
+                "z1 z3"
+                "z4 z3"
+            cards:
+              {% set len_1ste = (_global.rooms_1ste|list|count) %}
+              {% for room in _global.rooms_bg %}
+              - type: custom:button-card
+                view_layout:
+                  grid-area: z{{loop.index}}
+                template: room_card
+                variables:
+                  name: |
+                    [[[ return '{{room}}']]]
+                  icon: |
+                    [[[return hass.areas['{{room}}'].icon]]]
+                  path: "#{{room}}"
+                  state: |
+                    [[[
+                      var temp = states['sensor.gang_beweging_licht'].state;
+                      var hum = states['sensor.gang_beweging_licht'].state;
+                      return `
+                      ${parseFloat(temp).toFixed(0)}°<span style="font-size:
+                    0.3em;opacity:0.7">${parseFloat(hum).toFixed(0)} Lux</span>
+                      `
+                    ]]]
+                  background: var(--gray000)
+                  color: var(--{{rooms[room].color if room in rooms else 'blue' }})
+                  text: var(--gray800)
+                  {% if loop.index == 1 %}
+                  radius: 36px 36px 6px 36px
+                  {% elif loop.index == 2 %}
+                  radius: 36px 36px 36px 6px
+                  {% elif loop.index == len_1ste-1 %}
+                  radius: 6px 36px 36px 36px
+                  {% elif loop.index == len_1ste %}
+                  radius: 36px 6px 36px 36px
+                  {% else %}
+                  radius: 36px 36px 36px 36px
+                  {% endif %}
+              {% endfor %}
+    ################################################################################
+    ######                              1ste                                  #####
+    ################################################################################
+    - type: custom:local-conditional-card
+      id: 1ste
+      default: hide
+      card:
+        type: vertical-stack
+        cards:
+          - type: custom:layout-card
+            layout_type: custom:grid-layout
+            layout:
+              grid-template-columns: 1fr max-content max-content max-content
+              grid-template-rows: min-content
+              grid-template-areas: |
+                "favo begane 1ste 2de alles"
+            cards:
+              - type: custom:button-card
+                view_layout:
+                  grid-area: favo
+                name: Ruimte
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: show
+                      - begane: hide
+                      - 1ste: hide
+                      - 2de: hide
+                      - alles: hide
+                styles:
+                  card:
+                    - background: none
+                    - padding: 14px 0 15px 0
+                    - "--mdc-ripple-press-opacity": 0
+                  name:
+                    - font-size: 16px
+                    - font-weight: 500
+                    - justify-self: start
+                    - align-self: center
+              - type: custom:button-card
+                template: chips_big
+                view_layout:
+                  grid-area: alles
+                variables:
+                  name: alles
+                  icon: mdi:expand-all
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: hide
+                      - begane: hide
+                      - 1ste: hide
+                      - 2de: hide
+                      - alles: show
+              - type: custom:button-card
+                template: chips_small
+                view_layout:
+                  grid-area: begane
+                variables:
+                  icon: mdi:home-floor-0
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: hide
+                      - begane: show
+                      - 1ste: hide
+                      - 2de: hide
+                      - alles: hide
+              - type: custom:button-card
+                template: chips_small_active
+                view_layout:
+                  grid-area: 1ste
+                variables:
+                  icon: mdi:home-floor-1
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: hide
+                      - begane: hide
+                      - 1ste: show
+                      - 2de: hide
+                      - alles: hide
+              - type: custom:button-card
+                template: chips_small
+                view_layout:
+                  grid-area: 2de
+                variables:
+                  icon: mdi:home-floor-2
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: hide
+                      - begane: hide
+                      - 1ste: hide
+                      - 2de: show
+                      - alles: hide
+          - type: custom:layout-card
+            layout_type: custom:grid-layout
+            layout:
+              grid-template-columns: 1fr 1fr
+              grid-template-rows: 146px 70px 164px 70px 200px
+              grid-template-areas: |
+                "z1 z2"
+                "z1 z3"
+                "z4 z3"
+            cards:
+              {% set len_1ste = (_global.rooms_1ste|list|count) %}
+              {% for room in _global.rooms_1ste %}
+              - type: custom:button-card
+                view_layout:
+                  grid-area: z{{loop.index}}
+                template: room_card
+                variables:
+                  name: |
+                    [[[ return '{{room}}']]]
+                  icon: |
+                    [[[return hass.areas['{{room}}'].icon]]]
+                  path: "#{{room}}"
+                  state: |
+                    [[[
+                      var temp = states['sensor.gang_beweging_licht'].state;
+                      var hum = states['sensor.gang_beweging_licht'].state;
+                      return `
+                      ${parseFloat(temp).toFixed(0)}°<span style="font-size:
+                    0.3em;opacity:0.7">${parseFloat(hum).toFixed(0)} Lux</span>
+                      `
+                    ]]]
+                  background: var(--gray000)
+                  color: var(--blue)
+                  text: var(--gray800)
+                  {% if loop.index == 1 %}
+                  radius: 36px 36px 6px 36px
+                  {% elif loop.index == 2 %}
+                  radius: 36px 36px 36px 6px
+                  {% elif loop.index == len_1ste-1 %}
+                  radius: 6px 36px 36px 36px
+                  {% elif loop.index == len_1ste %}
+                  radius: 36px 6px 36px 36px
+                  {% else %}
+                  radius: 36px 36px 36px 36px
+                  {% endif %}
+              {% endfor %}
+
+
+    {% for room in _global.rooms_all %}
+    - !include
+      - popup/kamer.yaml 
+      - room_name: "{{room}}"
+        room_icon: "{{rooms[room].icon if room in rooms else 'mdi:map-marker'}}"
+        room_color: "{{rooms[room].color if room in rooms else 'blue' }}"
+    {% endfor %}
+
+    ################################################################################
+    ######                              1ste                                  #####
+    ################################################################################
+    - type: custom:local-conditional-card
+      id: 2de
+      default: hide
+      card:
+        type: vertical-stack
+        cards:
+          - type: custom:layout-card
+            layout_type: custom:grid-layout
+            layout:
+              grid-template-columns: 1fr max-content max-content max-content
+              grid-template-rows: min-content
+              grid-template-areas: |
+                "favo begane 1ste 2de alles"
+            cards:
+              - type: custom:button-card
+                view_layout:
+                  grid-area: favo
+                name: Ruimte
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: show
+                      - begane: hide
+                      - 1ste: hide
+                      - 2de: hide
+                      - alles: hide
+                styles:
+                  card:
+                    - background: none
+                    - padding: 14px 0 15px 0
+                    - "--mdc-ripple-press-opacity": 0
+                  name:
+                    - font-size: 16px
+                    - font-weight: 500
+                    - justify-self: start
+                    - align-self: center
+              - type: custom:button-card
+                template: chips_big
+                view_layout:
+                  grid-area: alles
+                variables:
+                  name: alles
+                  icon: mdi:expand-all
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: hide
+                      - begane: hide
+                      - 1ste: hide
+                      - 2de: hide
+                      - alles: show
+              - type: custom:button-card
+                template: chips_small
+                view_layout:
+                  grid-area: begane
+                variables:
+                  icon: mdi:home-floor-0
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: hide
+                      - begane: show
+                      - 1ste: hide
+                      - 2de: hide
+                      - alles: hide
+              - type: custom:button-card
+                template: chips_small
+                view_layout:
+                  grid-area: 1ste
+                variables:
+                  icon: mdi:home-floor-1
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: hide
+                      - begane: hide
+                      - 1ste: show
+                      - 2de: hide
+                      - alles: hide
+              - type: custom:button-card
+                template: chips_small_active
+                view_layout:
+                  grid-area: 2de
+                variables:
+                  icon: mdi:home-floor-2
+                tap_action:
+                  action: fire-dom-event
+                  local_conditional_card:
+                    action: set
+                    ids:
+                      - favo: hide
+                      - begane: hide
+                      - 1ste: hide
+                      - 2de: show
+                      - alles: hide
+          - type: custom:layout-card
+            layout_type: custom:grid-layout
+            layout:
+              grid-template-columns: 1fr 1fr
+              grid-template-rows: 146px 70px 164px 70px 200px
+              grid-template-areas: |
+                "z1 z2"
+                "z1 z3"
+                "z4 z3"
+            cards:
+              {% set len_2de = (_global.rooms_2de|list|count) %}
+              {% for room in _global.rooms_2de %}
+              - type: custom:button-card
+                view_layout:
+                  grid-area: z{{loop.index}}
+                template: room_card
+                variables:
+                  name: |
+                    [[[ return '{{room}}']]]
+                  icon: |
+                    [[[return hass.areas['{{room}}'].icon]]]
+                  path: "#{{room}}"
+                  state: |
+                    [[[
+                      var temp = states['sensor.gang_beweging_licht'].state;
+                      var hum = states['sensor.gang_beweging_licht'].state;
+                      return `
+                      ${parseFloat(temp).toFixed(0)}°<span style="font-size:
+                    0.3em;opacity:0.7">${parseFloat(hum).toFixed(0)} Lux</span>
+                      `
+                    ]]]
+                  background: var(--gray000)
+                  color: var(--blue)
+                  text: var(--gray800)
+                  {% if loop.index == 1 %}
+                  radius: 36px 36px 6px 36px
+                  {% elif loop.index == 2 %}
+                  radius: 36px 36px 36px 6px
+                  {% elif loop.index == len_2de-1 %}
+                  radius: 6px 36px 36px 36px
+                  {% elif loop.index == len_2de %}
+                  radius: 36px 6px 36px 36px
+                  {% else %}
+                  radius: 36px 36px 36px 36px
+                  {% endif %}
+              {% endfor %}
+
+
+    - !include generic/footer/footer.yaml
+    - !include popup/settings.yaml
+    - !include generic/wifi/popup.yaml
+    - !include generic/energy/popup.yaml
+    - !include generic/media/popup.yaml

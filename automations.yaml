@@ -1,0 +1,2454 @@
+- id: '1750170349590'
+  alias: licht wc
+  description: ''
+  triggers:
+  - type: turned_on
+    device_id: 1e6475a554576e2a1e75acc4805600c4
+    entity_id: 5a00d72f27b6db5f9cfc314528a9fabe
+    domain: light
+    trigger: device
+    for:
+      hours: 0
+      minutes: 15
+      seconds: 0
+    alias: 15 min aan
+    id: 15min aan
+  - alias: WC deur open
+    trigger: state
+    entity_id:
+    - binary_sensor.wc_deur
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: device
+        type: is_off
+        device_id: 1e6475a554576e2a1e75acc4805600c4
+        entity_id: 5a00d72f27b6db5f9cfc314528a9fabe
+        domain: light
+      - type: is_open
+        condition: device
+        device_id: 16f30c5200a652c91c229080afc95d9b
+        entity_id: 7e95a00337debe09962509224248800b
+        domain: binary_sensor
+      sequence:
+      - type: turn_on
+        device_id: 1e6475a554576e2a1e75acc4805600c4
+        entity_id: 5a00d72f27b6db5f9cfc314528a9fabe
+        domain: light
+      alias: wc plafond aanzetten
+    - conditions:
+      - condition: device
+        type: is_on
+        device_id: 1e6475a554576e2a1e75acc4805600c4
+        entity_id: 5a00d72f27b6db5f9cfc314528a9fabe
+        domain: light
+      - type: is_open
+        condition: device
+        device_id: 16f30c5200a652c91c229080afc95d9b
+        entity_id: 7e95a00337debe09962509224248800b
+        domain: binary_sensor
+      sequence:
+      - type: turn_off
+        device_id: 1e6475a554576e2a1e75acc4805600c4
+        entity_id: 5a00d72f27b6db5f9cfc314528a9fabe
+        domain: light
+      alias: wc plafond uitzetten
+    - conditions:
+      - condition: trigger
+        id:
+        - 15min aan
+      sequence:
+      - type: turn_off
+        device_id: 1e6475a554576e2a1e75acc4805600c4
+        entity_id: 5a00d72f27b6db5f9cfc314528a9fabe
+        domain: light
+  mode: single
+- id: '1750171307744'
+  alias: zon - op/ondergang
+  description: ''
+  triggers:
+  - trigger: sun
+    event: sunrise
+    offset: 0
+    id: zonopkomst
+  - trigger: sun
+    event: sunset
+    offset: 0
+    id: zonondergang
+  - trigger: time
+    at: '22:30:00'
+    id: Avond
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - zonopkomst
+      sequence:
+      - type: turn_off
+        device_id: bc5ed0aad8bdc6c4f6d35dd90a60f410
+        entity_id: 98ae45bf4d0d8809bdb3720d7a3b1e86
+        domain: switch
+    - conditions:
+      - condition: trigger
+        id:
+        - zonondergang
+      sequence:
+      - type: turn_on
+        device_id: bc5ed0aad8bdc6c4f6d35dd90a60f410
+        entity_id: 98ae45bf4d0d8809bdb3720d7a3b1e86
+        domain: switch
+      - action: light.turn_on
+        metadata: {}
+        data:
+          brightness_pct: 100
+        target:
+          entity_id: light.licht_voor
+      - action: light.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.woonkamer_houtspot
+    - conditions:
+      - condition: trigger
+        id:
+        - Avond
+      sequence:
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.licht_voor
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.woonkamer_houtspot
+  mode: single
+- id: '1750189559418'
+  alias: woonkamer 8knop
+  description: ''
+  use_blueprint:
+    path: Bekkie/robb-smarrt-8-switch-ROB_200-007-0.yaml
+    input:
+      remote: 66977239fe4b26ac633649ec2e0aef76
+      off_button_4_short:
+      - type: turn_off
+        device_id: 7dc99805f23efc5296cecd2e9284bb35
+        entity_id: fdf8d5c4cebbbf692f1aba805d1bc08f
+        domain: switch
+      on_button_4_short:
+      - type: turn_on
+        device_id: 7dc99805f23efc5296cecd2e9284bb35
+        entity_id: fdf8d5c4cebbbf692f1aba805d1bc08f
+        domain: switch
+      on_button_3_short:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: input_boolean.slapen
+            state: 'on'
+          sequence:
+          - action: scene.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: scene.woonkamer_nacht
+        - conditions:
+          - condition: state
+            entity_id: input_boolean.slapen
+            state: 'off'
+          sequence:
+          - action: scene.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: scene.woonkamer_dag
+      off_button_3_short:
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - light.woonkamer_houtspot
+          - light.woonkamer_kleurenspot
+          - light.woonkamer_olielamp
+          - light.woonkamer_servieskast
+      - action: switch.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.woonkamer_pompoen
+      on_button_1_short:
+      - action: input_boolean.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.keuken_by_knop
+      - action: scene.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: scene.keuken_dag
+      off_button_1_short:
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - light.keuken_ledstrip
+          - light.keuken_spotjes
+      - action: input_boolean.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.keuken_by_knop
+- id: '1750190117331'
+  alias: keuken licht beweging
+  description: ''
+  triggers:
+  - type: motion
+    device_id: 218bf4e29ea2fb6bfe9c99b9e91db680
+    entity_id: 8411400df35c752762047f0d8f942acf
+    domain: binary_sensor
+    trigger: device
+    id: Beweging
+  - type: no_motion
+    device_id: 218bf4e29ea2fb6bfe9c99b9e91db680
+    entity_id: 8411400df35c752762047f0d8f942acf
+    domain: binary_sensor
+    trigger: device
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+    id: Geen beweging 5min
+  - trigger: state
+    entity_id:
+    - binary_sensor.night_time
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: and
+        conditions:
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.night_time
+            state: 'on'
+          - condition: numeric_state
+            entity_id: sensor.blind_tilt_0050_lichtsterkte
+            below: 2
+        - type: is_motion
+          condition: device
+          device_id: 218bf4e29ea2fb6bfe9c99b9e91db680
+          entity_id: 8411400df35c752762047f0d8f942acf
+          domain: binary_sensor
+      sequence:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: input_boolean.slapen
+            state: 'on'
+          sequence:
+          - action: scene.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: scene.keuken_nacht
+        - conditions:
+          - condition: state
+            entity_id: input_boolean.slapen
+            state: 'off'
+          sequence:
+          - action: scene.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: scene.keuken_dag
+      alias: Aan beweging savonds
+    - conditions:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: input_boolean.keuken_by_knop
+          state: 'off'
+        - condition: trigger
+          id:
+          - Geen beweging 5min
+      sequence:
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - light.keuken_spotjes
+          - light.keuken_ledstrip
+      alias: uit nacht
+  mode: single
+- id: '1720432333517'
+  alias: Watch
+  description: ''
+  triggers:
+  - value_template: '{{now().strftime(''%d'')==''01''}}'
+    trigger: template
+  conditions:
+  - condition: and
+    conditions:
+    - condition: template
+      value_template: '{{now().strftime(''%d'')==''01''}}'
+    - condition: template
+      value_template: '{{(as_timestamp(now()) - (24*3600)) | timestamp_custom(''%d'')
+        == ''30''}}'
+  actions:
+  - action: notify.mobile_app_ruben_mobiel
+    metadata: {}
+    data:
+      title: Horloge datum
+      message: Datum hologe doordraaien
+  mode: single
+- id: '1750601884272'
+  alias: afvalcontainer
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - sensor.afvalinfo_thuis_trash_type_tomorrow
+    from: geen
+  conditions: []
+  actions:
+  - action: notify.mobile_app_ruben_mobiel
+    metadata: {}
+    data:
+      title: Container buitenzetten!
+      message: Morgen wordt {{states("sensor.afvalinfo_thuis_trash_type_tomorrow")}}
+        opgehaald
+  mode: single
+- id: wakeup_light
+  alias: Wakeup light
+  description: ''
+  triggers:
+  - value_template: '{{now().strftime(''%a %h %d %H:%M %Z %Y'') == (((state_attr(''sensor.ruben_mobiel_next_alarm'',
+      ''Time in Milliseconds'') | int / 1000)-300 ) | timestamp_custom(''%a %h %d
+      %H:%M %Z %Y''))}}'
+    trigger: template
+  conditions:
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: person.ruben
+      state: home
+  actions:
+  - target:
+      entity_id:
+      - light.nachtkastje_marit
+    data:
+      brightness_pct: 0
+    action: light.turn_on
+  - target:
+      entity_id:
+      - light.nachtkastje_marit
+    data:
+      transition: 300
+    action: light.turn_on
+  - action: switch.turn_on
+    target:
+      entity_id:
+      - switch.nachtkastje_ruben
+    data: {}
+  mode: single
+- id: '1725019681975'
+  alias: Music tags
+  description: ''
+  triggers:
+  - tag_id: Koffiehuis playlist
+    id: t Koffiehuis
+    trigger: tag
+  - tag_id: Daily Drive
+    id: Daily Drive
+    trigger: tag
+  - tag_id: Matthijn playlist
+    id: Matthijn Buwalda
+    trigger: tag
+  - tag_id: Matthijn radio
+    id: Matthijn Buwalda Radio
+    trigger: tag
+  - tag_id: Sela playlist
+    id: Sela
+    trigger: tag
+  - tag_id: Sela radio
+    id: Sela Radio
+    trigger: tag
+  - tag_id: Good people Good music
+    id: Good People Good Music
+    trigger: tag
+  - tag_id: Love Coffee Love Jesus
+    id: Love Coffee Love Jesus
+    trigger: tag
+  conditions: []
+  actions:
+  - action: media_player.play_media
+    metadata: {}
+    data:
+      media_content_type: playlist
+      media_content_id: "{% set trigger = trigger.id %} {% if trigger == 'Matthijn
+        Buwalda'%}\n  https://open.spotify.com/playlist/37i9dQZF1DZ06evO28cpQU?si=3ecac8ac46594e46\n{%
+        elif trigger == 'Matthijn Buwalda Radio' %} \n  https://open.spotify.com/playlist/37i9dQZF1E4BTKDo02No92?si=e2b8eb3289554670\n{%
+        elif trigger == 'Sela' %} \n  https://open.spotify.com/playlist/37i9dQZF1DZ06evO1P6XeT?si=88df28a4cf1b4348\n{%
+        elif trigger == 'Sela Radio' %} \n  https://open.spotify.com/playlist/37i9dQZF1E4sZLoCBiZh4D?si=e7708239fa8e46d4\n{%
+        elif trigger == 't Koffiehuis' %} \n  https://open.spotify.com/playlist/37i9dQZF1DWYPwGkJoztcR?si=68b4bb536d6f4893\n{%
+        elif trigger == 'Love Coffee Love Jesus' %} \n https://open.spotify.com/playlist/6o2E9vkewAblL79cIi4aiB?si=3176cd297c704e15\n{%
+        elif trigger == 'Daily Drive' %} \n https://open.spotify.com/playlist/37i9dQZF1EfOmkAi3kSqLL?si=005c7b4dc7464a9c\n{%
+        elif trigger == 'Good People Good Music' %} \n https://open.spotify.com/playlist/37i9dQZF1DWZy0j22jjWNA?si=Q_Cp-DFZQr-CrqmMa82MTw
+        \n {%else%}\n trigger.id\n{%endif%}\n"
+    target:
+      entity_id: media_player.woonkamer
+  mode: single
+- id: '1750677114848'
+  alias: HA update
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - update.home_assistant_core_update
+    to: 'on'
+  conditions: []
+  actions:
+  - action: notify.mobile_app_ruben_mobiel
+    metadata: {}
+    data:
+      title: Home Assistant Update Available
+      message: 'Installed: {{state_attr(''update.home_assistant_core_update'', ''installed_version'')}}
+        \n Latest: {{state_attr(''update.home_assistant_core_update'', ''latest_version''
+        )}}
+
+        '
+      data:
+        actions:
+        - action: URI
+          title: Release notes
+          uri: https://www.home-assistant.io/changelogs
+  mode: single
+- id: '1750963204482'
+  alias: slaapkamer afstandsbediening marit
+  description: ''
+  use_blueprint:
+    path: lsismeiro/ikea_e2001_e2002.yaml
+    input:
+      integration: ZHA
+      controller_device: 4868c42a31e552b683d88522db74daeb
+      helper_last_controller_event: input_text.slaapkamer_knop_marit
+      action_button_up_short:
+      - type: turn_on
+        device_id: 763ca7bad652e5e5d7f1e9becc14320c
+        entity_id: 9bcd4f3b75b8183cb918bc32a80044e8
+        domain: light
+      action_button_right_short:
+      - choose:
+        - conditions:
+          - condition: device
+            type: is_off
+            device_id: 9ed535abe3e2fa0b11c58ea608e9f9ff
+            entity_id: a325e264a08c71534cb66a8ade8d90df
+            domain: light
+          sequence:
+          - type: turn_on
+            device_id: 9ed535abe3e2fa0b11c58ea608e9f9ff
+            entity_id: a325e264a08c71534cb66a8ade8d90df
+            domain: light
+        - conditions:
+          - condition: device
+            type: is_on
+            device_id: 9ed535abe3e2fa0b11c58ea608e9f9ff
+            entity_id: a325e264a08c71534cb66a8ade8d90df
+            domain: light
+          sequence:
+          - type: turn_off
+            device_id: 9ed535abe3e2fa0b11c58ea608e9f9ff
+            entity_id: a325e264a08c71534cb66a8ade8d90df
+            domain: light
+          - choose:
+            - conditions:
+              - condition: time
+                after: '21:45:00'
+              sequence:
+              - action: input_boolean.turn_on
+                metadata: {}
+                data: {}
+                target:
+                  entity_id: input_boolean.slapen
+        - conditions: []
+          sequence: []
+      action_button_right_double: []
+      button_right_long_loop: true
+      button_left_double_press: false
+      button_right_double_press: false
+      button_up_double_press: false
+      button_down_double_press: false
+      action_button_left_short:
+      - choose:
+        - conditions:
+          - condition: device
+            type: is_off
+            device_id: fc18bc28ecc222cb27156ad26ed4443b
+            entity_id: b249c600975bc9aaa5dddd8521e116f2
+            domain: switch
+          sequence:
+          - type: turn_on
+            device_id: fc18bc28ecc222cb27156ad26ed4443b
+            entity_id: b249c600975bc9aaa5dddd8521e116f2
+            domain: switch
+        - conditions:
+          - condition: device
+            type: is_on
+            device_id: fc18bc28ecc222cb27156ad26ed4443b
+            entity_id: b249c600975bc9aaa5dddd8521e116f2
+            domain: switch
+          sequence:
+          - type: turn_off
+            device_id: fc18bc28ecc222cb27156ad26ed4443b
+            entity_id: b249c600975bc9aaa5dddd8521e116f2
+            domain: switch
+          - choose:
+            - conditions:
+              - condition: time
+                after: '21:45:00'
+              sequence:
+              - action: input_boolean.turn_on
+                metadata: {}
+                data: {}
+                target:
+                  entity_id: input_boolean.slapen
+      action_button_left_long: []
+      action_button_right_long: []
+      action_button_down_long:
+      - type: turn_off
+        device_id: 763ca7bad652e5e5d7f1e9becc14320c
+        entity_id: 9bcd4f3b75b8183cb918bc32a80044e8
+        domain: light
+      - choose:
+        - conditions:
+          - condition: time
+            after: '21:45:00'
+          sequence:
+          - action: input_boolean.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: input_boolean.slapen
+      action_button_down_short:
+      - type: turn_off
+        device_id: 763ca7bad652e5e5d7f1e9becc14320c
+        entity_id: 9bcd4f3b75b8183cb918bc32a80044e8
+        domain: light
+      - choose:
+        - conditions:
+          - condition: time
+            after: '21:45:00'
+          sequence:
+          - action: input_boolean.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: input_boolean.slapen
+- id: '1750964870735'
+  alias: Logeerkamer afstandsbediening
+  description: ''
+  use_blueprint:
+    path: lsismeiro/ikea_e2001_e2002.yaml
+    input:
+      integration: ZHA
+      controller_device: 7810fe604140a622e0f54b574bc27c90
+      helper_last_controller_event: input_text.logeerkamer_knop
+      action_button_up_short:
+      - action: light.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.zigbee_logeerkamer_plafond
+      - action: input_boolean.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.logeerkamer_by_knop
+      action_button_right_short: []
+      action_button_right_double: []
+      button_right_long_loop: true
+      button_left_double_press: false
+      button_right_double_press: false
+      button_up_double_press: false
+      button_down_double_press: false
+      action_button_left_short: []
+      action_button_left_long: []
+      action_button_right_long: []
+      action_button_down_short:
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.zigbee_logeerkamer_plafond
+      - action: input_boolean.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.logeerkamer_by_knop
+- id: '1750965034174'
+  alias: babykamer afstandsbediening
+  description: ''
+  use_blueprint:
+    path: lsismeiro/ikea_e2001_e2002.yaml
+    input:
+      integration: ZHA
+      controller_device: a6b7c1153ef6fa934352fcbdb7c86c1d
+      helper_last_controller_event: input_text.babykamer_knop
+      action_button_up_short:
+      - choose:
+        - conditions:
+          - condition: device
+            type: is_off
+            device_id: c8cea47c42e82632e065c777ebbdebd6
+            entity_id: aa37e6c43e971b071cc9456e43d8cd83
+            domain: light
+          sequence:
+          - action: light.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: light.babykamer_plafond
+        - conditions:
+          - condition: device
+            type: is_on
+            device_id: c8cea47c42e82632e065c777ebbdebd6
+            entity_id: aa37e6c43e971b071cc9456e43d8cd83
+            domain: light
+          sequence:
+          - action: light.turn_on
+            metadata: {}
+            data:
+              brightness_step_pct: 5
+            target:
+              entity_id: light.babykamer_plafond
+      action_button_right_short:
+      - action: light.turn_on
+        metadata: {}
+        data:
+          color_temp_kelvin: 2628
+        target:
+          entity_id:
+          - light.ikea_of_sweden_tradfri_bulb_gu10_cws_345lm
+          - light.ikea_of_sweden_tradfri_bulb_gu10_cws_345lm_3
+          - light.ikea_of_sweden_tradfri_bulb_gu10_cws_345lm_2
+          - light.babykamer_plafond
+      action_button_right_double: []
+      button_right_long_loop: false
+      button_left_double_press: false
+      button_right_double_press: false
+      button_up_double_press: true
+      button_down_double_press: true
+      action_button_left_short:
+      - action: input_boolean.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.evi_slaapt
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: input_boolean.evi_slaapt
+            state:
+            - 'on'
+          sequence:
+          - action: light.turn_on
+            metadata: {}
+            data:
+              rgb_color:
+              - 0
+              - 17
+              - 255
+            target:
+              entity_id: light.ikea_of_sweden_tradfri_bulb_gu10_cws_345lm
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - action: light.turn_off
+            metadata: {}
+            data: {}
+            target:
+              entity_id: light.ikea_of_sweden_tradfri_bulb_gu10_cws_345lm
+          alias: evi slaapt
+        - conditions:
+          - condition: state
+            entity_id: input_boolean.evi_slaapt
+            state:
+            - 'off'
+          sequence:
+          - action: light.turn_on
+            metadata: {}
+            data:
+              flash: short
+            target:
+              entity_id: light.ikea_of_sweden_tradfri_bulb_gu10_cws_345lm
+          - action: light.turn_off
+            metadata: {}
+            data: {}
+            target:
+              entity_id: light.ikea_of_sweden_tradfri_bulb_gu10_cws_345lm
+          alias: evi wakker
+      action_button_left_long: []
+      action_button_right_long: []
+      action_button_down_short:
+      - action: light.turn_on
+        metadata: {}
+        data:
+          brightness_step_pct: -5
+        target:
+          entity_id: light.babykamer_plafond
+      action_button_up_double:
+      - action: light.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.zigbee_lampje
+      action_button_down_double: []
+      action_button_down_long:
+      - type: turn_off
+        device_id: c8cea47c42e82632e065c777ebbdebd6
+        entity_id: aa37e6c43e971b071cc9456e43d8cd83
+        domain: light
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.zigbee_lampje
+- id: '1751831550251'
+  alias: licht warmtepomp
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.warmtepomp_deur
+  - trigger: state
+    entity_id:
+    - binary_sensor.night_time
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: binary_sensor.night_time
+          state: 'on'
+        - condition: state
+          entity_id: binary_sensor.warmtepomp_deur
+          state: 'on'
+      sequence:
+      - type: turn_on
+        device_id: 99b26b6d27104f88fd685b11c407ffb0
+        entity_id: 429cc628335e39bcce734dd5c55ac69b
+        domain: light
+    default:
+    - type: turn_off
+      device_id: 99b26b6d27104f88fd685b11c407ffb0
+      entity_id: 429cc628335e39bcce734dd5c55ac69b
+      domain: light
+  mode: single
+- id: '1751833668586'
+  alias: Slaapkamer Awtrix Night Mode
+  description: ''
+  triggers:
+  - at: '22:00:00'
+    id: NM Start
+    enabled: true
+    trigger: time
+  - at: 06:45:00
+    id: NM End
+    enabled: true
+    trigger: time
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - NM Start
+      sequence:
+      - data:
+          qos: 0
+          retain: false
+          topic: Slaapkamer/switch
+          payload: '{"name":"Time"}'
+        action: mqtt.publish
+      - data:
+          qos: 0
+          retain: false
+          topic: Slaapkamer/settings
+          payload: '{ "WD": false, "TIME_COL": [255,0,0], "TMODE": 0, "BRI": 1, "ABRI":
+            false, "ATRANS": false }'
+        action: mqtt.publish
+    - conditions:
+      - condition: trigger
+        id:
+        - NM End
+        enabled: true
+      sequence:
+      - data:
+          qos: 0
+          retain: false
+          topic: slaapkamer/settings
+          payload: '{ "WD": true, "TIME_COL": [255,255,255], "TMODE": 2, "ABRI": true,
+            "ATRANS": false }'
+        action: mqtt.publish
+  mode: single
+- id: '1751834230425'
+  alias: licht logeerkamer beweging
+  description: ''
+  triggers:
+  - type: occupied
+    device_id: cc4caf7562aa6a457b169173473407b4
+    entity_id: 512f924aa7da54400ed93d7eef83d80d
+    domain: binary_sensor
+    trigger: device
+    id: Beweging
+  - type: not_occupied
+    device_id: cc4caf7562aa6a457b169173473407b4
+    entity_id: 512f924aa7da54400ed93d7eef83d80d
+    domain: binary_sensor
+    trigger: device
+    id: Geen beweging 5min
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 5
+  - trigger: state
+    entity_id:
+    - binary_sensor.night_time
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: binary_sensor.night_time
+          state: 'on'
+        - type: is_occupied
+          condition: device
+          device_id: cc4caf7562aa6a457b169173473407b4
+          entity_id: 512f924aa7da54400ed93d7eef83d80d
+          domain: binary_sensor
+        - condition: state
+          entity_id: input_boolean.slapen
+          state: 'off'
+      sequence:
+      - action: light.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.zigbee_logeerkamer_plafond
+      alias: Aan beweging savonds
+    - conditions:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: input_boolean.logeerkamer_by_knop
+          state: 'off'
+        - condition: trigger
+          id:
+          - Geen beweging 5min
+      sequence:
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.zigbee_logeerkamer_plafond
+      alias: uit nacht
+  mode: single
+- id: '1752480012310'
+  alias: Deurbel
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.deurbel_doorbell
+    to: 'on'
+  conditions: []
+  actions:
+  - action: notify.parents
+    metadata: {}
+    data:
+      message: Er staat iemand voor de deur
+      title: Deurbel
+      data:
+        vibrationPattern: 25, 25
+        channel: Deurbel
+        priority: high
+        importance: high
+        ttl: 0
+  mode: single
+- id: '1753384796248'
+  alias: Vitamine Evi
+  description: ''
+  triggers:
+  - trigger: time
+    at: 06:50:00
+    alias: Start
+    id: start
+  - trigger: time
+    at: '11:00:00'
+    alias: Herinnering
+    id: herinnering
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - start
+      sequence:
+      - action: input_boolean.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: input_boolean.vitamine_d
+      - action: notify.parents
+        metadata: {}
+        data:
+          message: Vitamine D en K aan Evi geven
+          title: Vitamine Evi
+          data:
+            channel: Vitamine
+            importance: high
+            vibrationPattern: 100, 1000, 100, 1000, 100
+            ttl: 0
+      alias: start
+    - conditions:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: input_boolean.vitamine_d
+          state: 'on'
+        - condition: trigger
+          id:
+          - herinnering
+      sequence:
+      - action: notify.parents
+        metadata: {}
+        data:
+          message: Vitamine D en K aan Evi geven
+          title: 'Herinnering: Vitamine Evi'
+          data:
+            channel: Vitamine
+            importance: high
+            vibrationPattern: 100, 1000, 100, 1000, 100
+            ttl: 0
+      alias: Herinnering
+  mode: single
+- &id001
+  id: light_gang
+  alias: licht gang
+  description: ''
+  triggers:
+  - type: motion
+    device_id: 5d3600b4ecfda5743176803a6a26915b
+    entity_id: binary_sensor.gang_beweging
+    domain: binary_sensor
+    trigger: device
+  - type: no_motion
+    device_id: 5d3600b4ecfda5743176803a6a26915b
+    entity_id: binary_sensor.gang_beweging
+    domain: binary_sensor
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+    trigger: device
+  - type: no_motion
+    device_id: 5d3600b4ecfda5743176803a6a26915b
+    entity_id: binary_sensor.gang_beweging
+    domain: binary_sensor
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    id: no_ motion
+    trigger: device
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: and
+        conditions:
+        - type: is_motion
+          condition: device
+          device_id: 5d3600b4ecfda5743176803a6a26915b
+          entity_id: binary_sensor.gang_beweging
+          domain: binary_sensor
+        - condition: device
+          type: is_off
+          device_id: 0bf4f29dc8647337ea53ac695ce74397
+          entity_id: 360f82e39066330f48d8885ce01bd349
+          domain: light
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.night_time
+            state: 'on'
+          - condition: numeric_state
+            entity_id: sensor.blind_tilt_0050_lichtsterkte
+            below: 2
+      sequence:
+      - data: {}
+        target:
+          entity_id: input_boolean.gang_by_motion
+        action: input_boolean.turn_on
+      - action: light.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.gang_plafond
+    - conditions:
+      - condition: and
+        conditions:
+        - type: is_no_motion
+          condition: device
+          device_id: 5d3600b4ecfda5743176803a6a26915b
+          entity_id: binary_sensor.gang_beweging
+          domain: binary_sensor
+        - condition: state
+          entity_id: input_boolean.gang_by_motion
+          state: 'on'
+      sequence:
+      - data: {}
+        target:
+          entity_id: input_boolean.gang_by_motion
+        action: input_boolean.turn_off
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.gang_plafond
+    - conditions:
+      - condition: trigger
+        id: no_ motion
+      sequence:
+      - data: {}
+        target:
+          entity_id: input_boolean.gang_by_motion
+        action: input_boolean.turn_off
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.gang_plafond
+  mode: single
+- *id001
+- id: '1755551503863'
+  alias: Overloop licht
+  description: ''
+  triggers:
+  - type: turned_on
+    device_id: 5f90df37145f5a8d088862b871fa926f
+    entity_id: 2be72044ba96abda8fcaa68e4c809258
+    domain: light
+    trigger: device
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: input_boolean.slapen
+          state: 'on'
+        - condition: state
+          entity_id: input_boolean.evi_slaapt
+          state:
+          - 'on'
+      sequence:
+      - action: light.turn_on
+        metadata: {}
+        data:
+          brightness_pct: 10
+        target:
+          entity_id: light.overloop_plafond
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.slapen
+        state: 'off'
+      sequence:
+      - action: light.turn_on
+        metadata: {}
+        data:
+          brightness_pct: 50
+        target:
+          entity_id: light.overloop_plafond
+  mode: single
+- id: '1756481961703'
+  alias: Blinds weg
+  description: ''
+  triggers:
+  - trigger: sun
+    event: sunrise
+    offset: -00:15:00
+    id: Zonsopkomst
+  - trigger: sun
+    event: sunset
+    offset: 00:15:00
+    id: Zonsondergang
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - Zonsondergang
+      sequence:
+      - type: turn_off
+        device_id: 7dc99805f23efc5296cecd2e9284bb35
+        entity_id: fdf8d5c4cebbbf692f1aba805d1bc08f
+        domain: switch
+      - device_id: 05bb0420b59b00fb67da52c5dafc0c4b
+        domain: cover
+        entity_id: f5c7b2ed3f4fd9084cb311b1110f6dc4
+        type: set_tilt_position
+        position: 100
+      - device_id: fcba6f1f5a9aa51e702881f05deded7a
+        domain: cover
+        entity_id: ee7a267441f733c08ab1690302d59f3c
+        type: set_tilt_position
+        position: 100
+      - device_id: 90bd8f51f1ffa5af0b278cb46f4aa66f
+        domain: cover
+        entity_id: b15083de6a43edb56ccd5a245c778d93
+        type: set_tilt_position
+        position: 100
+      - device_id: 1c8f2ec0eb7ccbfd3bfc36eda836b8ec
+        domain: cover
+        entity_id: 15d27d500112aa305424c1384130e272
+        type: set_tilt_position
+        position: 100
+    - conditions:
+      - condition: trigger
+        id:
+        - Zonsopkomst
+      sequence:
+      - device_id: 05bb0420b59b00fb67da52c5dafc0c4b
+        domain: cover
+        entity_id: f5c7b2ed3f4fd9084cb311b1110f6dc4
+        type: set_tilt_position
+        position: 79
+      - device_id: fcba6f1f5a9aa51e702881f05deded7a
+        domain: cover
+        entity_id: ee7a267441f733c08ab1690302d59f3c
+        type: set_tilt_position
+        position: 65
+      - device_id: 90bd8f51f1ffa5af0b278cb46f4aa66f
+        domain: cover
+        entity_id: b15083de6a43edb56ccd5a245c778d93
+        type: set_tilt_position
+        position: 75
+      - device_id: 1c8f2ec0eb7ccbfd3bfc36eda836b8ec
+        domain: cover
+        entity_id: 15d27d500112aa305424c1384130e272
+        type: set_tilt_position
+        position: 82
+  mode: single
+- id: '1757512567293'
+  alias: Opstaan
+  description: ''
+  triggers:
+  - trigger: time
+    at: 06:30:00
+  conditions: []
+  actions:
+  - action: input_boolean.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.slapen
+  mode: single
+- id: '1757529382701'
+  alias: Licht werkkamer beweging
+  description: ''
+  triggers:
+  - type: opened
+    device_id: 09c1d972a81e5817b7126d47f7c33f25
+    entity_id: befd2192e00af2bb9123fac03516710b
+    domain: binary_sensor
+    trigger: device
+    id: raam open
+    alias: raam open
+  - type: not_opened
+    device_id: 09c1d972a81e5817b7126d47f7c33f25
+    entity_id: befd2192e00af2bb9123fac03516710b
+    domain: binary_sensor
+    trigger: device
+    alias: raam dicht
+    id: raam dicht
+  - trigger: state
+    entity_id:
+    - binary_sensor.woonkamer_pir_sensor
+    to: 'on'
+    id: beweging
+    alias: beweging
+  - trigger: state
+    entity_id:
+    - binary_sensor.woonkamer_pir_sensor
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 2
+      seconds: 0
+    id: geen beweging
+    alias: geen beweging
+  - trigger: state
+    entity_id:
+    - binary_sensor.night_time
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - beweging
+        - raam dicht
+        - raam open
+      - condition: or
+        conditions:
+        - condition: numeric_state
+          entity_id: sensor.blind_tilt_0050_lichtsterkte
+          below: 2
+        - condition: state
+          entity_id: binary_sensor.night_time
+          state: 'on'
+      sequence:
+      - choose:
+        - conditions:
+          - type: is_open
+            condition: device
+            device_id: 09c1d972a81e5817b7126d47f7c33f25
+            entity_id: befd2192e00af2bb9123fac03516710b
+            domain: binary_sensor
+          sequence:
+          - action: scene.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: scene.raam_open
+        - conditions:
+          - type: is_not_open
+            condition: device
+            device_id: 09c1d972a81e5817b7126d47f7c33f25
+            entity_id: befd2192e00af2bb9123fac03516710b
+            domain: binary_sensor
+          - condition: state
+            entity_id: binary_sensor.night_time
+            state: 'on'
+          - condition: state
+            entity_id: input_boolean.slapen
+            state: 'on'
+          sequence:
+          - action: scene.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: scene.nacht
+        - conditions:
+          - type: is_not_open
+            condition: device
+            device_id: 09c1d972a81e5817b7126d47f7c33f25
+            entity_id: befd2192e00af2bb9123fac03516710b
+            domain: binary_sensor
+          - condition: state
+            entity_id: binary_sensor.night_time
+            state: 'on'
+          - condition: state
+            entity_id: input_boolean.slapen
+            state: 'off'
+          sequence:
+          - action: scene.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: scene.werkkamer_dag
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: trigger
+          id:
+          - geen beweging
+        - condition: state
+          entity_id: binary_sensor.night_time
+          state: 'off'
+      sequence:
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - light.werkkamer_links
+          - light.werkkamer_midden
+          - light.werkkamer_rechts
+      alias: Geen beweging of licht
+  mode: single
+- id: '1757669739035'
+  alias: Thuiskomen
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - person.ruben
+    to: home
+    alias: Thuiskomen
+  - trigger: state
+    entity_id:
+    - binary_sensor.night_time
+    to: 'on'
+    alias: Avond
+  conditions:
+  - condition: state
+    entity_id: binary_sensor.night_time
+    state: 'on'
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: person.ruben
+        state: home
+      sequence:
+      - action: scene.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: scene.woonkamer_dag
+    - conditions:
+      - condition: state
+        entity_id: person.ruben
+        state: not_home
+      sequence:
+      - type: turn_on
+        device_id: 6bd64ee16ce71818f1c3c838b21d2c19
+        entity_id: 662e8218266f82bdb611c882b48dc33a
+        domain: light
+  mode: single
+- id: '1758100216384'
+  alias: licht zolder beweging
+  description: ''
+  triggers:
+  - type: turned_on
+    device_id: 455b84275821f43d9483d821330dedef
+    entity_id: c6b18449a9c7968355ec2f9f4559add1
+    domain: light
+    trigger: device
+  - trigger: state
+    entity_id:
+    - binary_sensor.beweging_overloop_zolder
+    to: 'on'
+    id: Beweging
+  - trigger: state
+    entity_id:
+    - binary_sensor.beweging_overloop_zolder
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 2
+      seconds: 0
+    id: geen beweging
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - Beweging
+      - condition: or
+        conditions:
+        - condition: numeric_state
+          entity_id: sensor.blind_tilt_0050_lichtsterkte
+          below: 2
+        - condition: state
+          entity_id: binary_sensor.night_time
+          state: 'on'
+      sequence:
+      - action: light.turn_on
+        metadata: {}
+        data:
+          brightness_pct: 50
+        target:
+          entity_id:
+          - light.robb_smarrt_rob_200_014_0_2
+    - conditions:
+      - condition: trigger
+        id:
+        - geen beweging
+      sequence:
+      - type: turn_off
+        device_id: 455b84275821f43d9483d821330dedef
+        entity_id: c6b18449a9c7968355ec2f9f4559add1
+        domain: light
+  mode: single
+- id: '1758276516032'
+  alias: Vaatwasser beste tijd
+  description: ''
+  triggers:
+  - trigger: time
+    at: 06:45:00
+  conditions: []
+  actions:
+  - action: notify.mobile_app_ruben_mobiel
+    metadata: {}
+    data:
+      message: "{%- set kwh_pattern = [0.164, 0.168, 0.023, 0.007, 0.085, 0.091, 0.007,
+        0.011, 0.008, 0.018, 0.185, 0.044, 0.006, 0.008, 0.008, 0.006, 0.007, 0.008,
+        0.006, 0.007, 0.012, 0.006, 0.009, 0.005, 0.007, 0.006, 0.005, 0.007, 0.009,
+        0.164, 0.044, 0.107, 0.137] %} \n{%- set resolution_in_minutes = 5 %} \n{%-
+        set start_time = now().replace(hour=0).replace(minute=0).replace(second=0).replace(microsecond=0)
+        %} \n{%- set list = namespace(expected_costs=[], time=start_time) %} {# Calculating
+        until 20:30 #} \n{%- set amount_of_calculations = 22 * (60 // resolution_in_minutes)
+        %} {#2 dagen met een resolutie van 5 minuten#} \n{%- for _ in range(0, amount_of_calculations)
+        %}\n  {%- set time_loop = list.time %}\n  {%- set ns = namespace(costs=0,
+        solaropwek = 0, time=time_loop) %}\n  {%- for kwh in kwh_pattern %}\n    {#-
+        half uur correctie #}\n    {%- if ns.time.minute < 30 %}\n      {%- set correctie
+        = 0 %}\n    {%- else %}\n      {%- set correctie = 1 %}\n    {%- endif %}\n
+        \   {%- set solar = state_attr('sensor.solcast_pv_forecast_forecast_today',
+        'detailedForecast')[(ns.time.hour*2) + correctie].pv_estimate/6 %}\n    {%-
+        if solar < kwh %}\n      {%- set ns.costs = ns.costs + (kwh-solar) * 0.31
+        %}\n    {%- endif %}\n    {%- set ns.time = ns.time + timedelta(minutes=resolution_in_minutes)
+        %}\n  {%- endfor %} \n  {%- set start_time = time_loop %}\n  {%- set add_item
+        = {'start': start_time, 'solar': ns.solaropwek ,'costs': ns.costs | round(5)}
+        %}\n  {%- set list.expected_costs = list.expected_costs + [add_item] %}\n
+        \ {%- set list.time = list.time + timedelta(minutes=resolution_in_minutes)
+        %}\n{%- endfor %} \n{%- set sorted_list = list.expected_costs | sort(attribute='start')|
+        sort(attribute='costs') %} \nstart de vaatwasser om {{sorted_list[1].start}}
+        dan kost het {{sorted_list[1].costs}}\n"
+  mode: single
+- id: '1721203134218'
+  alias: Cube2
+  description: ''
+  triggers:
+  - event_type: zha_event
+    event_data:
+      device_id: 9138f5df8d4edb5bc0aa9f4ba36a77b3
+    trigger: event
+  actions:
+  - variables:
+      command: '{{ trigger.event.data.command }}'
+      value: '{{ trigger.event.data.args.value | default(0) }}'
+      flip_degrees: '{{ trigger.event.data.args.flip_degrees | default(0) }}'
+      flip_any: false
+      flip_90: false
+      flip_180: false
+      slide_any_side: false
+      knock_any_side: false
+      rotate_any_side: false
+      flip90: 64
+      flip180: 128
+      slide: 256
+      knock: 512
+      shake: 0
+      drop: 3
+      active_face_entity: input_number.cube
+      active_face: '{{ states(active_face_entity) | int }}'
+      activated_face: "\n{% if command == \"slide\" or command == \"knock\" %}\n\n
+        \ {% if trigger.event.data.args.activated_face == 1 %} 1\n\n  {% elif trigger.event.data.args.activated_face
+        == 2 %} 2\n\n  {% elif trigger.event.data.args.activated_face == 3 %} 3\n\n
+        \ {% elif trigger.event.data.args.activated_face == 4 %} 4\n\n  {% elif trigger.event.data.args.activated_face
+        == 5 %} 5\n\n  {% elif trigger.event.data.args.activated_face == 6 %} 6\n\n
+        \ {% endif %}\n\n{% elif command == 'flip' %}\n\n  {{ trigger.event.data.args.activated_face
+        | int }}\n\n{% endif %}\n"
+      from_face: "\n{% if command == \"flip\" and flip_degrees == 90 %}\n\n  {{ ((value
+        - flip90 - (trigger.event.data.args.activated_face - 1)) / 8) + 1 | int }}\n\n{%
+        endif %}\n"
+      relative_degrees: "\n{% if command == \"rotate_right\" or command == \"rotate_left\"
+        %}\n\n  {{ trigger.event.data.args.relative_degrees | float }}\n\n{% endif
+        %}\n"
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''checkin'' }}'
+      sequence: []
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''flip'' }}'
+      sequence:
+      - target:
+          entity_id: '{{ active_face_entity }}'
+        data:
+          value: '{{ activated_face | int }}'
+        action: input_number.set_value
+      - choose:
+        - conditions:
+          - condition: template
+            value_template: '{{ flip_any }}'
+          sequence:
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ activated_face == 1 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ activated_face == 2 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ activated_face == 3 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ activated_face == 4 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ activated_face == 5 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ activated_face == 6 }}'
+              sequence: []
+        - conditions:
+          - condition: template
+            value_template: '{{ flip_degrees == 90 and flip_90 }}'
+          sequence: []
+        - conditions:
+          - condition: template
+            value_template: '{{ flip_degrees == 180 and flip_180 }}'
+          sequence: []
+        - conditions:
+          - condition: template
+            value_template: '{{ flip_degrees == 90 and activated_face == 1 }}'
+          sequence:
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 2 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 3 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 5 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 6 }}'
+              sequence: []
+        - conditions:
+          - condition: template
+            value_template: '{{ flip_degrees == 90 and activated_face == 2 }}'
+          sequence:
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 1 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 3 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 4 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 6 }}'
+              sequence: []
+        - conditions:
+          - condition: template
+            value_template: '{{ flip_degrees == 90 and activated_face == 3 }}'
+          sequence:
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 1 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 2 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 4 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 5 }}'
+              sequence: []
+        - conditions:
+          - condition: template
+            value_template: '{{ flip_degrees == 90 and activated_face == 4 }}'
+          sequence:
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 2 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 3 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 5 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 6 }}'
+              sequence: []
+        - conditions:
+          - condition: template
+            value_template: '{{ flip_degrees == 90 and activated_face == 5 }}'
+          sequence:
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 1 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 3 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 4 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 6 }}'
+              sequence: []
+        - conditions:
+          - condition: template
+            value_template: '{{ flip_degrees == 90 and activated_face == 6 }}'
+          sequence:
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 1 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 2 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 4 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ from_face == 5 }}'
+              sequence: []
+        - conditions:
+          - condition: template
+            value_template: '{{ value == flip180 + activated_face - 1 }}'
+          sequence:
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ activated_face == 1 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ activated_face == 2 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ activated_face == 3 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ activated_face == 4 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ activated_face == 5 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ activated_face == 6 }}'
+              sequence: []
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''knock'' }}'
+        alias: knock
+      sequence:
+      - target:
+          entity_id: '{{ active_face_entity }}'
+        data:
+          value: '{{ activated_face | int }}'
+        action: input_number.set_value
+      - choose:
+        - conditions:
+          - condition: template
+            value_template: '{{ knock_any_side }}'
+          sequence: []
+        - conditions:
+          - condition: template
+            value_template: '{{ activated_face == 1 }}'
+          sequence: []
+        - conditions:
+          - condition: template
+            value_template: '{{ activated_face == 2 }}'
+          sequence:
+          - metadata: {}
+            data: {}
+            target:
+              entity_id: media_player.werkkamer
+            action: media_player.media_play_pause
+        - conditions:
+          - condition: template
+            value_template: '{{ activated_face == 3 }}'
+          sequence:
+          - action: switch.toggle
+            metadata: {}
+            data: {}
+            target:
+              entity_id: switch.bureau_marit
+        - conditions:
+          - condition: template
+            value_template: '{{ activated_face == 4 }}'
+          sequence:
+          - action: switch.toggle
+            metadata: {}
+            data: {}
+            target:
+              entity_id: switch.bueau_ruben
+        - conditions:
+          - condition: template
+            value_template: '{{ activated_face == 5 }}'
+          sequence:
+        - conditions:
+          - condition: template
+            value_template: '{{ activated_face == 6 }}'
+          sequence:
+          - action: light.toggle
+            metadata: {}
+            data: {}
+            target:
+              entity_id: light.zigbee_werkkamer
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''slide'' }}'
+        alias: slide
+      sequence:
+      - target:
+          entity_id: '{{ active_face_entity }}'
+        data:
+          value: '{{ activated_face | int }}'
+        action: input_number.set_value
+      - choose:
+        - conditions:
+          - condition: template
+            value_template: '{{ slide_any_side }}'
+            alias: slide
+          sequence: []
+        - conditions:
+          - condition: template
+            value_template: '{{ value == slide + activated_face - 1 }}'
+          sequence:
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ activated_face == 1 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ activated_face == 2 }}'
+              sequence:
+              - data: {}
+                target:
+                  entity_id: media_player.werkkamer
+                action: media_player.media_next_track
+            - conditions:
+              - condition: template
+                value_template: '{{ activated_face == 3 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ activated_face == 4 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ activated_face == 5 }}'
+              sequence: []
+            - conditions:
+              - condition: template
+                value_template: '{{ activated_face == 6 }}'
+              sequence: []
+    - conditions:
+      - condition: template
+        value_template: '{{ command ==  ''rotate_left'' and rotate_any_side }}'
+      sequence: []
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''rotate_left'' and active_face == 1 }}'
+        alias: Rotate left 1
+      sequence: []
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''rotate_left'' and active_face == 2 }}'
+        alias: Rotate left 2
+      sequence:
+      - metadata: {}
+        data: {}
+        target:
+          entity_id: media_player.werkkamer
+        action: media_player.volume_down
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''rotate_left'' and active_face == 3 }}'
+        alias: Rotate left 3
+      sequence: []
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''rotate_left'' and active_face == 4 }}'
+        alias: Rotate left 4
+      sequence: []
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''rotate_left'' and active_face == 5 }}'
+        alias: Rotate left 5
+      sequence: []
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''rotate_left'' and active_face == 6 }}'
+        alias: Rotate left 6
+      sequence:
+      - action: light.turn_on
+        metadata: {}
+        data:
+          brightness_step_pct: -5
+        target:
+          entity_id: light.zigbee_werkkamer
+      - action: mqtt.publish
+        data:
+          topic: Werkkamer/notify
+          payload: "{\"icon\": 49301,\n \"duration\": 1,\n \"text\": \"{{(state_attr('light.zigbee_werkkamer',
+            'brightness')/254*100) |round(1)}}%\"\n }"
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''rotate_right'' and rotate_any_side }}'
+      sequence: []
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''rotate_right'' and active_face == 1 }}'
+        alias: Rotate right 1
+      sequence: []
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''rotate_right'' and active_face == 2 }}'
+        alias: Rotate right 2
+      sequence:
+      - metadata: {}
+        data: {}
+        target:
+          entity_id: media_player.werkkamer
+        action: media_player.volume_up
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''rotate_right'' and active_face == 3 }}'
+        alias: Rotate right 3
+      sequence: []
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''rotate_right'' and active_face == 4 }}'
+        alias: Rotate right 4
+      sequence: []
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''rotate_right'' and active_face == 5 }}'
+        alias: Rotate right 5
+      sequence: []
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''rotate_right'' and active_face == 6 }}'
+        alias: Rotate right 6
+      sequence:
+      - action: light.turn_on
+        metadata: {}
+        data:
+          brightness_step_pct: 5
+        target:
+          entity_id: light.zigbee_werkkamer
+      - action: mqtt.publish
+        data:
+          topic: Werkkamer/notify
+          payload: "{\"icon\": 49301,\n \"duration\": 1,\n \"text\": \"{{(state_attr('light.zigbee_werkkamer',
+            'brightness')/254*100) |round(1)}}%\"\n }"
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''shake'' or value == shake }}'
+        alias: shake
+      sequence: []
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''drop'' or value == drop }}'
+        alias: drop
+      sequence: []
+  mode: restart
+  max_exceeded: silent
+- id: '1758723340280'
+  alias: Koelen weigeren
+  description: Wanneer koelen uitgaat verbied koelen max vermogen is al kwijt
+  triggers:
+  - entity_id:
+    - sensor.ecodan_heatpump_status_bedrijf
+    from: Koelen
+    trigger: state
+    to: Uit
+  conditions: []
+  actions:
+  - action: switch.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.ecodan_heatpump_server_control_zone_1_prohibit_cooling
+  mode: single
+- id: '1758723496420'
+  alias: Koelen toestaan
+  description: ''
+  triggers:
+  - at: 08:00:00
+    trigger: time
+  - at: '10:00:00'
+    trigger: time
+  - at: '12:00:00'
+    trigger: time
+  - at: '14:00:00'
+    trigger: time
+  - at: '16:00:00'
+    trigger: time
+  - at: '18:00:00'
+    trigger: time
+  conditions:
+  - condition: and
+    conditions:
+    - condition: state
+      entity_id: select.ecodan_heatpump_gekozen_werking_mode
+      state: Koelen Flow
+    - condition: state
+      entity_id: sensor.ecodan_heatpump_status_bedrijf
+      for:
+        hours: 1
+        minutes: 0
+        seconds: 0
+      state: Uit
+    - condition: state
+      entity_id: switch.ecodan_heatpump_server_control_enable_disable
+      state: 'on'
+  actions:
+  - action: switch.turn_off
+    target:
+      entity_id: switch.ecodan_heatpump_server_control_zone_1_prohibit_cooling
+    data: {}
+  mode: single
+- id: '1758917240346'
+  alias: slaapkamer afstandsbediening ruben
+  description: ''
+  use_blueprint:
+    path: lsismeiro/ikea_e2001_e2002.yaml
+    input:
+      integration: ZHA
+      controller_device: 047e47a6ffa64e75e190c328f889bae8
+      helper_last_controller_event: input_text.slaapkamer_knop_ruben
+      action_button_up_short:
+      - type: turn_on
+        device_id: 763ca7bad652e5e5d7f1e9becc14320c
+        entity_id: 9bcd4f3b75b8183cb918bc32a80044e8
+        domain: light
+      action_button_right_short:
+      - choose:
+        - conditions:
+          - condition: device
+            type: is_off
+            device_id: 9ed535abe3e2fa0b11c58ea608e9f9ff
+            entity_id: a325e264a08c71534cb66a8ade8d90df
+            domain: light
+          sequence:
+          - type: turn_on
+            device_id: 9ed535abe3e2fa0b11c58ea608e9f9ff
+            entity_id: a325e264a08c71534cb66a8ade8d90df
+            domain: light
+        - conditions:
+          - condition: device
+            type: is_on
+            device_id: 9ed535abe3e2fa0b11c58ea608e9f9ff
+            entity_id: a325e264a08c71534cb66a8ade8d90df
+            domain: light
+          sequence:
+          - type: turn_off
+            device_id: 9ed535abe3e2fa0b11c58ea608e9f9ff
+            entity_id: a325e264a08c71534cb66a8ade8d90df
+            domain: light
+          - choose:
+            - conditions:
+              - condition: time
+                after: '21:45:00'
+              sequence:
+              - action: input_boolean.turn_on
+                metadata: {}
+                data: {}
+                target:
+                  entity_id: input_boolean.slapen
+      action_button_right_double: []
+      button_right_long_loop: true
+      button_left_double_press: false
+      button_right_double_press: false
+      button_up_double_press: false
+      button_down_double_press: false
+      action_button_left_short:
+      - choose:
+        - conditions:
+          - condition: device
+            type: is_off
+            device_id: fc18bc28ecc222cb27156ad26ed4443b
+            entity_id: b249c600975bc9aaa5dddd8521e116f2
+            domain: switch
+          sequence:
+          - type: turn_on
+            device_id: fc18bc28ecc222cb27156ad26ed4443b
+            entity_id: b249c600975bc9aaa5dddd8521e116f2
+            domain: switch
+        - conditions:
+          - condition: device
+            type: is_on
+            device_id: fc18bc28ecc222cb27156ad26ed4443b
+            entity_id: b249c600975bc9aaa5dddd8521e116f2
+            domain: switch
+          sequence:
+          - type: turn_off
+            device_id: fc18bc28ecc222cb27156ad26ed4443b
+            entity_id: b249c600975bc9aaa5dddd8521e116f2
+            domain: switch
+          - choose:
+            - conditions:
+              - condition: time
+                after: '21:45:00'
+              sequence:
+              - action: input_boolean.turn_on
+                metadata: {}
+                data: {}
+                target:
+                  entity_id: input_boolean.slapen
+      action_button_left_long: []
+      action_button_right_long: []
+      action_button_down_long:
+      - type: turn_off
+        device_id: 763ca7bad652e5e5d7f1e9becc14320c
+        entity_id: 9bcd4f3b75b8183cb918bc32a80044e8
+        domain: light
+      - choose:
+        - conditions:
+          - condition: time
+            after: '21:45:00'
+          sequence:
+          - action: input_boolean.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: input_boolean.slapen
+      action_button_down_short:
+      - type: turn_off
+        device_id: 763ca7bad652e5e5d7f1e9becc14320c
+        entity_id: 9bcd4f3b75b8183cb918bc32a80044e8
+        domain: light
+      - choose:
+        - conditions:
+          - condition: time
+            after: '21:45:00'
+          sequence:
+          - action: input_boolean.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: input_boolean.slapen
+- id: '1760511435812'
+  alias: Begrenzing koeltemperatuur laag
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.ecodan_heatpump_zone_1_ruimte_setpoint_waarde
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 10
+    below: 18
+  conditions:
+  - condition: state
+    entity_id: select.ecodan_heatpump_gekozen_werking_mode
+    state: Koelen Flow
+  actions:
+  - action: climate.set_temperature
+    metadata: {}
+    data:
+      temperature: 18
+    target:
+      entity_id: climate.ecodan_heatpump_zone_1_aanvoertemp
+  mode: single
+- &id002
+  id: SyncTemperatureToAdaptiveController
+  alias: Sync Room Temp to Auto-Adaptive Controller
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - sensor.buitenmeter_voor_temperatuur
+  conditions: []
+  actions:
+  - action: number.set_value
+    data:
+      value: '{{ states(''sensor.buitenmeter_voor_temperatuur'') }}'
+    target:
+      entity_id: number.ecodan_heatpump_auto_adaptief_terugkoppeling_huidige_kamertemperatuur_z1
+- *id002
+- id: SyncSetpointToAdaptiveController
+  alias: Sync Room Setpoint to Auto-Adaptive Controller
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id: sensor.buitenmeter_voor_temperatuur
+  conditions:
+  - condition: template
+    value_template: '{{ trigger.from_state.attributes.temperature != trigger.to_state.attributes.temperature
+      }}'
+  actions:
+  - action: climate.set_temperature
+    target:
+      entity_id:
+      - climate.ecodan_heatpump_zone_1_kamertemp
+    data:
+      temperature: 21
+- id: '1760706991041'
+  alias: Join music
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.slaapkamer_multisensor_slaapkamer_pir_sensor
+    id: Werkkamer beweging
+    to: 'on'
+    alias: Werkkamer beweging
+  - type: motion
+    device_id: 218bf4e29ea2fb6bfe9c99b9e91db680
+    entity_id: 8411400df35c752762047f0d8f942acf
+    domain: binary_sensor
+    trigger: device
+    id: keuken beweging
+    alias: keuken beweging
+  conditions:
+  - condition: and
+    conditions:
+    - condition: state
+      entity_id: input_boolean.follow_music
+      state: 'on'
+    - condition: template
+      value_template: " {% if states('media_player.music') == 'playing' %}\n            true\n
+        \         {% else %}\n            false\n          {% endif %}"
+  actions:
+  - choose:
+    - conditions: []
+      sequence:
+      - action: script.sonos_group_motion
+        data_template:
+          target_players: "{% if trigger.id == 'Werkkamer beweging' %}\n  {% set player
+            = 'media_player.werkkamer' %}\n{% elif trigger.id == 'Werkkamer beweging'
+            %}\n  {% set player = 'media_player.keuken' %}\n{% endif %} {% if player
+            is not none %}\n  {{ player }}\n{% else %}\n  false\n{% endif %}\n"
+  mode: single
+- id: '1760953358769'
+  alias: overloop beweging
+  description: ''
+  triggers:
+  - type: turned_on
+    device_id: 455b84275821f43d9483d821330dedef
+    entity_id: c6b18449a9c7968355ec2f9f4559add1
+    domain: light
+    trigger: device
+  - trigger: state
+    entity_id:
+    - binary_sensor.overloop1_beweging
+    to: 'on'
+    id: Beweging
+  - trigger: state
+    entity_id:
+    - binary_sensor.overloop1_beweging
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+    id: geen beweging
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - Beweging
+        alias: is bewegen
+      - condition: or
+        conditions:
+        - condition: numeric_state
+          entity_id: sensor.blind_tilt_0050_lichtsterkte
+          below: 2
+          alias: is licht onder 2
+        - condition: state
+          entity_id: binary_sensor.night_time
+          state: 'on'
+          alias: is nacht
+      sequence:
+      - choose:
+        - conditions:
+          - condition: or
+            conditions:
+            - condition: state
+              entity_id: input_boolean.evi_slaapt
+              state:
+              - 'on'
+            - condition: state
+              entity_id: input_boolean.slapen
+              state: 'on'
+          sequence:
+          - action: light.turn_on
+            metadata: {}
+            data:
+              brightness_pct: 5
+            target:
+              entity_id:
+              - light.overloop_plafond
+        - conditions:
+          - condition: and
+            conditions:
+            - condition: state
+              entity_id: input_boolean.slapen
+              state: 'off'
+            - condition: state
+              entity_id: input_boolean.evi_slaapt
+              state:
+              - 'off'
+          sequence:
+          - action: light.turn_on
+            metadata: {}
+            data:
+              brightness_pct: 50
+            target:
+              entity_id:
+              - light.overloop_plafond
+      alias: Donker en bewegen
+    - conditions:
+      - condition: trigger
+        id:
+        - geen beweging
+      sequence:
+      - type: turn_off
+        device_id: 5f90df37145f5a8d088862b871fa926f
+        entity_id: 2be72044ba96abda8fcaa68e4c809258
+        domain: light
+  mode: single
+- id: '1760963547654'
+  alias: Warmtepomp aan
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.ecodan_heatpump_status_in1_thermostaat
+    to: 'on'
+  conditions: []
+  actions:
+  - action: notify.mobile_app_ruben_mobiel
+    metadata: {}
+    data:
+      message: Warmtepomp aan
+  mode: single
+- id: '1762080396470'
+  alias: Legionella setpoint
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - sensor.ecodan_heatpump_status_bedrijf
+    to: Legionellapreventie
+    id: Start
+  - trigger: state
+    entity_id:
+    - sensor.ecodan_heatpump_status_bedrijf
+    id: Eind
+    from: Legionellapreventie
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - Start
+      sequence:
+      - action: climate.set_temperature
+        metadata: {}
+        data:
+          temperature: 59
+        target:
+          entity_id: climate.ecodan_heatpump_dhw_thermostaat
+    - conditions:
+      - condition: and
+        conditions:
+        - condition: trigger
+          id:
+          - Eind
+      sequence:
+      - action: climate.set_temperature
+        metadata: {}
+        data:
+          temperature: 55
+        target:
+          entity_id: climate.ecodan_heatpump_dhw_thermostaat
+  mode: single
+- id: '1762541669607'
+  alias: Trigger alarm while armed away
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id: binary_sensor.beweging
+  conditions:
+  - condition: state
+    entity_id: alarm_control_panel.home_alarm
+    state: armed_away
+  actions:
+  - action: alarm_control_panel.alarm_trigger
+    target:
+      entity_id: alarm_control_panel.home_alarm
+- id: '1762541823652'
+  alias: Send notification when alarm triggered
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id: alarm_control_panel.home_alarm
+    to: triggered
+  actions:
+  - action: notify.ruben
+    data:
+      message: ALARM! The alarm has been triggered
+- id: '1762542813258'
+  alias: Vaatwasser status
+  description: ''
+  triggers:
+  - alias: klaar
+    trigger: numeric_state
+    entity_id:
+    - sensor.keuken_vaatwasser_vermogen
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
+    above: -0.3
+    id: klaar
+    below: 5
+  - trigger: numeric_state
+    entity_id:
+    - sensor.keuken_vaatwasser_vermogen
+    above: 1900
+    alias: Start
+    id: start
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - start
+      sequence:
+      - action: input_select.select_option
+        metadata: {}
+        data:
+          option: Running
+        target:
+          entity_id: input_select.dishwasher_status
+    - conditions:
+      - condition: trigger
+        id:
+        - klaar
+      sequence:
+      - action: input_select.select_option
+        metadata: {}
+        data:
+          option: Clean
+        target:
+          entity_id: input_select.dishwasher_status
+  mode: single
+- id: e8580ba4-fa76-4185-818b-fba3c3cea41c
+  alias: Master Bedroom Report
+  description: ''
+  triggers:
+  - at: '6:45'
+    trigger: time
+  conditions: []
+  actions:
+  - action: script.morning_wakeup_report
+- id: e8580ba4-fa76-4185-818b-fba3c3cea41c
+  alias: Master Bedroom Report
+  description: ''
+  triggers:
+  - at: '6:45'
+    trigger: time
+  conditions: []
+  actions:
+  - action: script.morning_wakeup_report
+- id: e8580ba4-fa76-4185-818b-fba3c3cea41c
+  alias: Master Bedroom Report
+  description: ''
+  triggers:
+  - at: '6:45'
+    trigger: time
+  conditions: []
+  actions:
+  - action: script.morning_wakeup_report
+- id: '1763130989428'
+  alias: Afvalbak
+  description: ''
+  triggers:
+  - type: turned_off
+    device_id: 6bd64ee16ce71818f1c3c838b21d2c19
+    entity_id: 662e8218266f82bdb611c882b48dc33a
+    domain: light
+    trigger: device
+  conditions:
+  - condition: time
+    after: '21:00:00'
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: sensor.afvalinfo_thuis_trash_type_tomorrow
+      state:
+      - geen
+  actions:
+  - sequence:
+    - response_variable: greetings
+      action: script.get_tts_greetings
+      data: {}
+    - variables:
+        message: '{{ greetings.general }}, Morgen wordt de afvalbak opgehaald zet
+          de {{states("sensor.afvalinfo_thuis_trash_type_tomorrow")}} buiten
+
+          '
+    - data:
+        message: '{{ message }}
+
+          '
+      response_variable: cleaned_briefing
+      action: script.cleanup_text
+    - data:
+        who: keuken
+        message: '{{ cleaned_briefing.text }}
+
+          '
+        msg_summary: the Morning Wakeup Report
+        type: briefing
+      action: script.speech_engine

@@ -1,0 +1,42 @@
+type: vertical-stack
+cards:
+  - type: custom:bubble-card
+    card_type: pop-up
+    name: Energie
+    icon: mdi:power-plug-outline
+    state: null
+    hash: "#Energie"
+    is_sidebar_hidden: true
+    styles: >-
+      .bubble-pop-up-container {
+        --vertical-stack-card-gap: 0px!important;
+      } #header-container > div > div {
+        background: var(--popupBG)!important;
+      }     
+
+      #header-container > button {background: none;}    
+
+      .icon-container {background-color:var(--gray800)!important;} 
+
+      .icon-container > ha-icon
+      {color:var(--gray000)!important;opacity:1!important} 
+
+      .bubble-icon {
+        --mdc-icon-size: 24px !important;
+      }
+    bg_blur: "20"
+    shadow_opacity: "20"
+    bg_opacity: "88"
+    margin_top_mobile: 50px
+    margin_top_desktop: 50px
+    card_layout: large
+  #  - type: vertical-stack
+  #    cards:
+  #      - !include items/dag_verbruik.yaml
+  - type: custom:decluttering-card
+    template: humidity_comparison_stack
+    variables:
+      - indoor_entity: sensor.klimaat_sensor_luchtvochtigheid
+      - outdoor_entity: sensor.buitenmeter_achter_luchtvochtigheid
+      - location: Indoor
+      - location_outdoor: Outdoor

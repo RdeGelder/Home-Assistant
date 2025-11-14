@@ -1,0 +1,31 @@
+script:
+  cleanup_text:
+    sequence:
+      - variables:
+          cleaned: >
+            {%- macro getReport() -%}
+                {{ message }}
+            {%- endmacro -%} {%- macro cleanup(data) -%}
+              {%- for item in data.split("\n")  if item | trim != "" -%}
+                {{ item | trim }} {% endfor -%}
+            {%- endmacro -%} {%- macro mother_of_all_macros() -%}
+              {{ getReport() }}
+            {%- endmacro -%} 
+            {"text":"{{- cleanup(mother_of_all_macros()) | string -}}"}
+      - stop: "ok, Im done."
+        response_variable: "cleaned"
+
+  get_room_audio:
+    sequence:
+      - variables:
+          type: >
+            {% if type in ['alert','priority','briefing','goodnight','weather_alert','weather_advisory','notification','gong','tornado','alarm','intercom'] %}
+              {{type}}
+            {% elif room in ['ruben','marit','evi'] %}
+              priority
+            {% else %}
+              normal
+            {% endif %}
+
+      - stop: "ok, Im done."
+        response_variable: "room_services"

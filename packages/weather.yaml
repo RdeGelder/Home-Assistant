@@ -1,0 +1,34 @@
+# used for buiengraph
+command_line:
+  - sensor:
+      name: weather_buienalarm_hours
+      command: python3 -c "import requests; response = requests.get('https://api.meteoplaza.com/buienalarm/v1/timeseries24/52.03/5.10',headers={'Cache-Control':'no-cache'}).text; print(response.replace('\r\n',' '));"
+      unique_id: 1704039709
+      json_attributes:
+        - data
+      value_template: "last_changed: {{states.sensor.weather_buienalarm_hours.last_changed | default(now())}}"
+      scan_interval: 1800
+  - sensor:
+      name: weather_buienradar_hours
+      command: python3 -c "import requests; response = requests.get('https://graphdata.buienradar.nl/3.0/forecast/geo/Rain24Hour?lat=52.032&lon=5.103',headers={'Cache-Control':'no-cache'}).text; data = '{\"data\":'+response.replace('\r\n',' ')+'}'; print(data);"
+      unique_id: 1704039881
+      json_attributes:
+        - data
+      value_template: "last_changed: {{states.sensor.weather_buienradar_hours.last_changed | default(now())}}"
+      scan_interval: 1800
+  - sensor:
+      name: forecast_buienalarm_min
+      command: python3 -c "import requests; import json; import random; dataRequest = requests.get('https://cdn-secure.buienalarm.nl/api/3.4/forecast.php?lat=52.032&lon=5.103&region=nl&unit=mm%2Fu').text; dataRequest = dataRequest.replace('\r\n',' '); data = '{\"data\":'+dataRequest+'}'; print(data);"
+      unique_id: f90f2131fd05b6533705e59f7a18b037abec97f6e63aa9d0b831f85dd8383f69
+      json_attributes:
+        - data
+      value_template: "last_changed: {{states.sensor.forecast_buienalarm_min.last_changed | default(now())}}"
+      scan_interval: 240
+  - sensor:
+      name: forecast_buienradar_min
+      command: python3 -c "import requests; import json; import random; dataRequest = requests.get('https://graphdata.buienradar.nl/2.0/forecast/geo/RainHistoryForecast?lat=52.03&lon=5.1&c=9',headers={'Cache-Control':'no-cache'}).text; dataRequest = dataRequest.replace('\r\n',' '); data = '{\"data\":'+dataRequest+'}'; print(data);"
+      unique_id: 394757364d9b855917cbb50c8349ebbbade1db69a867a12ded54c625d023a637
+      json_attributes:
+        - data
+      value_template: "last_changed: {{states.sensor.forecast_buienradar_min.last_changed | default(now())}}"
+      scan_interval: 240
