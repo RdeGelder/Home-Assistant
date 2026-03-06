@@ -36,14 +36,20 @@ homeassistant:
   latitude: !secret lat
   longitude: !secret lon
   elevation: !secret elev
-  #  internal_url: !secret internal_url
-  #  external_url: !secret external_url
+  internal_url: !secret internal_url
+  external_url: !secret external_url
   unit_system: metric
   currency: EUR
   country: NL
   temperature_unit: C
 
   packages: !include_dir_named packages
+
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 192.168.68.55
+    - 172.16.0.0/12
 
 lovelace_gen:
   rooms_most_used:
@@ -152,10 +158,6 @@ script: !include scripts.yaml
 scene: !include scenes.yaml
 
 input_boolean:
-  debug_rounded:
-    name: Debug Rounded
-    icon: mdi:view-dashboard-edit
-
   house_eco_mode:
     name: "House Eco Mode"
     icon: "mdi:leaf"
@@ -163,8 +165,6 @@ input_boolean:
   house_guest_mode:
     name: "House Guest Mode"
     icon: "mdi:account-multiple-plus"
-
-
 
   vacation_mode:
     name: vacation mode
@@ -207,6 +207,7 @@ binary_sensor:
     after: "18:00"
     before: "00:00"
 
+
 #{% set T, RH = states('sensor.temperatuur'), states('sensor.luchtvochtigheid') %}
 #{% if (T == 'unknown')  or (RH == 'unknown') %}
 #  'unknown'
@@ -231,7 +232,7 @@ template:
         unit_of_measurement: "W"
         device_class: power
         state: >
-          {{states('sensor.solis_ac_output_total_power')|float + states('sensor.p1_meter_vermogen')|float}}
+          {{states('sensor.solar_power')|float + states('sensor.p1_meter_vermogen')|float}}
       - name: "AirQuality"
         unique_id: "airquality"
         state: >
@@ -323,14 +324,35 @@ template:
             | list 
             | count %}
           {{ lights_on }}
+
+      - name: "Any Battery Low"
+        unique_id: any_battery_low_5pct
+        device_class: battery
+        icon: >
+          {% if is_state('binary_sensor.any_battery_low', 'on') %}
+            mdi:battery-alert
+          {% else %}
+            mdi:battery-check
+          {% endif %}
+        state: >
+          {% set low_batteries = states.sensor 
+            | selectattr('attributes.device_class', 'defined')
+            | selectattr('attributes.device_class', 'eq', 'battery')
+            | map(attribute='entity_id')
+            | map('states')
+            | select('is_number')
+            | map('float')
+            | select('lt', 5)
+            | list %}
+          {{ low_batteries | count > 0 }}
 media_player:
   - platform: universal
     name: music
     unique_id: musicuniversal
     children:
-      - media_player.keuken
-      - media_player.werkkamer
-      - media_player.woonkamer
+      - media_player.kitchen
+      - media_player.office
+      - media_player.livingroom
 
 input_text:
   music_playlist:

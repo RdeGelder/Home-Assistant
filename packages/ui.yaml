@@ -1,0 +1,31 @@
+input_boolean:
+  kiosk_mode:
+    name: "kiosk mode"
+
+  ######## room toggle #########
+  room_toggle_living_room:
+    name: "room toggle living room"
+    icon: "mdi:sofa"
+  room_toggle_bedroom:
+    name: "room toggle bedroom"
+    icon: "mdi:bed-king-outline"
+  room_toggle_office:
+    name: "room toggle office"
+    icon: "mdi:sofa"
+  room_toggle_guest_room:
+    name: "room toggle guest room"
+    icon: "mdi:sofa"
+  room_toggle_room_evi:
+    name: "room toggle room evi"
+    icon: "mdi:sofa"
+
+  rooms_quick_access:
+    name: "rooms quick access"
+    icon: "mdi:link"
+  all_rooms:
+    name: "all rooms"
+    icon: "mdi:link"
+
+  debug_rounded:
+    name: Debug Rounded
+    icon: mdi:view-dashboard-edit

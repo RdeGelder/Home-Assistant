@@ -1,0 +1,159 @@
+# Vakantie modus
+- type: entity
+  show_name: false
+  show_state: false
+  show_icon: true
+  entity: input_boolean.vacation_mode
+  color: orange
+  tap_action:
+    action: toggle
+  visibility:
+    - condition: state
+      entity: input_boolean.vacation_mode
+      state: "on"
+
+# notificaties
+- type: entity
+  show_name: false
+  show_state: false
+  show_icon: true
+  entity: input_boolean.text_notify_ruben
+  color: primary
+  tap_action:
+    action: toggle
+  visibility:
+    - condition: state
+      entity: input_boolean.text_notify_ruben
+      state: "off"
+    - condition: user
+      users:
+        - fb506dcbb14a480f936e12028d53db9c
+- type: entity
+  show_name: false
+  show_state: false
+  show_icon: true
+  entity: input_boolean.text_notify_marit
+  color: primary
+  tap_action:
+    action: toggle
+  visibility:
+    - condition: state
+      entity: input_boolean.text_notify_marit
+      state: "off"
+    - condition: user
+      users:
+        - 626fff83a21e4d83b4776cc3e52488e2
+- type: entity
+  show_name: false
+  show_state: false
+  show_icon: true
+  entity: input_boolean.text_notify_parents
+  color: primary
+  tap_action:
+    action: toggle
+  visibility:
+    - condition: state
+      entity: input_boolean.text_notify_parents
+      state: "off"
+    - condition: user
+      users:
+        - 626fff83a21e4d83b4776cc3e52488e2
+        - fb506dcbb14a480f936e12028d53db9c
+- type: entity
+  show_name: false
+  show_state: true
+  show_icon: true
+  entity: alarm_control_panel.home_alarm
+
+# Evi slapen
+- type: custom:mushroom-template-badge
+  entity: input_boolean.evi_slaapt
+  tap_action:
+    action: toggle
+  hold_action:
+    action: more-info
+  content: |
+    {{relative_time(states.input_boolean.evi_slaapt.last_changed)}}
+  icon: |
+    {% if is_state('input_boolean.evi_slaapt', 'on') %}
+      mdi:sleep
+    {% elif is_state('input_boolean.evi_slaapt', 'off') %}
+      mdi:baby
+    {% else %}
+      mdi:baby
+    {% endif %}
+  color: |
+    {% if is_state('input_boolean.evi_slaapt', 'on') %}
+      blue
+    {% elif is_state('input_boolean.evi_slaapt', 'off') %}
+      black
+    {% else %}
+      black
+    {% endif %}
+- type: entity
+  show_name: true
+  show_state: true
+  show_icon: true
+  entity: person.ruben
+  show_entity_picture: true
+  visibility:
+    - condition: screen
+      media_query: "(min-width: 768px)"
+- type: entity
+  show_name: true
+  show_state: true
+  show_icon: true
+  entity: person.marit
+  show_entity_picture: true
+  visibility:
+    - condition: screen
+      media_query: "(min-width: 768px)"
+- type: custom:mushroom-template-badge
+  content: |-
+    {% if is_state('input_select.dishwasher_status', 'Running') %}
+      Hier moet nog een percentage komen%
+    {% elif is_state('input_select.dishwasher_status', 'Clean') %}
+      Clean
+    {% elif is_state('input_select.dishwasher_status', 'Dirty') %}
+      Dirty
+    {% else %}
+      Off
+    {% endif %}
+  icon: |
+    {% if is_state('input_select.dishwasher_status', 'Running') %}
+      mdi:dishwasher
+    {% elif is_state('input_select.dishwasher_status', 'Clean') %}
+      mdi:dishwasher-alert
+    {% elif is_state('input_select.dishwasher_status', 'Dirty') %}
+      mdi:dishwasher
+    {% else %}
+      mdi:dishwasher-off
+    {% endif %}
+  color: |-
+    {% if is_state('input_select.dishwasher_status', 'Running') %}
+      blue
+    {% elif is_state('input_select.dishwasher_status', 'Clean') %}
+      green
+    {% elif is_state('input_select.dishwasher_status', 'Dirty') %}
+      yellow
+    {% else %}
+      grey
+    {% endif %}
+  # entity: sensor.dishwasher_status
+  # label: ""
+  #  double_tap_action:
+  #    action: perform-action
+  #    perform_action: input_boolean.turn_off
+  #    target:
+  #      entity_id: input_boolean.chores_dishwasher
+  #    data: {}
+  visibility:
+    - condition: state
+      entity: input_select.dishwasher_status
+      state_not: "Off"
+
+- type: entity
+  show_name: false
+  show_state: true
+  show_icon: true
+  entity: sensor.lights

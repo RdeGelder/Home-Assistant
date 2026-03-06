@@ -1,12 +1,22 @@
 type: custom:navbar-card
+
+layout:
+  auto_padding:
+    enabled: true
+    desktop_px: 100
+    mobile_xp: 180
+
 desktop:
   position: left
   show_labels: true
   show_popup_label_backgrounds: false
   min_width: 768
+
 mobile:
   show_labels: true
+
 routes:
+  # Home
   - icon: mdi:home-outline
     icon_selected: mdi:home-assistant
     url: /dashboard-bubble/home
@@ -21,20 +31,21 @@ routes:
         else if (location.hash == '#guest-room') return false;
         else if (location.hash == '#corridor') return false;
         else if (location.hash == '#remote') return false;
-        else if (location.hash == '#julian') return false;
-        else if (location.hash == '#anna') return false;
+        else if (location.hash == '#ruben') return false;
+        else if (location.hash == '#marit') return false;
         else return true;
       ]]]
+
   - icon: mdi:sofa-outline
     icon_selected: mdi:sofa
-    label: Rooms
+    label: Kamers
     selected: |
       [[[
-        if (location.hash == '#woonkamer') return true;
-        else if (location.hash == '#slaapkamer') return true;
-        else if (location.hash == '#werkkamer') return true;
-        else if (location.hash == '#keuken') return true;
-        else if (location.hash == '#badkamer') retn') return true;
+        if (location.hash == '#living-room') return true;
+        else if (location.hash == '#bedroom') return true;
+        else if (location.hash == '#office') return true;
+        else if (location.hash == '#kitchen') return true;
+        else if (location.hash == '#badkamer') return true;
         else return false;
       ]]]
     badge:
@@ -47,20 +58,27 @@ routes:
       action: open-popup
     popup:
       - icon: mdi:sofa-outline
-        url: /dashboard-bubble/home#living-room
         label: Woonkamer
+        tap_action:
+          action: navigate
+          navigation_path: "#living-room"
       - icon: mdi:bed-king-outline
         url: /dashboard-bubble/home#bedroom
         label: Slaapkamer
       - icon: mdi:monitor
         url: /dashboard-bubble/home#office
         label: Werkkkamer
+        badge:
+          show: true
+          color: var(--yellow-color)
+          count: 4
       - icon: mdi:silverware-variant
         url: /dashboard-bubble/home#kitchen
         label: Keuken
       - icon: mdi:paper-roll-outline
         url: /dashboard-bubble/home#bathroom
         label: Badkamer
+  # Music
   - icon: mdi:music
     url: /dashboard-bubble/Music
     label: Music
@@ -113,18 +131,11 @@ routes:
     url: /dashboard-bubble/security
     label: Security
     badge:
-      show: |
-        [[[ return states['binary_sensor.window_sensors'].state === 'on' ]]]
-      color: var(--red-color)
-      count: |
-        [[[ return states['sensor.window_open_count'].state ]]]
-  - url: home#profile
-    icon: mdi:cog
-    label: Settings
-    badge:
-      color: Red
       show: true
-      count: "20"
+      color: var(--red-color)
+      count: 1
+
+    #region person Marit
   - url: /dashboard-bubble/home#marit
     image: "[[[return hass.states['person.marit'].attributes.entity_picture]]]"
     label: Marit
@@ -137,15 +148,21 @@ routes:
     badge:
       color: Red
       show: false
+    #region person Ruben
   - url: /dashboard-bubble/home#ruben
     image: "[[[return hass.states['person.ruben'].attributes.entity_picture]]]"
-    label: Marit
+    label: Ruben
     selected: |
       [[[
         return location.hash == '#Ruben';
       ]]]
     hidden: |
       [[[ return user.name != "Ruben" ]]]
+    badge:
+      show: >
+        [[[ return states['input_boolean.debug_rounded'].state ===
+        'on' ]]]
+      color: var(--red-color)
   - icon: mdi:dots-horizontal
     label: More
     badge:
@@ -200,9 +217,13 @@ routes:
         label: Developer Tools
         hidden: |
           [[[ return user.name != "Ruben" ]]]
-styles: |-
+styles: |
   .image {
     border-radius: 16px !important;
+  }
+  .navbar {
+    --navbar-primary-color: var(--purple-color);
+    background: var(--contrast4);
   }
 media_player:
   entity: media_player.music

@@ -16,7 +16,8 @@ custom_card_user:
     [[[
       if (entity.state == "home") {
         if (user.name == "Ruben") {
-          return "Room: ";
+          return "Room: "+ states["sensor.ruben_mobiel_area"].state;
+          
         } else {
           return "Welcome home.";
         }

@@ -30,13 +30,16 @@ play_favorite_playlist:
         entity:
           domain:
           - media_player
-      default: media_player.woonkamer
+          multiple: false
+      default: media_player.werkkamer_music
+      name: Entity
+      description: Entity you want the music to start playing on
     playlist:
       selector:
         text:
-      default: https://open.spotify.com/playlist/1C4xhQw4BRYlK075PRUhzP
-      name: Playlist
-      description: Playlist Media ID for example a Spotify URI
+      default: spotify:user:spotify:playlist:37i9dQZF1DWYPwGkJoztcR
+      name: playlist
+      description: Playlist media ID for example a Spotify URI
   sequence:
   - action: input_text.set_value
     metadata: {}
@@ -44,15 +47,11 @@ play_favorite_playlist:
       value: '{{playlist}}'
     target:
       entity_id: input_text.music_playlist
-  - action: music_assistant.play_media
-    metadata: {}
-    data:
-      media_type: playlist
-      media_id: '{{states("input_text.music_playlist")| string}}
-
-        '
-    target:
+  - action: media_player.play_media
+    data_template:
       entity_id: '{{entity}}'
+      media_content_id: '{{playlist}}'
+      media_content_type: playlist
   alias: Play Favorite Playlist
   description: ''
 set_playlist_and_play:
@@ -90,14 +89,29 @@ set_playlist_and_play:
       description: Playlist Media ID for example a Spotify URI
   alias: Set Playlist and Play
   description: ''
-nieuw_script:
+nieuw_scrip:
   sequence:
   - response_variable: greetings
     action: script.get_tts_greetings
+  - response_variable: weather_info
+    action: script.get_weather_info
+  - response_variable: briefing_data
+    action: script.get_briefing_data
+  - response_variable: jeff_briefing
+    action: script.get_ruben_briefing
   - variables:
       message: '{{ greetings.general }}
 
+        {{ weather_info.current_conditions}}
+
+        {{ weather_info.sun_status }}
+
+        {{ jeff_briefing.device_status}}
+
+        {{ jeff_briefing.critical_battery_info }}
+
         '
+  - action: script.battery_notification
   - data:
       message: '{{ message }}
 
@@ -105,10 +119,10 @@ nieuw_script:
     response_variable: cleaned_briefing
     action: script.cleanup_text
   - data:
-      who: werkkamer
+      who: livingroom
       message: '{{ cleaned_briefing.text }}
 
         '
-      msg_summary: the Morning Wakeup Report
-      type: briefing
+      msg_summary: Gave the Jeff briefing.
+      type: priority
     action: script.speech_engine

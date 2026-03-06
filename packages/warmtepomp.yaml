@@ -1,0 +1,171 @@
+automation:
+  - id: "1758723340280"
+    alias: Koelen weigeren
+    description: Wanneer koelen uitgaat verbied koelen max vermogen is al kwijt
+    triggers:
+      - entity_id:
+          - sensor.ecodan_heatpump_status_bedrijf
+        from: Koelen
+        trigger: state
+        to: Uit
+    conditions: []
+    actions:
+      - action: switch.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.ecodan_heatpump_server_control_zone_1_prohibit_cooling
+    mode: single
+  - id: "1758723496420"
+    alias: Koelen toestaan
+    description: ""
+    triggers:
+      - at: 08:00:00
+        trigger: time
+      - at: "10:00:00"
+        trigger: time
+      - at: "12:00:00"
+        trigger: time
+      - at: "14:00:00"
+        trigger: time
+      - at: "16:00:00"
+        trigger: time
+      - at: "18:00:00"
+        trigger: time
+    conditions:
+      - condition: and
+        conditions:
+          - condition: state
+            entity_id: select.ecodan_heatpump_gekozen_werking_mode
+            state: Koelen Flow
+          - condition: state
+            entity_id: sensor.ecodan_heatpump_status_bedrijf
+            for:
+              hours: 1
+              minutes: 0
+              seconds: 0
+            state: Uit
+          - condition: state
+            entity_id: switch.ecodan_heatpump_server_control_enable_disable
+            state: "on"
+    actions:
+      - action: switch.turn_off
+        target:
+          entity_id: switch.ecodan_heatpump_server_control_zone_1_prohibit_cooling
+        data: {}
+    mode: single
+
+  - id: "1760511435812"
+    alias: Begrenzing koeltemperatuur laag
+    description: ""
+    triggers:
+      - trigger: numeric_state
+        entity_id:
+          - sensor.ecodan_heatpump_zone_1_ruimte_setpoint_waarde
+        for:
+          hours: 0
+          minutes: 0
+          seconds: 10
+        below: 18
+    conditions:
+      - condition: state
+        entity_id: select.ecodan_heatpump_gekozen_werking_mode
+        state: Koelen Flow
+    actions:
+      - action: climate.set_temperature
+        metadata: {}
+        data:
+          temperature: 18
+        target:
+          entity_id: climate.ecodan_heatpump_zone_1_aanvoertemp
+    mode: single
+  - id: SyncTemperatureToAdaptiveController
+    alias: Sync Room Temp to Auto-Adaptive Controller
+    description: ""
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.buitenmeter_voor_temperatuur
+    conditions: []
+    actions:
+      - action: number.set_value
+        data:
+          value: "{{ states('sensor.buitenmeter_voor_temperatuur') }}"
+        target:
+          entity_id: number.ecodan_heatpump_auto_adaptief_terugkoppeling_huidige_kamertemperatuur_z1
+  - id: SyncSetpointToAdaptiveController
+    alias: Sync Room Setpoint to Auto-Adaptive Controller
+    description: ""
+    triggers:
+      - trigger: state
+        entity_id: sensor.buitenmeter_voor_temperatuur
+    conditions:
+      - condition: template
+        value_template:
+          "{{ trigger.from_state.attributes.temperature != trigger.to_state.attributes.temperature
+          }}"
+    actions:
+      - action: climate.set_temperature
+        target:
+          entity_id:
+            - climate.ecodan_heatpump_zone_1_kamertemp
+        data:
+          temperature: 21
+
+  - id: "1760963547654"
+    alias: Warmtepomp aan
+    description: ""
+    triggers:
+      - trigger: state
+        entity_id:
+          - binary_sensor.ecodan_heatpump_status_in1_thermostaat
+        to: "on"
+    conditions: []
+    actions:
+      - action: notify.mobile_app_ruben_mobiel
+        metadata: {}
+        data:
+          message: Warmtepomp aan
+    mode: single
+  - id: "1762080396470"
+    alias: Legionella setpoint
+    description: ""
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.ecodan_heatpump_status_bedrijf
+        to: Legionellapreventie
+        id: Start
+      - trigger: state
+        entity_id:
+          - sensor.ecodan_heatpump_status_bedrijf
+        id: Eind
+        from: Legionellapreventie
+    conditions: []
+    actions:
+      - choose:
+          - conditions:
+              - condition: trigger
+                id:
+                  - Start
+            sequence:
+              - action: climate.set_temperature
+                metadata: {}
+                data:
+                  temperature: 59
+                target:
+                  entity_id: climate.ecodan_heatpump_dhw_thermostaat
+          - conditions:
+              - condition: and
+                conditions:
+                  - condition: trigger
+                    id:
+                      - Eind
+            sequence:
+              - action: climate.set_temperature
+                metadata: {}
+                data:
+                  temperature: 55
+                target:
+                  entity_id: climate.ecodan_heatpump_dhw_thermostaat
+    mode: single

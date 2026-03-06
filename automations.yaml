@@ -327,39 +327,6 @@
       message: Morgen wordt {{states("sensor.afvalinfo_thuis_trash_type_tomorrow")}}
         opgehaald
   mode: single
-- id: wakeup_light
-  alias: Wakeup light
-  description: ''
-  triggers:
-  - value_template: '{{now().strftime(''%a %h %d %H:%M %Z %Y'') == (((state_attr(''sensor.ruben_mobiel_next_alarm'',
-      ''Time in Milliseconds'') | int / 1000)-300 ) | timestamp_custom(''%a %h %d
-      %H:%M %Z %Y''))}}'
-    trigger: template
-  conditions:
-  - condition: or
-    conditions:
-    - condition: state
-      entity_id: person.ruben
-      state: home
-  actions:
-  - target:
-      entity_id:
-      - light.nachtkastje_marit
-    data:
-      brightness_pct: 0
-    action: light.turn_on
-  - target:
-      entity_id:
-      - light.nachtkastje_marit
-    data:
-      transition: 300
-    action: light.turn_on
-  - action: switch.turn_on
-    target:
-      entity_id:
-      - switch.nachtkastje_ruben
-    data: {}
-  mode: single
 - id: '1725019681975'
   alias: Music tags
   description: ''
@@ -700,7 +667,30 @@
               entity_id: light.ikea_of_sweden_tradfri_bulb_gu10_cws_345lm
           alias: evi wakker
       action_button_left_long: []
-      action_button_right_long: []
+      action_button_right_long:
+      - sequence:
+        - response_variable: greetings
+          action: script.get_tts_greetings
+          data: {}
+        - variables:
+            message: '{{ greetings.general }}, het flesje kan gemaakt worden, Evi
+              is bijna klaar
+
+              '
+        - data:
+            message: '{{ message }}
+
+              '
+          response_variable: cleaned_briefing
+          action: script.cleanup_text
+        - data:
+            who: keuken
+            message: '{{ cleaned_briefing.text }}
+
+              '
+            msg_summary: the Morning Wakeup Report
+            type: briefing
+          action: script.speech_engine
       action_button_down_short:
       - action: light.turn_on
         metadata: {}
@@ -741,22 +731,41 @@
     - conditions:
       - condition: and
         conditions:
-        - condition: state
-          entity_id: binary_sensor.night_time
-          state: 'on'
+        - condition: or
+          conditions:
+          - condition: numeric_state
+            entity_id: binary_sensor.blind_tilt_0050_kalibratie
+            below: 2
+            alias: Is licht onder 2
+          - condition: state
+            entity_id: binary_sensor.night_time
+            state:
+            - 'on'
         - condition: state
           entity_id: binary_sensor.warmtepomp_deur
-          state: 'on'
+          state:
+          - 'on'
       sequence:
       - type: turn_on
         device_id: 99b26b6d27104f88fd685b11c407ffb0
         entity_id: 429cc628335e39bcce734dd5c55ac69b
         domain: light
-    default:
-    - type: turn_off
-      device_id: 99b26b6d27104f88fd685b11c407ffb0
-      entity_id: 429cc628335e39bcce734dd5c55ac69b
-      domain: light
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: binary_sensor.warmtepomp_deur
+          state:
+          - 'off'
+        - condition: state
+          entity_id: binary_sensor.night_time
+          state:
+          - 'off'
+      sequence:
+      - type: turn_off
+        device_id: 99b26b6d27104f88fd685b11c407ffb0
+        entity_id: 429cc628335e39bcce734dd5c55ac69b
+        domain: light
   mode: single
 - id: '1751833668586'
   alias: Slaapkamer Awtrix Night Mode
@@ -949,8 +958,7 @@
             ttl: 0
       alias: Herinnering
   mode: single
-- &id001
-  id: light_gang
+- id: light_gang
   alias: licht gang
   description: ''
   triggers:
@@ -1047,9 +1055,8 @@
         target:
           entity_id: light.gang_plafond
   mode: single
-- *id001
 - id: '1755551503863'
-  alias: Overloop licht
+  alias: Licht Overloop
   description: ''
   triggers:
   - type: turned_on
@@ -1074,7 +1081,7 @@
       - action: light.turn_on
         metadata: {}
         data:
-          brightness_pct: 10
+          brightness_pct: 15
         target:
           entity_id: light.overloop_plafond
     - conditions:
@@ -1093,21 +1100,44 @@
   alias: Blinds weg
   description: ''
   triggers:
-  - trigger: sun
-    event: sunrise
-    offset: -00:15:00
-    id: Zonsopkomst
-  - trigger: sun
-    event: sunset
-    offset: 00:15:00
-    id: Zonsondergang
-  conditions: []
+  - alias: Weggaan
+    trigger: state
+    entity_id:
+    - person.ruben
+    - person.marit
+    id: Weggaan
+    from:
+    - home
+  - alias: Thuiskomen
+    trigger: state
+    entity_id:
+    - person.ruben
+    - person.marit
+    to:
+    - home
+    id: Thuiskomen
+  - alias: Dag nacht
+    trigger: state
+    entity_id:
+    - binary_sensor.night_time
+  conditions:
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: person.ruben
+      state:
+      - home
+    - condition: state
+      entity_id: person.marit
+      state:
+      - home
   actions:
   - choose:
     - conditions:
-      - condition: trigger
-        id:
-        - Zonsondergang
+      - condition: state
+        entity_id: binary_sensor.night_time
+        state:
+        - 'on'
       sequence:
       - type: turn_off
         device_id: 7dc99805f23efc5296cecd2e9284bb35
@@ -1133,31 +1163,83 @@
         entity_id: 15d27d500112aa305424c1384130e272
         type: set_tilt_position
         position: 100
+      alias: '''s Avonds'
     - conditions:
-      - condition: trigger
-        id:
-        - Zonsopkomst
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: binary_sensor.night_time
+          state:
+          - 'off'
       sequence:
-      - device_id: 05bb0420b59b00fb67da52c5dafc0c4b
-        domain: cover
-        entity_id: f5c7b2ed3f4fd9084cb311b1110f6dc4
-        type: set_tilt_position
-        position: 79
-      - device_id: fcba6f1f5a9aa51e702881f05deded7a
-        domain: cover
-        entity_id: ee7a267441f733c08ab1690302d59f3c
-        type: set_tilt_position
-        position: 65
-      - device_id: 90bd8f51f1ffa5af0b278cb46f4aa66f
-        domain: cover
-        entity_id: b15083de6a43edb56ccd5a245c778d93
-        type: set_tilt_position
-        position: 75
-      - device_id: 1c8f2ec0eb7ccbfd3bfc36eda836b8ec
-        domain: cover
-        entity_id: 15d27d500112aa305424c1384130e272
-        type: set_tilt_position
-        position: 82
+      - choose:
+        - conditions:
+          - condition: not
+            conditions:
+            - condition: state
+              entity_id: person.ruben
+              state:
+              - home
+            - condition: state
+              entity_id: person.marit
+              state:
+              - home
+          sequence:
+          - device_id: 05bb0420b59b00fb67da52c5dafc0c4b
+            domain: cover
+            entity_id: f5c7b2ed3f4fd9084cb311b1110f6dc4
+            type: set_tilt_position
+            position: 79
+          - device_id: fcba6f1f5a9aa51e702881f05deded7a
+            domain: cover
+            entity_id: ee7a267441f733c08ab1690302d59f3c
+            type: set_tilt_position
+            position: 65
+          - device_id: 90bd8f51f1ffa5af0b278cb46f4aa66f
+            domain: cover
+            entity_id: b15083de6a43edb56ccd5a245c778d93
+            type: set_tilt_position
+            position: 74
+          - device_id: 1c8f2ec0eb7ccbfd3bfc36eda836b8ec
+            domain: cover
+            entity_id: 15d27d500112aa305424c1384130e272
+            type: set_tilt_position
+            position: 74
+          alias: Weg
+        - conditions:
+          - condition: and
+            conditions:
+            - condition: state
+              entity_id: person.ruben
+              state:
+              - home
+            - condition: state
+              entity_id: person.marit
+              state:
+              - home
+          sequence:
+          - device_id: 05bb0420b59b00fb67da52c5dafc0c4b
+            domain: cover
+            entity_id: f5c7b2ed3f4fd9084cb311b1110f6dc4
+            type: set_tilt_position
+            position: 50
+          - device_id: fcba6f1f5a9aa51e702881f05deded7a
+            domain: cover
+            entity_id: ee7a267441f733c08ab1690302d59f3c
+            type: set_tilt_position
+            position: 50
+          - device_id: 90bd8f51f1ffa5af0b278cb46f4aa66f
+            domain: cover
+            entity_id: b15083de6a43edb56ccd5a245c778d93
+            type: set_tilt_position
+            position: 50
+          - device_id: 1c8f2ec0eb7ccbfd3bfc36eda836b8ec
+            domain: cover
+            entity_id: 15d27d500112aa305424c1384130e272
+            type: set_tilt_position
+            position: 50
+          alias: Thuis
+      alias: Overdag
   mode: single
 - id: '1757512567293'
   alias: Opstaan
@@ -1173,154 +1255,52 @@
     target:
       entity_id: input_boolean.slapen
   mode: single
-- id: '1757529382701'
-  alias: Licht werkkamer beweging
-  description: ''
-  triggers:
-  - type: opened
-    device_id: 09c1d972a81e5817b7126d47f7c33f25
-    entity_id: befd2192e00af2bb9123fac03516710b
-    domain: binary_sensor
-    trigger: device
-    id: raam open
-    alias: raam open
-  - type: not_opened
-    device_id: 09c1d972a81e5817b7126d47f7c33f25
-    entity_id: befd2192e00af2bb9123fac03516710b
-    domain: binary_sensor
-    trigger: device
-    alias: raam dicht
-    id: raam dicht
-  - trigger: state
-    entity_id:
-    - binary_sensor.woonkamer_pir_sensor
-    to: 'on'
-    id: beweging
-    alias: beweging
-  - trigger: state
-    entity_id:
-    - binary_sensor.woonkamer_pir_sensor
-    to: 'off'
-    for:
-      hours: 0
-      minutes: 2
-      seconds: 0
-    id: geen beweging
-    alias: geen beweging
-  - trigger: state
-    entity_id:
-    - binary_sensor.night_time
-  conditions: []
-  actions:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - beweging
-        - raam dicht
-        - raam open
-      - condition: or
-        conditions:
-        - condition: numeric_state
-          entity_id: sensor.blind_tilt_0050_lichtsterkte
-          below: 2
-        - condition: state
-          entity_id: binary_sensor.night_time
-          state: 'on'
-      sequence:
-      - choose:
-        - conditions:
-          - type: is_open
-            condition: device
-            device_id: 09c1d972a81e5817b7126d47f7c33f25
-            entity_id: befd2192e00af2bb9123fac03516710b
-            domain: binary_sensor
-          sequence:
-          - action: scene.turn_on
-            metadata: {}
-            data: {}
-            target:
-              entity_id: scene.raam_open
-        - conditions:
-          - type: is_not_open
-            condition: device
-            device_id: 09c1d972a81e5817b7126d47f7c33f25
-            entity_id: befd2192e00af2bb9123fac03516710b
-            domain: binary_sensor
-          - condition: state
-            entity_id: binary_sensor.night_time
-            state: 'on'
-          - condition: state
-            entity_id: input_boolean.slapen
-            state: 'on'
-          sequence:
-          - action: scene.turn_on
-            metadata: {}
-            data: {}
-            target:
-              entity_id: scene.nacht
-        - conditions:
-          - type: is_not_open
-            condition: device
-            device_id: 09c1d972a81e5817b7126d47f7c33f25
-            entity_id: befd2192e00af2bb9123fac03516710b
-            domain: binary_sensor
-          - condition: state
-            entity_id: binary_sensor.night_time
-            state: 'on'
-          - condition: state
-            entity_id: input_boolean.slapen
-            state: 'off'
-          sequence:
-          - action: scene.turn_on
-            metadata: {}
-            data: {}
-            target:
-              entity_id: scene.werkkamer_dag
-    - conditions:
-      - condition: or
-        conditions:
-        - condition: trigger
-          id:
-          - geen beweging
-        - condition: state
-          entity_id: binary_sensor.night_time
-          state: 'off'
-      sequence:
-      - action: light.turn_off
-        metadata: {}
-        data: {}
-        target:
-          entity_id:
-          - light.werkkamer_links
-          - light.werkkamer_midden
-          - light.werkkamer_rechts
-      alias: Geen beweging of licht
-  mode: single
 - id: '1757669739035'
   alias: Thuiskomen
   description: ''
   triggers:
-  - trigger: state
+  - alias: Thuiskomen
+    trigger: state
     entity_id:
     - person.ruben
-    to: home
-    alias: Thuiskomen
+    - person.marit
+    to:
+    - home
+    id: Thuiskomen
+  - alias: Weggaan
+    trigger: state
+    entity_id:
+    - person.ruben
+    - person.marit
+    id: Weggaan
+    from:
+    - home
   - trigger: state
     entity_id:
     - binary_sensor.night_time
     to: 'on'
     alias: Avond
-  conditions:
-  - condition: state
-    entity_id: binary_sensor.night_time
-    state: 'on'
+  conditions: []
   actions:
   - choose:
     - conditions:
       - condition: state
-        entity_id: person.ruben
-        state: home
+        entity_id: binary_sensor.night_time
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.slapen
+        state:
+        - 'off'
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: person.marit
+          state:
+          - home
+        - condition: state
+          entity_id: person.ruben
+          state:
+          - home
       sequence:
       - action: scene.turn_on
         metadata: {}
@@ -1329,13 +1309,49 @@
           entity_id: scene.woonkamer_dag
     - conditions:
       - condition: state
-        entity_id: person.ruben
-        state: not_home
+        entity_id: binary_sensor.night_time
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.slapen
+        state:
+        - 'off'
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: person.ruben
+          state:
+          - home
+        - condition: state
+          entity_id: person.marit
+          state:
+          - home
       sequence:
-      - type: turn_on
-        device_id: 6bd64ee16ce71818f1c3c838b21d2c19
-        entity_id: 662e8218266f82bdb611c882b48dc33a
-        domain: light
+      - action: light.turn_on
+        metadata: {}
+        target:
+          entity_id:
+          - light.keuken_spot_links
+          - light.keuken_spot_rechts
+        data:
+          brightness_pct: 100
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.night_time
+        state:
+        - 'off'
+      sequence:
+      - action: light.turn_off
+        metadata: {}
+        target:
+          label_id: slapen
+        data: {}
+      - action: switch.turn_off
+        metadata: {}
+        target:
+          label_id: slapen
+        data: {}
+      alias: Licht
   mode: single
 - id: '1758100216384'
   alias: licht zolder beweging
@@ -1895,61 +1911,6 @@
       sequence: []
   mode: restart
   max_exceeded: silent
-- id: '1758723340280'
-  alias: Koelen weigeren
-  description: Wanneer koelen uitgaat verbied koelen max vermogen is al kwijt
-  triggers:
-  - entity_id:
-    - sensor.ecodan_heatpump_status_bedrijf
-    from: Koelen
-    trigger: state
-    to: Uit
-  conditions: []
-  actions:
-  - action: switch.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: switch.ecodan_heatpump_server_control_zone_1_prohibit_cooling
-  mode: single
-- id: '1758723496420'
-  alias: Koelen toestaan
-  description: ''
-  triggers:
-  - at: 08:00:00
-    trigger: time
-  - at: '10:00:00'
-    trigger: time
-  - at: '12:00:00'
-    trigger: time
-  - at: '14:00:00'
-    trigger: time
-  - at: '16:00:00'
-    trigger: time
-  - at: '18:00:00'
-    trigger: time
-  conditions:
-  - condition: and
-    conditions:
-    - condition: state
-      entity_id: select.ecodan_heatpump_gekozen_werking_mode
-      state: Koelen Flow
-    - condition: state
-      entity_id: sensor.ecodan_heatpump_status_bedrijf
-      for:
-        hours: 1
-        minutes: 0
-        seconds: 0
-      state: Uit
-    - condition: state
-      entity_id: switch.ecodan_heatpump_server_control_enable_disable
-      state: 'on'
-  actions:
-  - action: switch.turn_off
-    target:
-      entity_id: switch.ecodan_heatpump_server_control_zone_1_prohibit_cooling
-    data: {}
-  mode: single
 - id: '1758917240346'
   alias: slaapkamer afstandsbediening ruben
   description: ''
@@ -2070,100 +2031,6 @@
             data: {}
             target:
               entity_id: input_boolean.slapen
-- id: '1760511435812'
-  alias: Begrenzing koeltemperatuur laag
-  description: ''
-  triggers:
-  - trigger: numeric_state
-    entity_id:
-    - sensor.ecodan_heatpump_zone_1_ruimte_setpoint_waarde
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 10
-    below: 18
-  conditions:
-  - condition: state
-    entity_id: select.ecodan_heatpump_gekozen_werking_mode
-    state: Koelen Flow
-  actions:
-  - action: climate.set_temperature
-    metadata: {}
-    data:
-      temperature: 18
-    target:
-      entity_id: climate.ecodan_heatpump_zone_1_aanvoertemp
-  mode: single
-- &id002
-  id: SyncTemperatureToAdaptiveController
-  alias: Sync Room Temp to Auto-Adaptive Controller
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - sensor.buitenmeter_voor_temperatuur
-  conditions: []
-  actions:
-  - action: number.set_value
-    data:
-      value: '{{ states(''sensor.buitenmeter_voor_temperatuur'') }}'
-    target:
-      entity_id: number.ecodan_heatpump_auto_adaptief_terugkoppeling_huidige_kamertemperatuur_z1
-- *id002
-- id: SyncSetpointToAdaptiveController
-  alias: Sync Room Setpoint to Auto-Adaptive Controller
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id: sensor.buitenmeter_voor_temperatuur
-  conditions:
-  - condition: template
-    value_template: '{{ trigger.from_state.attributes.temperature != trigger.to_state.attributes.temperature
-      }}'
-  actions:
-  - action: climate.set_temperature
-    target:
-      entity_id:
-      - climate.ecodan_heatpump_zone_1_kamertemp
-    data:
-      temperature: 21
-- id: '1760706991041'
-  alias: Join music
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - binary_sensor.slaapkamer_multisensor_slaapkamer_pir_sensor
-    id: Werkkamer beweging
-    to: 'on'
-    alias: Werkkamer beweging
-  - type: motion
-    device_id: 218bf4e29ea2fb6bfe9c99b9e91db680
-    entity_id: 8411400df35c752762047f0d8f942acf
-    domain: binary_sensor
-    trigger: device
-    id: keuken beweging
-    alias: keuken beweging
-  conditions:
-  - condition: and
-    conditions:
-    - condition: state
-      entity_id: input_boolean.follow_music
-      state: 'on'
-    - condition: template
-      value_template: " {% if states('media_player.music') == 'playing' %}\n            true\n
-        \         {% else %}\n            false\n          {% endif %}"
-  actions:
-  - choose:
-    - conditions: []
-      sequence:
-      - action: script.sonos_group_motion
-        data_template:
-          target_players: "{% if trigger.id == 'Werkkamer beweging' %}\n  {% set player
-            = 'media_player.werkkamer' %}\n{% elif trigger.id == 'Werkkamer beweging'
-            %}\n  {% set player = 'media_player.keuken' %}\n{% endif %} {% if player
-            is not none %}\n  {{ player }}\n{% else %}\n  false\n{% endif %}\n"
-  mode: single
 - id: '1760953358769'
   alias: overloop beweging
   description: ''
@@ -2221,7 +2088,7 @@
           - action: light.turn_on
             metadata: {}
             data:
-              brightness_pct: 5
+              brightness_pct: 15
             target:
               entity_id:
               - light.overloop_plafond
@@ -2253,64 +2120,6 @@
         device_id: 5f90df37145f5a8d088862b871fa926f
         entity_id: 2be72044ba96abda8fcaa68e4c809258
         domain: light
-  mode: single
-- id: '1760963547654'
-  alias: Warmtepomp aan
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - binary_sensor.ecodan_heatpump_status_in1_thermostaat
-    to: 'on'
-  conditions: []
-  actions:
-  - action: notify.mobile_app_ruben_mobiel
-    metadata: {}
-    data:
-      message: Warmtepomp aan
-  mode: single
-- id: '1762080396470'
-  alias: Legionella setpoint
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - sensor.ecodan_heatpump_status_bedrijf
-    to: Legionellapreventie
-    id: Start
-  - trigger: state
-    entity_id:
-    - sensor.ecodan_heatpump_status_bedrijf
-    id: Eind
-    from: Legionellapreventie
-  conditions: []
-  actions:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - Start
-      sequence:
-      - action: climate.set_temperature
-        metadata: {}
-        data:
-          temperature: 59
-        target:
-          entity_id: climate.ecodan_heatpump_dhw_thermostaat
-    - conditions:
-      - condition: and
-        conditions:
-        - condition: trigger
-          id:
-          - Eind
-      sequence:
-      - action: climate.set_temperature
-        metadata: {}
-        data:
-          temperature: 55
-        target:
-          entity_id: climate.ecodan_heatpump_dhw_thermostaat
-  mode: single
 - id: '1762541669607'
   alias: Trigger alarm while armed away
   description: ''
@@ -2401,15 +2210,6 @@
   conditions: []
   actions:
   - action: script.morning_wakeup_report
-- id: e8580ba4-fa76-4185-818b-fba3c3cea41c
-  alias: Master Bedroom Report
-  description: ''
-  triggers:
-  - at: '6:45'
-    trigger: time
-  conditions: []
-  actions:
-  - action: script.morning_wakeup_report
 - id: '1763130989428'
   alias: Afvalbak
   description: ''
@@ -2445,10 +2245,385 @@
       response_variable: cleaned_briefing
       action: script.cleanup_text
     - data:
-        who: keuken
+        who: kitchen
         message: '{{ cleaned_briefing.text }}
 
           '
         msg_summary: the Morning Wakeup Report
         type: briefing
       action: script.speech_engine
+- id: '1767607622666'
+  alias: Lampen uit slapen
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - input_boolean.slapen
+    to:
+    - 'on'
+  conditions: []
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      label_id: slapen
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      label_id: slapen
+  mode: single
+- id: '1767635174622'
+  alias: Badkamer licht
+  description: ''
+  triggers:
+  - type: not_opened
+    device_id: 76edde770268a29cf8391d479d688099
+    entity_id: 1d8733dd03ff686fbb093def6132cc09
+    domain: binary_sensor
+    trigger: device
+    id: Deur dicht
+  - type: opened
+    device_id: 76edde770268a29cf8391d479d688099
+    entity_id: 1d8733dd03ff686fbb093def6132cc09
+    domain: binary_sensor
+    trigger: device
+    id: Deur open
+  - type: no_motion
+    device_id: 8389fde5eabdeefaea35308e569a0ada
+    entity_id: 4da371320f59213156f6e3fc0dccae4a
+    domain: binary_sensor
+    trigger: device
+    id: geen beweging
+  - type: motion
+    device_id: 8389fde5eabdeefaea35308e569a0ada
+    entity_id: 4da371320f59213156f6e3fc0dccae4a
+    domain: binary_sensor
+    trigger: device
+    id: beweging
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - Deur dicht
+      sequence:
+      - alias: Licht aan als het uit is
+        if:
+        - condition: device
+          type: is_off
+          device_id: 70953d558bc2f51623a437d5ea170b26
+          entity_id: 3aca527b7cd8c0f3b3813bc2cf9d8898
+          domain: light
+        then:
+        - type: turn_on
+          device_id: 70953d558bc2f51623a437d5ea170b26
+          entity_id: 3aca527b7cd8c0f3b3813bc2cf9d8898
+          domain: light
+      alias: Wanneer badkamer deur dicht is
+    - conditions:
+      - condition: and
+        conditions:
+        - type: is_no_motion
+          condition: device
+          device_id: 8389fde5eabdeefaea35308e569a0ada
+          entity_id: 4da371320f59213156f6e3fc0dccae4a
+          domain: binary_sensor
+        - condition: trigger
+          id:
+          - Deur open
+      sequence:
+      - alias: Licht uit als het aan is
+        if:
+        - condition: device
+          type: is_on
+          device_id: 70953d558bc2f51623a437d5ea170b26
+          entity_id: 3aca527b7cd8c0f3b3813bc2cf9d8898
+          domain: light
+        then:
+        - type: turn_off
+          device_id: 70953d558bc2f51623a437d5ea170b26
+          entity_id: 3aca527b7cd8c0f3b3813bc2cf9d8898
+          domain: light
+      alias: Wanneer badkamer deur open is en geen beweging
+    - conditions:
+      - condition: trigger
+        id:
+        - beweging
+      sequence:
+      - alias: Licht aan als het uit is
+        if:
+        - condition: device
+          type: is_off
+          device_id: 70953d558bc2f51623a437d5ea170b26
+          entity_id: 3aca527b7cd8c0f3b3813bc2cf9d8898
+          domain: light
+        then:
+        - type: turn_on
+          device_id: 70953d558bc2f51623a437d5ea170b26
+          entity_id: 3aca527b7cd8c0f3b3813bc2cf9d8898
+          domain: light
+    - conditions:
+      - condition: and
+        conditions:
+        - condition: trigger
+          id:
+          - geen beweging
+        - type: is_open
+          condition: device
+          device_id: 76edde770268a29cf8391d479d688099
+          entity_id: 1d8733dd03ff686fbb093def6132cc09
+          domain: binary_sensor
+      sequence:
+      - alias: Licht uit als het aan is
+        if:
+        - condition: device
+          type: is_on
+          device_id: 70953d558bc2f51623a437d5ea170b26
+          entity_id: 3aca527b7cd8c0f3b3813bc2cf9d8898
+          domain: light
+        then:
+        - type: turn_off
+          device_id: 70953d558bc2f51623a437d5ea170b26
+          entity_id: 3aca527b7cd8c0f3b3813bc2cf9d8898
+          domain: light
+      alias: Geen beweging en deur open
+  mode: single
+- id: '1767636988416'
+  alias: Morning light
+  description: ''
+  triggers:
+  - trigger: time
+    at: 06:25:00
+    weekday:
+    - tue
+    - wed
+    - thu
+    - mon
+    - fri
+  conditions: []
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    target:
+      entity_id: light.robb_smarrt_rob_200_014_0
+    data:
+      brightness_pct: 0
+  - action: light.turn_on
+    metadata: {}
+    target:
+      entity_id:
+      - light.robb_smarrt_rob_200_014_0
+    data:
+      brightness_pct: 100
+      transition: 600
+  mode: single
+- id: '1772028614936'
+  alias: Warmtepomp energie
+  description: ''
+  triggers:
+  - alias: zonproductie
+    trigger: numeric_state
+    entity_id:
+    - sensor.test_mean
+    above: 200
+  - trigger: numeric_state
+    entity_id:
+    - sensor.test_mean
+    below: -500
+    alias: zonproductie
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: and
+        conditions:
+        - condition: numeric_state
+          entity_id: climate.woonkamer
+          below: 21.5
+        - condition: numeric_state
+          entity_id: sensor.test_mean
+          below: -500
+          alias: Vermogen -500
+      sequence:
+      - action: climate.turn_on
+        metadata: {}
+        target:
+          entity_id: climate.woonkamer
+        data: {}
+      - action: climate.set_temperature
+        metadata: {}
+        target:
+          entity_id: climate.woonkamer
+        data:
+          temperature: 21.1
+      alias: Start met verwarmen
+    - conditions:
+      - alias: Vermogen 200
+        condition: numeric_state
+        entity_id: sensor.test_mean
+        above: 200
+      sequence:
+      - choose:
+        - conditions:
+          - condition: numeric_state
+            entity_id: climate.woonkamer
+            above: 20.9
+          sequence:
+          - action: climate.turn_off
+            metadata: {}
+            target:
+              entity_id: climate.woonkamer
+            data: {}
+      - action: climate.set_temperature
+        metadata: {}
+        target:
+          entity_id: climate.woonkamer
+        data:
+          temperature: 20.5
+      alias: Boven 200w
+  mode: single
+- id: '1772180209386'
+  alias: technischeruimte
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.technischeruimte_deur
+  - trigger: state
+    entity_id:
+    - binary_sensor.technischeruimte_deur
+    for:
+      hours: 0
+      minutes: 15
+      seconds: 0
+    id: deur status
+  - trigger: state
+    entity_id:
+    - binary_sensor.beweging_overloop_zolder
+    to:
+    - 'off'
+    for:
+      hours: 0
+      minutes: 15
+      seconds: 0
+    id: geen beweging
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: and
+        conditions:
+        - condition: trigger
+          id:
+          - geen beweging
+          - deur status
+        - condition: state
+          entity_id: binary_sensor.beweging_overloop_zolder
+          state:
+          - 'off'
+          for:
+            hours: 0
+            minutes: 14
+            seconds: 0
+        - condition: state
+          entity_id: binary_sensor.technischeruimte_deur
+          state: []
+          for:
+            hours: 0
+            minutes: 14
+            seconds: 0
+      sequence:
+      - type: turn_off
+        device_id: 261a0f35b007cda6107538b9de855a90
+        entity_id: 3dc57d85eb0c2b70b8fcea512f0b9963
+        domain: switch
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.technischeruimte_deur
+        state:
+        - 'on'
+      sequence:
+      - type: turn_on
+        device_id: 261a0f35b007cda6107538b9de855a90
+        entity_id: 3dc57d85eb0c2b70b8fcea512f0b9963
+        domain: switch
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.technischeruimte_deur
+        state:
+        - 'off'
+      sequence:
+      - type: turn_off
+        device_id: 261a0f35b007cda6107538b9de855a90
+        entity_id: 3dc57d85eb0c2b70b8fcea512f0b9963
+        domain: switch
+  mode: single
+- id: washer_running
+  alias: Washingmachine
+  description: ''
+  triggers:
+  - above: 1000
+    entity_id:
+    - sensor.technische_ruimte_wasmachine_vermogen
+    trigger: numeric_state
+    id: Verwarmen
+  - entity_id:
+    - sensor.technische_ruimte_wasmachine_vermogen
+    trigger: numeric_state
+    id: klaarVerwarmen
+    below: 500
+  - entity_id:
+    - sensor.technische_ruimte_wasmachine_vermogen
+    trigger: numeric_state
+    id: klaar
+    below: 5
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_select.washing_machine_status
+        state:
+        - Idle
+        - Finishing
+        - Clean
+      - condition: trigger
+        id:
+        - Verwarmen
+      sequence:
+      - action: input_select.select_option
+        target:
+          entity_id: input_select.washing_machine_status
+        data:
+          option: Running
+    - conditions:
+      - condition: trigger
+        id:
+        - klaarVerwarmen
+      - condition: state
+        entity_id: input_select.washing_machine_status
+        state:
+        - Running
+      sequence:
+      - action: input_select.select_option
+        target:
+          entity_id: input_select.washing_machine_status
+        data:
+          option: Finishing
+    - conditions:
+      - condition: trigger
+        id:
+        - klaar
+      - condition: state
+        entity_id: input_select.washing_machine_status
+        state:
+        - Finishing
+      sequence:
+      - action: input_select.select_option
+        target:
+          entity_id: input_select.washing_machine_status
+        data:
+          option: Clean

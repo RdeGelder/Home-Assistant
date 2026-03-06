@@ -1,0 +1,233 @@
+room_template:
+  template: setup
+  variables:
+    icon: mdi:monitor
+    light: light.zigbee_werkkamer
+    climate: climate.woonkamer
+    window_sensor: binary_sensor.badkamer
+    motion_sensor: binary_sensor.gang_beweging
+    media_player: media_player.woonkamer
+    navigation_path: "#livingroom"
+  icon: "[[[return variables.icon]]]"
+  label: "[[[return entity.state]]]"
+  show_label: true
+  show_state: false
+  tap_action:
+    action: navigate
+    navigation_path: "[[[return variables.navigation_path]]]"
+  hold_action:
+    action: call-service
+    service: light.toggle
+    service_data:
+      entity_id: "[[[return variables.light]]]"
+  double_tap_action:
+    action: toggle
+  state:
+    - value: "on"
+      label: |
+        [[[
+          return Math.round(states[variables.climate].attributes.current_temperature) + '°C'
+        ]]]
+      styles:
+        grid:
+          - grid-template-areas: "'icon2 . slider ''i l slider''n n slider'"
+          - grid-template-columns: 25px 1fr 30px
+          - grid-template-rows: 1fr min-content min-content
+      custom_fields:
+        slider:
+          card:
+            type: custom:button-card
+            entity: "[[[return variables.climate]]]"
+            show_label: true
+            show_name: false
+            show_icon: false
+            label: |
+              [[[
+                return Math.round(states[variables.climate].attributes.temperature)
+              ]]]
+            custom_fields:
+              minus:
+                card:
+                  type: custom:button-card
+                  icon: mdi:minus
+                  styles:
+                    icon:
+                      - width: 20px
+                      - color: var(--contrast20)
+                    card:
+                      - box-shadow: none
+                      - background: none
+                    tap_action:
+                      action: call-service
+                      service: climate.set_temperature
+                      service_data:
+                        entity_id: "[[[ return variables.climate]]]"
+                        temperature: |
+                          [[[
+                            return states[variables.climate].attributes.temperature + 0.5;
+                          ]]]
+              plus:
+                card:
+                  type: custom:button-card
+                  icon: mdi:plus
+                  styles:
+                    icon:
+                      - width: 20px
+                      - color: var(--contrast20)
+                    card:
+                      - box-shadow: none
+                      - background: none
+                    tap_action:
+                      action: call-service
+                      service: climate.set_temperature
+                      service_data:
+                        entity_id: "[[[ return variables.climate]]]"
+                        temperature: |
+                          [[[
+                            return states[variables.climate].attributes.temperature + 0.5;
+                          ]]]
+            styles:
+              grid:
+                - grid-template-areas: "'plus''l''minus'"
+                - grid-template-columns: 1fr
+                - grid-template-rows: min-content 1fr min-content
+              card:
+                - background-color: var(--contrast1)
+                - padding: 5px
+                - border-raduis: 12px
+                - height: 100px
+                - width: 26px
+              label:
+                - font-weight: 500
+                - font-size: 8px
+                - color: var(--contrast2)
+    - value: "off"
+      label: |
+        [[[
+          if (states[variables.light].state == "on") return Math.round(states[variables.light].attributes.brightness/255*100) + "%"
+          else return Math.round(states[variables.climate].attributes.current_temperature) + '°C'
+        ]]]
+      styles:
+        grid:
+          - grid-template-areas: "'icon2 . slider ''i l slider''n n slider'"
+          - grid-template-columns: 25px 1fr 30px
+          - grid-template-rows: 1fr min-content min-content
+      custom_fields:
+        slider:
+          card:
+            type: custom:my-slider-v2
+            entity: "[[[return variables.light]]]"
+            colorMode: brightness
+            vertical: true
+            styles:
+              container:
+                - background: none
+                - border-radius: 100px
+              card:
+                - height: 100px
+                - width: 26px
+                - background: |
+                    [[[
+                      if (states[variables.light].state == "on") return "linear-gradient(0deg, rgba(255,255,255, 0.3) 0%, rgba(255,255,255, 1) 100%)";
+                      else return "var(--contrast1)";
+                    ]]]
+              track:
+                - overflow: visible
+                - background: none
+              progress:
+                - background: none
+              thumb:
+                - background: |
+                    [[[
+                      if (states[variables.light].state == "on") return "var(--black)";
+                      else return "var(--contrast20)";
+                    ]]]
+                - height: 4px
+                - top: 0px
+                - width: 26px
+                - border-radius: 0px
+  custom_fields:
+    icon2:
+      card:
+        type: custom:button-card
+        icon: >
+          [[[ if(states[variables.window_sensor].state == "on") return
+          "mdi:window-open-variant";
+              else if(states[variables.media_player].state == "playing") return "mdi:music"; 
+              else if(states[variables.motion_sensor].state == "on") return "mdi:motion-sensor"; 
+              else if(entity.state == "on") return "mdi:thermostat"; 
+              else return "mdi:lightbulb";
+          ]]]
+        styles:
+          card:
+            - background-color: >
+                [[[ if(states[variables.window_sensor].state == "on") return
+                "var(--red)";
+                      else if(states[variables.media_player].state == "playing") return "var(--green)"; 
+                      else if(states[variables.motion_sensor].state == "on") return "var(--orange)"; 
+                      else return "var(--contrast1)";
+                ]]]
+            - width: 35px
+            - height: 35px
+          icon:
+            - width: 20px
+            - color: >
+                [[[ if(states[variables.window_sensor].state == "on") return
+                "var(--black)";
+                      else if(states[variables.media_player].state == "playing") return "var(--black)"; 
+                      else if(states[variables.motion_sensor].state == "on") return "var(--black)"; 
+                      else return "var(--contrast20)";
+                  ]]]
+
+  styles:
+    grid:
+      - grid-template-areas: "'icon2 . . ''i l l''n n n'"
+      - grid-template-columns: 25px 1fr 1fr
+      - grid-template-rows: 1fr min-content min-content
+    card:
+      - height: 130px
+      - background-color: |
+          [[[ if(states[variables.light].state == "on") return "var(--yellow)";
+            else return "var(--contrast2)";
+          ]]]
+      - back-shadow: none
+      - padding: 10px 10px 14px 14px
+    icon:
+      - width: 25px
+      - padding-top: 10px
+      - margin-top: 7px
+      - color: |
+          [[[
+          if(states[variables.light].state == "on") return "var(--black)";
+          else return "var(--contrast20)";
+          ]]]
+    img_cell:
+      - justify-content: flex-start
+    name:
+      - justify-self: start
+      - font-size: 11px
+      - margin-buttom: 3px
+      - color: |
+          [[[
+          if(states[variables.light].state == "on") return "var(--black)";
+          else return "var(--contrast20)";
+          ]]]
+    label:
+      - justify-self: start
+      - font-size: 25px
+      - margin-top: 11px
+      - padding-top: 10px
+      - padding-left: 7px
+      - font-weight: 300
+      - color: |
+          [[[
+          if(states[variables.light].state == "on") return "var(--black)";
+          else return "var(--contrast20)";
+          ]]]
+    custom-fields:
+      icon2:
+        - margin-top: "-10px"
+        - margin-left: "-5px"
+        - justify-self: start
+        - align-self: center
+        - widht: 24px

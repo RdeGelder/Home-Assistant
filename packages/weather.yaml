@@ -32,3 +32,36 @@ command_line:
         - data
       value_template: "last_changed: {{states.sensor.forecast_buienradar_min.last_changed | default(now())}}"
       scan_interval: 240
+template:
+  - sensor:
+      - name: sun_status
+        state: >-
+          {%- if is_state('sun.sun', 'below_horizon') -%}
+            Je hebt  
+            {%- set seconds = as_timestamp(states.sun.sun.attributes.next_rising)-now().timestamp() -%}
+            {% set hours = seconds / 60 -%}
+            {%- if seconds / ( 60 * 60 ) > 1 -%}
+              {{""}} {{ (seconds //  ( 60 * 60 )) | int }} hours
+            {%- else -%}
+              {{""}} {{ (seconds // 60) | int }} minutes
+            {%- endif -%}
+            {{ [
+              ' totdat de zon opkomt.',
+              ' totdat zonsopkomst officieel start.',
+              ' voor zonopkomst. '
+            ]|random }}
+          {%- else %}
+            You have 
+            {%- set seconds = as_timestamp(states.sun.sun.attributes.next_setting)-now().timestamp() %}
+            {%- set hours = seconds / 60 -%}
+            {%- if seconds / ( 60 * 60 ) > 1 -%}
+              {{""}} {{ (seconds //  ( 60 * 60 )) | int }} hours
+            {%- else -%}
+              {{""}} {{ (seconds // 60) | int }} minutes
+            {%- endif -%}
+            {{ [
+              ' totdat de zon onder is voor vandaag.',
+              ' totdat de zonondergang is geweest.',
+              ' voordat de zon officeel ondergaat. '
+            ]|random }}
+          {%- endif -%}

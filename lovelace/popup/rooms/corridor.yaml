@@ -1,0 +1,74 @@
+- type: custom:bubble-card
+  card_type: pop-up
+  name: Corridor
+  icon: mdi:door
+  hash: '#corridor'
+  button_type: name
+  sub_button: []
+- type: custom:mushroom-chips-card
+  chips:
+    - type: entity
+      entity: binary_sensor.gang_beweging
+      icon_color: yellow
+      content_info: last-changed
+      icon: mdi:motion-sensor
+    - type: entity
+      entity: sensor.gang_beweging_licht
+      icon_color: yellow
+      icon: mdi:brightness-5
+  alignment: center
+- square: false
+  type: grid
+  cards:
+    - type: heading
+      icon: mdi:lightbulb-group
+      heading: Lights
+      heading_style: subtitle
+      badges:
+        - type: entity
+          show_state: false
+          show_icon: true
+          entity: light.gang_plafond
+          color: yellow
+          tap_action:
+            action: toggle
+        # - type: entity
+        #   entity: switch.adaptive_lighting_corridor
+        #   show_icon: true
+        #   show_state: false
+        #   color: orange
+        #   tap_action:
+        #     action: toggle
+        # - type: entity
+        #   entity: switch.adaptive_lighting_adapt_color_corridor
+        #   show_state: false
+        #   show_icon: true
+        #   color: pink
+        #   tap_action:
+        #     action: toggle
+        # - type: entity
+        #   entity: switch.adaptive_lighting_adapt_brightness_corridor
+        #   show_state: false
+        #   show_icon: true
+        #   color: yellow
+        #   tap_action:
+        #     action: toggle
+        # - type: entity
+        #   entity: switch.adaptive_lighting_sleep_mode_corridor
+        #   show_state: false
+        #   show_icon: true
+        #   color: blue
+        #   tap_action:
+        #     action: toggle
+    - square: false
+      columns: 2
+      type: grid
+      cards:
+        - type: custom:button-card
+          name: Spot 1
+          entity: light.gang_plafond
+          template: light
+        - type: custom:button-card
+          name: Spot 1
+          entity: light.licht_voor
+          template: light

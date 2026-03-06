@@ -62,3 +62,29 @@ script:
             "{% if target_player is not none %}\n  {{ target_player }}\n{% endif
             %}\n"
     description: ""
+
+
+automation:
+- id: '1760706991041'
+  alias: Join music
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.slaapkamer_multisensor_slaapkamer_pir_sensor
+    id: Werkkamer beweging
+    to: 'on'
+    alias: Werkkamer beweging
+  - type: motion
+    device_id: 218bf4e29ea2fb6bfe9c99b9e91db680
+    entity_id: 8411400df35c752762047f0d8f942acf
+    domain: binary_sensor
+    trigger: device
+    id: keuken beweging
+    alias: keuken beweging
+  conditions:
+  - condition: and
+    conditions:
+    - condition: state
+      entity_id: input_boolean.follow_music
+      state: 'on'

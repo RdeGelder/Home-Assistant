@@ -116,7 +116,7 @@
       - 0.387
       off_with_transition: false
       off_brightness:
-      friendly_name: Woonkamer houtspot
+      friendly_name: Houtspot
       supported_features: 40
       state: 'on'
     light.woonkamer_kleurenspot:
@@ -132,7 +132,7 @@
       - xy
       effect: 'off'
       color_mode: color_temp
-      brightness: 128
+      brightness: 59
       color_temp_kelvin: 2564
       color_temp: 390
       hs_color:
@@ -147,6 +147,7 @@
       - 0.389
       off_with_transition: false
       off_brightness:
+      icon: mdi:light-flood-up
       friendly_name: Woonkamer kleurenspot
       supported_features: 44
       state: 'on'
@@ -154,9 +155,10 @@
       supported_color_modes:
       - brightness
       color_mode: brightness
-      brightness: 51
+      brightness: 31
       off_with_transition: false
       off_brightness:
+      icon: mdi:lightbulb-outline
       friendly_name: Woonkamer olielamp
       supported_features: 40
       state: 'on'
@@ -164,12 +166,15 @@
       supported_color_modes:
       - brightness
       color_mode: brightness
-      brightness: 41
+      brightness: 10
       off_with_transition: false
       off_brightness:
       friendly_name: Woonkamer servieskast
       supported_features: 40
       state: 'on'
+    switch.woonkamer_pompoen:
+      friendly_name: Woonkamer pompoen
+      state: 'off'
   metadata: {}
 - id: '1756833050091'
   name: Woonkamer dag

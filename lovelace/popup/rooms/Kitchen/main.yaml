@@ -1,0 +1,439 @@
+- type: custom:bubble-card
+  card_type: pop-up
+  name: Kitchen
+  icon: mdi:silverware-variant
+  hash: "#kitchen"
+  button_type: name
+  sub_button:
+    main: []
+    bottom: []
+- type: custom:mushroom-chips-card
+  chips:
+    - type: entity
+      entity: binary_sensor.lumi_lumi_motion_ac02
+      icon_color: yellow
+      content_info: last-changed
+      icon: mdi:motion-sensor
+    - type: entity
+      entity: binary_sensor.keuken_raam_openen
+      icon_color: red
+      icon: mdi:window-closed-variant
+  alignment: center
+- type: heading
+  icon: mdi:thermostat
+  heading: Climate
+  heading_style: title
+  badges: null
+- type: heading
+  icon: mdi:devices
+  heading: Devices
+  heading_style: title
+  badges:
+    - type: entity
+      show_state: false
+      show_icon: true
+      entity: automation.keuken_licht_beweging
+      icon: mdi:light-switch
+      color: red
+      tap_action:
+        action: toggle
+- square: false
+  columns: 2
+  type: grid
+  cards:
+    - type: custom:button-card
+      entity: input_select.dishwasher_status
+      name: |
+        [[[
+          if (states['input_select.dishwasher_status'].state == 'Clean') {
+            return 'Dishwasher';
+          } else {
+            return 'Dishwasher' + " (" + states['sensor.keuken_vaatwasser_vermogen'].state + " w)";
+          }
+        ]]]
+      icon: |
+        [[[
+          if (states['input_select.dishwasher_status'].state == 'Idle') {
+            return 'mdi:dots-circle';
+          } else if (states['input_select.dishwasher_status'].state == 'Running') {
+            return 'mdi:circle-half-full';
+          } else if (states['input_select.dishwasher_status'].state == 'Clean') {
+            return 'mdi:dishwasher';
+          } else if (states['input_select.dishwasher_status'].state == 'Dirty') {
+            return 'mdi:dishwasher-Dirty';
+          }
+        ]]]
+      show_name: true
+      show_icon: true
+      show_label: true
+      show_state: false
+      tap_action:
+        action: more-info
+      hold_action:
+        action: more-info
+      double_tap_action:
+        action: call-service
+        service: input_boolean.turn_off
+        service_data:
+          entity_id: input_boolean.chores_dishwasher
+      label: |
+        [[[
+          if (states['input_select.dishwasher_status'].state == 'Idle') {
+            return 'Idle';
+          } else if (states['input_select.dishwasher_status'].state == 'Running') {
+            return 'Running';
+          } else if (states['input_select.dishwasher_status'].state == 'Clean') {
+            return 'Clean';
+          } else if (states['input_select.dishwasher_status'].state == 'Dirty') {
+            return 'Dirty';
+          }
+        ]]]
+      custom_fields:
+        bar: |
+          [[[
+            var color = "var(--green)";
+            var state = 100 - 8; 
+            if (state < 10) color = "var(--red)";
+            else if (state < 50) color = "var(--yellow)";
+            else if (state < 90) color = "var(--orange)";
+            return `
+            <div>
+            <div style="background:${color}; height: 12px; width:${state}%">
+            </div>
+            </div>`
+          ]]]
+        rem:
+          card:
+            type: conditional
+            conditions:
+              - condition: state
+                entity: input_select.dishwasher_status
+                state: Running
+            card:
+              type: custom:button-card
+              entity: timer.dishwasher_timer
+              name: |
+                [[[
+                  var nu = new Date()
+                  var endTime = new Date(states['timer.dishwasher_timer'].attributes.finishes_at);
+                  var remainingTime = Math.round((endTime - nu) /1000/60);
+                  return `${remainingTime}min`;
+                ]]]
+              show_icon: false
+              styles:
+                card:
+                  - width: min
+                  - background: none
+                  - overflow: visible
+                  - box-shadow: none
+                name:
+                  - font-size: 12px
+                  - color: var(--black)
+                  - font-weight: 500
+        start:
+          card:
+            type: conditional
+            conditions:
+              - condition: state
+                entity: input_select.dishwasher_status
+                state: Running
+            card:
+              type: custom:button-card
+              entity: timer.dishwasher_timer
+              name: |
+                [[[
+                   var endTime = states['timer.dishwasher_timer'].attributes.finishes_at;
+                   var duration = states['timer.dishwasher_timer'].attributes.duration;
+                   var start = Date(endTime - duration);
+                   // Extract time from the end time
+                   var time = new Date(start).toLocaleTimeString('nl-NL', {hour: '2-digit', minute: '2-digit', hour12: false});
+                   return `${time} Uur`;
+                ]]]
+              show_icon: false
+              styles:
+                card:
+                  - width: min
+                  - padding: 5px
+                  - background: none
+                  - box-shadow: none
+                name:
+                  - font-size: 12px
+                  - color: var(--black)
+        end:
+          card:
+            type: conditional
+            conditions:
+              - condition: state
+                entity: input_select.dishwasher_status
+                state: Running
+            card:
+              type: custom:button-card
+              entity: timer.dishwasher_timer
+              name: |
+                [[[
+                  var endTime = states['timer.dishwasher_timer'].attributes.finishes_at;
+                  // Extract time from the end time
+                  var time = new Date(endTime).toLocaleTimeString('nl-NL', {hour: '2-digit', minute: '2-digit', hour12: false});
+                  return `${time} Uur`;
+                ]]]
+              show_icon: false
+              styles:
+                card:
+                  - width: min
+                  - padding: 5px
+                  - background: none
+                  - box-shadow: none
+                name:
+                  - font-size: 12px
+                  - color: var(--black)
+        icon1:
+          card:
+            type: custom:button-card
+            icon: mdi:dishwasher
+            styles:
+              card:
+                - background-color: var(--contrast1)
+                - width: 30px
+                - height: 30px
+              icon:
+                - width: 18px
+                - color: var(--contrast20)
+      styles:
+        grid:
+          - grid-template-areas: '". icon1" "l l" "n icon2" "rem icon2" "bar bar" "start end"'
+          - grid-template-rows: 24px 1fr 24px min-content min-content min-content
+          - grid-template-columns: 60% 40%
+        card:
+          - height: 100%
+          - padding: 1rem
+          - background: |
+              [[[
+                if (entity.state == 'Clean') {
+                  return 'var(--green)';
+                } else if (entity.state == 'Running') {
+                  return 'var(--blue)';
+                } else if (entity.state == 'Idle') {
+                  return 'var(--yellow)';
+                } else if (entity.state == 'Dirty') {
+                  return 'var(--contrast2)';
+                } else {
+                  return 'var(--primary-text-color)';
+                }
+              ]]]
+        img_cell:
+          - position: absolute
+          - top: 20%
+          - left: 40%
+          - overflow: visible
+        icon:
+          - position: absolute
+          - width: 20em
+          - opacity: 20%
+          - color: |
+              [[[
+                if (entity.state == 'Clean') {
+                  return 'var(--black)';
+                } else if (entity.state == 'Running') {
+                  return 'var(--black)';
+                } else if (entity.state == 'Idle') {
+                  return 'var(--black)';
+                } else if (entity.state == 'Dirty') {
+                  return 'var(--contrast20)';
+                } else {
+                  return 'var(--primary-background-color)';
+                }
+              ]]]
+          - transform: rotate(-20deg)
+          - animation: |
+              [[[
+                if (states['input_select.dishwasher_status'].state == 'Clean') {
+                  return 'null';
+                } else if (states['input_select.dishwasher_status'].state == 'Idle') {
+                  return 'blink 1.5s linear infinite';
+                } else if (states['input_select.dishwasher_status'].state == 'Running') {
+                  return 'rotating 2s linear infinite';
+                }
+              ]]]
+        label:
+          - text-align: left
+          - font-size: 18px
+          - font-weight: 500
+          - justify-self: start
+          - align-self: end
+          - overflow: visible
+          - color: |
+              [[[
+                if (entity.state == 'Clean') {
+                  return 'var(--black)';
+                } else if (entity.state == 'Running') {
+                  return 'var(--black)';
+                } else if (entity.state == 'Idle') {
+                  return 'var(--black)';
+                } else if (entity.state == 'Dirty') {
+                  return 'var(--contrast20)';
+                } else {
+                  return 'var(--primary-background-color)';
+                }
+              ]]]
+        name:
+          - text-align: left
+          - font-size: 12px
+          - opacity: 0.7
+          - justify-self: start
+          - align-self: center
+          - overflow: visible
+          - color: |
+              [[[
+                if (entity.state == 'Clean') {
+                  return 'var(--black)';
+                } else if (entity.state == 'Running') {
+                  return 'var(--black)';
+                } else if (entity.state == 'Idle') {
+                  return 'var(--black)';
+                } else if (entity.state == 'Dirty') {
+                  return 'var(--contrast20)';
+                } else {
+                  return 'var(--primary-background-color)';
+                }
+              ]]]
+        custom_fields:
+          bar:
+            - justify-self: start
+            - width: 100%
+            - height: |
+                [[[
+                  if (entity.state == 'Running') {
+                    return '12px';
+                  } else {
+                    return '0px';
+                  }
+                ]]]
+            - background: var(--contrast1)
+            - border-radius: 24px
+          end:
+            - justify-self: end
+          start:
+            - justify-self: start
+          rem:
+            - justify-self: start
+            - align-self: end
+            - height: |
+                [[[
+                  if (entity.state == 'Running') {
+                    return '27px';
+                  } else {
+                    return '0px';
+                  }
+                ]]]
+          icon1:
+            - justify-self: end
+            - width: 24px
+            - color: |
+                [[[
+                  if (entity.state == 'Clean') {
+                    return 'var(--black)';
+                  } else if (entity.state == 'Running') {
+                    return 'var(--black)';
+                  } else if (entity.state == 'Idle') {
+                    return 'var(--black)';
+                  } else if (entity.state == 'Dirty') {
+                    return 'var(--contrast20)';
+                  } else {
+                    return 'var(--primary-background-color)';
+                  }
+                ]]]
+          icon2:
+            - justify-self: end
+            - align-self: end
+            - width: 24px
+            - color: |
+                [[[
+                  if (entity.state == 'Clean') {
+                    return 'var(--black)';
+                  } else if (entity.state == 'Running') {
+                    return 'var(--black)';
+                  } else if (entity.state == 'Idle') {
+                    return 'var(--black)';
+                  } else if (entity.state == 'Dirty') {
+                    return 'var(--contrast20)';
+                  } else {
+                    return 'var(--primary-background-color)';
+                  }
+                ]]]
+        hold_action:
+          action: more-info
+- type: custom:button-card
+  entity: alarm_control_panel.home_alarm
+  name: Securit System
+  icon: mdi:security
+  show_state: true
+  tap_action:
+    action: more-info
+  state:
+    - value: arming
+      styles:
+        icon:
+          - animation: blink 2s ease infinite
+    - value: disarmed
+      styles:
+        card:
+          - background: var(--red)
+        icon:
+          - animation: blink 2s ease infinite
+          - color: var(--black)
+        name:
+          - color: var(--black)
+        state:
+          - color: var(--black)
+  styles:
+    grid:
+      - grid-template-areas: "'i i' 's tile' 'n tile' 'n tile'"
+      - grid-template-columns: 1fr min-content
+      - grid-template-rows: 1fr min-content min-content min-content
+    card:
+      - padding: 18px
+      - background: var(--popupBG)
+      - height: 100px
+    icon:
+      - color: var(--gray800)
+      - width: 24px
+      - height: 24px
+    state:
+      - justify-self: start
+      - font-size: 14px
+      - margin: 8px 0 2px 0
+      - color: var(--gray800)
+    name:
+      - color: var(--gray700)
+      - justify-self: start
+      - font-size: 12px
+      - margin: 2px 0 2px 0
+    img_cell:
+      - justify-self: start
+      - width: 24px
+      - height: 24px
+  border-width: 0px;
+  custom_fields:
+    tile:
+      card:
+        type: tile
+        entity: "[[[ return entity.entity_id]]]"
+        features:
+          - type: alarm-modes
+            modes:
+              - armed_home
+              - armed_away
+              - disarmed
+        card_mod:
+          style:
+            .: |
+              ha-card .content{
+                display: none;
+                } ha-card {
+                  width: 200px;
+                  border-width: 0px;
+                  background: transparent;
+                  border-radius: 0px;
+                } ha-card.active{
+                  height: 40px;
+              }

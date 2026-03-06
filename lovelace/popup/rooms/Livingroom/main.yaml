@@ -1,0 +1,293 @@
+- type: custom:bubble-card
+  card_type: pop-up
+  name: Living room
+  icon: mdi:sofa-outline
+  hash: "#living-room"
+  button_type: name
+  card_layout: large
+# - type: custom:mushroom-chips-card
+#   chips:
+#     - type: entity
+#       entity: binary_sensor.living_room_presence_sensor_occupancy
+#       icon_color: yellow
+#       content_info: last-changed
+#       icon: mdi:motion-sensor
+#     - type: entity
+#       entity: binary_sensor.living_room_window_door_sensor
+#       icon_color: red
+#       icon: mdi:window-closed-variant
+#   alignment: center
+- type: heading
+  icon: mdi:thermostat
+  heading: Climate
+  heading_style: title
+  badges:
+    - type: entity
+      show_state: true
+      show_icon: true
+      entity: sensor.buitenmeter_voor_temperatuur
+      color: red
+      tap_action:
+        action: more-info
+    - type: entity
+      show_state: true
+      show_icon: true
+      entity: sensor.buitenmeter_voor_luchtvochtigheid
+      color: blue
+      tap_action:
+        action: more-info
+- type: custom:bubble-card
+  card_type: climate
+  entity: climate.woonkamer
+  sub_button:
+    - name: HVAC modes menu
+      select_attribute: hvac_modes
+      state_background: false
+      show_arrow: false
+  show_state: true
+- type: heading
+  icon: mdi:devices
+  heading: Devices
+  heading_style: title
+  badges:
+    #     - type: entity
+    #       show_state: false
+    #       show_icon: true
+    #       entity: switch.camera_living_room
+    #       icon: mdi:cctv
+    #       color: red
+    #       tap_action:
+    #         action: toggle
+    #     - type: entity
+    #       show_state: false
+    #       show_icon: true
+    #       entity: input_boolean.living_room_occupancy
+    #       icon: mdi:light-switch
+    #       color: red
+    #       tap_action:
+    #         action: toggle
+    - type: entity
+      show_state: false
+      show_icon: true
+      entity: input_boolean.slapen
+      color: blue
+      tap_action:
+        action: toggle
+  # - square: false
+  #   columns: 2
+  #   type: grid
+  #   cards:
+  #     - type: custom:button-card
+  #       entity: select.harmony_hub_activities
+  #       template: nav_button
+  #       name: TV Remote
+  #       label: >-
+  #         [[[return
+  #         states["remote.harmony_hub"].attributes.current_activity]]]
+  #       variables:
+  #         navigation_path: home#remote
+  #       state:
+  #         - value: power_off
+  #           label: "Off"
+  #           icon: mdi:television-off
+  #         - value: Smart TV
+  #           label: SmartTV
+  #           icon: mdi:television-guide
+  #           styles:
+  #             card:
+  #               - background-color: var(--green)
+  #             icon:
+  #               - color: var(--black)
+  #             name:
+  #               - color: var(--black)
+  #             label:
+  #               - color: var(--black)
+  #         - value: Netflix
+  #           label: Netflix
+  #           icon: mdi:netflix
+  #           styles:
+  #             card:
+  #               - background-color: var(--red)
+  #             icon:
+  #               - color: var(--black)
+  #             name:
+  #               - color: var(--black)
+  #             label:
+  #               - color: var(--black)
+  #         - value: Playstation
+  #           label: PS5
+  #           icon: mdi:sony-playstation
+  #           styles:
+  #             card:
+  #               - background-color: var(--blue)
+  #             icon:
+  #               - color: var(--black)
+  #             name:
+  #               - color: var(--black)
+  #             label:
+  #               - color: var(--black)
+  #         - value: Nintendo Switch
+  #           label: Switch
+  #           icon: mdi:nintendo-switch
+  #           styles:
+  #             card:
+  #               - background-color: var(--red)
+  #             icon:
+  #               - color: var(--black)
+  #             name:
+  #               - color: var(--black)
+  #             label:
+  #               - color: var(--black)
+  #         - value: Bluetooth
+  #           label: Bluetooth
+  #           icon: mdi:bluetooth
+  #           styles:
+  #             card:
+  #               - background-color: var(--blue)
+  #             icon:
+  #               - color: var(--black)
+  #             name:
+  #               - color: var(--black)
+  #             label:
+  #               - color: var(--black)
+  #     - type: custom:button-card
+  #       template: switch_template
+  #       entity: switch.ps5_343_power
+  #       label: >-
+  #         [[[return
+  #         states["sensor.ps5_343_activity"].attributes.activity]]]
+  #       name: Playstation 5
+  #       variables:
+  #         icon_on: mdi:sony-playstation
+  #         icon_off: mdi:sony-playstation
+  #         color: var(--blue)
+  #       tap_action:
+  #         action: call-service
+  #         service: switch.toggle
+  #         service_data:
+  #           entity_id:
+  #             - switch.harmony_hub_playstation
+  #             - switch.ps5_343_power
+  #         haptic: success
+  # - square: false
+  #   type: grid
+  #   cards:
+  #     - type: heading
+  #       icon: mdi:lightbulb-group
+  #       heading: Lights
+  #       heading_style: subtitle
+  #       badges:
+  #         - type: entity
+  #           show_state: false
+  #           show_icon: true
+  #           entity: light.living_room_lights
+  #           color: yellow
+  #           tap_action:
+  #             action: toggle
+  #         - type: entity
+  #           entity: switch.adaptive_lighting_living_room
+  #           show_state: false
+  #           show_icon: true
+  #           color: orange
+  #           tap_action:
+  #             action: toggle
+  #         - type: entity
+  #           entity: switch.adaptive_lighting_adapt_color_living_room
+  #           show_state: false
+  #           show_icon: true
+  #           color: pink
+  #           tap_action:
+  #             action: toggle
+  #         - type: entity
+  #           entity: switch.adaptive_lighting_adapt_brightness_living_room
+  #           show_state: false
+  #           show_icon: true
+  #           color: yellow
+  #           tap_action:
+  #             action: toggle
+  #         - type: entity
+  #           entity: switch.adaptive_lighting_sleep_mode_living_room
+  #           show_state: false
+  #           show_icon: true
+  #           color: blue
+  #           tap_action:
+  #             action: toggle
+  #     - square: false
+  #       columns: 2
+  #       type: grid
+  #       cards:
+  #         - type: custom:button-card
+  #           name: Top Light
+  #           template: light_rgb
+  #           entity: light.living_room_light
+  #           double_tap_action:
+  #             action: call-service
+  #             service: script.turn_light_to_random_color
+  #             data:
+  #               target: "[[[ return entity.entity_id ]]]"
+  #             haptic: success
+  #         - type: custom:button-card
+  #           name: Lightstrip
+  #           template: light_rgb
+  #           entity: light.living_room_lightstrip
+  #           double_tap_action:
+  #             action: call-service
+  #             service: script.turn_light_to_random_color
+  #             data:
+  #               target: "[[[ return entity.entity_id ]]]"
+  #             haptic: success
+  #         - type: custom:button-card
+  #           name: Couch Lights
+  #           entity: light.living_room_christmas_light
+  #           template: light_switch
+  #         - type: custom:button-card
+  #           name: Lava Lamp
+  #           entity: light.lava_lamp
+  #           template: light_switch
+  #         - type: custom:button-card
+  #           name: Bowl Lamp
+  #           template: light_rgb
+  #           entity: light.bowl_lamp
+  #           tap_action:
+  #             action: toggle
+  #             haptic: medium
+  #           hold_action:
+  #             action: more-info
+  #             haptic: medium
+  #         - type: custom:button-card
+  #           name: Ball Lamp
+  #           template: light_rgb
+  #           entity: light.ball_lamp
+  #           double_tap_action:
+  #             action: call-service
+  #             service: script.turn_light_to_random_color
+  #             data:
+  #               target: "[[[ return entity.entity_id ]]]"
+  #             haptic: success
+  #         - type: custom:button-card
+  #           name: TV Backlight
+  #           template: light_rgb
+  #           entity: light.dreamview_tv
+  columns: 1
+- type: heading
+  icon: mdi:music
+  heading: Media
+  heading_style: title
+- type: custom:swipe-card
+  card_width: calc(100% - 48px)
+  parameters:
+    centeredSlides: true
+    slidesPerView: auto
+    spaceBetween: 16
+    initialSlide: 0
+  cards:
+    - type: conditional
+      conditions:
+        - entity: media_player.livingroom
+          state_not: standby
+        - entity: media_player.livingroom
+          state_not: "off"
+      card:
+        type: custom:button-card
+        entity: media_player.livingroom
+        template: custom_card_mediaplayer_music

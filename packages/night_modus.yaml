@@ -1,0 +1,12 @@
+input_boolean:
+  night_mode:
+    name: Night Mode
+  office_night_mode:
+    name: Office Night Mode
+  livinroom_night_mode:
+    name: Livingroom Night Mode
+  kitchen_night_mode:
+    name: Kitchen Night Mode
+  bedroom_night_mode:
+    name: Bedroom Night Mode
+  

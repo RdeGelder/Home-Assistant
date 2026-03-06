@@ -1,0 +1,487 @@
+- type: grid
+  cards:
+    - type: vertical-stack
+      cards:
+        - type: custom:bubble-card
+          card_type: pop-up
+          name: People
+          icon: mdi:account-group
+          hash: "#user"
+          button_type: name
+        - square: false
+          columns: 2
+          type: grid
+          cards:
+            - type: custom:button-card
+              name: Ruben
+              show_name: false
+              show_state: false
+              show_icon: true
+              show_entity_picture: true
+              entity: person.ruben
+              state:
+                - value: not_home
+                  styles:
+                    entity_picture:
+                      - filter: grayscale(100%)
+              tap_action:
+                action: more-info
+              icon: mdi:bed-king-outline
+              styles:
+                card:
+                  - background-color: var(--contrast2)
+                  - padding: 10px 0px 10px 10px
+                grid:
+                  - grid-template-areas: '"name name btn" "state btn1 btn" "icon btn1 btn"'
+                  - grid-template-columns: 3fr min-content min-content
+                  - grid-template-rows: 1em 1em 1fr
+                img_cell:
+                  - justify-content: start
+                  - position: absolute
+                  - width: 90px
+                  - height: 90px
+                  - left: 0
+                  - bottom: 0
+                  - margin: 0 0 -10px -10px
+                  - border-radius: 500px
+                  - border: |
+                      [[[
+                        if (entity.state == 'home') {
+                          return '2px solid var(--green)';
+                        } else {
+                          return 'none';
+                        }
+                      ]]]
+                entity_picture:
+                  - justify-content: start
+                  - position: absolute
+                  - width: 90px
+                  - height: 90px
+                  - left: 0
+                  - bottom: 0
+                  - margin: 0 0 0 0
+                  - border-radius: 500px
+                  - opacity: |
+                      [[[
+                        if (entity.state == 'not_home') {
+                          return '0.7';
+                        } else {
+                          return '1';
+                        }
+                      ]]]
+                icon:
+                  - width: 45px
+                  - color: var(--contrast1)
+                custom_fields:
+                  name:
+                    - align-self: start
+                    - justify-self: start
+                    - background: none
+                    - padding: 5px
+                  state:
+                    - align-self: start
+                    - justify-self: start
+                    - background: none
+                    - padding: 5px
+                    - margin-top: 5px
+                  btn1:
+                    - align-self: end
+                    - justify-self: end
+                    - padding-right: 8px
+                  btn:
+                    - align-self: end
+                    - justify-self: end
+                    - padding-right: 5px
+                  icon:
+                    - align-self: start
+                    - justify-self: start
+              custom_fields:
+                name:
+                  card:
+                    type: custom:button-card
+                    name: Ruben
+                    styles:
+                      card:
+                        - color: var(--contrast20)
+                        - font-size: 18px
+                        - font-weight: 500
+                        - background: none
+                state:
+                  card:
+                    type: custom:button-card
+                    entity: person.ruben
+                    show_icon: false
+                    name: |
+                      [[[ 
+                        return states['person.ruben'].state;
+                      ]]]
+                    state:
+                      - value: home
+                        name: Home
+                      - value: not_home
+                        name: Away
+                    styles:
+                      card:
+                        - color: var(--contrast20)
+                        - font-size: 13px
+                        - background: none
+                        - opacity: "0.7"
+                btn:
+                  card:
+                    type: custom:mushroom-chips-card
+                    chips:
+                      - type: entity
+                        tap_action:
+                          action: more-info
+                        entity: sensor.ruben_mobiel_battery_level_2
+                        content_info: none
+                        card_mod:
+                          style: |
+                            ha-card {
+                              --chip-background: {{ 'var(--contrast1)' if states('sensor.ruben_mobiel_battery_level_2') | float > 10  else 'var(--red)' }};
+                              --color: {{ 'var(--contrast20)' if states('sensor.ruben_mobiel_battery_level_2') | float > 10  else 'var(--black)' }};
+                              padding: 0px!important;
+                              border-radius: 100px!impportant;
+                              --primary-text-color: var(--contrast20);
+                      - type: entity
+                        tap_action:
+                          action: navigate
+                          navigation_path: steps
+                        entity: sensor.ruben_garmin_total_steps
+                        content_info: none
+                        card_mod:
+                          style: |
+                            ha-card {
+                              --chip-background: {{ 'var(--green)' if states('sensor.ruben_garmin_total_steps') | float > states('sensor.marit_garmin_total_steps') | float  else 'var(--red)' }};
+                              --color: var(--black);
+                              padding: 0px!important;
+                              border-radius: 100px!impportant;
+                              --primary-text-color: var(--contrast20);
+                      - type: entity
+                        tap_action:
+                          action: more-info
+                        entity: sensor.home_julian_direction_of_travel
+                        content_info: none
+                        card_mod:
+                          style: |
+                            ha-card {
+                              --chip-background: var(--contrast1);
+                              padding: 0px!important;
+                              border-radius: 100px!impportant;
+                              --primary-text-color: var(--contrast20);
+
+                            }
+            - type: custom:button-card
+              name: Marit
+              show_name: false
+              show_state: false
+              show_icon: true
+              show_entity_picture: true
+              entity: person.marit
+              state:
+                - value: not_home
+                  styles:
+                    entity_picture:
+                      - filter: grayscale(100%)
+              tap_action:
+                action: more-info
+              styles:
+                card:
+                  - background-color: var(--contrast2)
+                  - padding: 10px 0px 10px 10px
+                grid:
+                  - grid-template-areas: '"name name btn" "state btn1 btn" "icon btn1 btn"'
+                  - grid-template-columns: 3fr min-content min-content
+                  - grid-template-rows: 1em 1em 1fr
+                img_cell:
+                  - justify-content: start
+                  - position: absolute
+                  - width: 90px
+                  - height: 90px
+                  - left: 0
+                  - bottom: 0
+                  - margin: 0 0 -10px -10px
+                  - border-radius: 500px
+                  - border: |
+                      [[[
+                        if (entity.state == 'home') {
+                          return '2px solid var(--green)';
+                        } else {
+                          return 'none';
+                        }
+                      ]]]
+                entity_picture:
+                  - justify-content: start
+                  - position: absolute
+                  - width: 90px
+                  - height: 90px
+                  - left: 0
+                  - bottom: 0
+                  - margin: 0 0 0 0
+                  - border-radius: 500px
+                  - opacity: |
+                      [[[
+                        if (entity.state == 'not_home') {
+                          return '0.7';
+                        } else {
+                          return '1';
+                        }
+                      ]]]
+                icon:
+                  - width: 45px
+                  - color: var(--contrast1)
+                custom_fields:
+                  name:
+                    - align-self: start
+                    - justify-self: start
+                    - background: none
+                    - padding: 5px
+                  state:
+                    - align-self: start
+                    - justify-self: start
+                    - background: none
+                    - padding: 5px
+                    - margin-top: 5px
+                  btn1:
+                    - align-self: end
+                    - justify-self: end
+                    - padding-right: 8px
+                  btn:
+                    - align-self: end
+                    - justify-self: end
+                    - padding-right: 5px
+                  icon:
+                    - align-self: start
+                    - justify-self: start
+              custom_fields:
+                name:
+                  card:
+                    type: custom:button-card
+                    name: Marit
+                    styles:
+                      card:
+                        - color: var(--contrast20)
+                        - font-size: 18px
+                        - font-weight: 500
+                        - background: none
+                state:
+                  card:
+                    type: custom:button-card
+                    entity: person.marit
+                    show_icon: false
+                    name: |
+                      [[[ 
+                        return states['person.marit'].state;
+                      ]]]
+                    state:
+                      - value: home
+                        name: Home
+                      - value: not_home
+                        name: Away
+                    styles:
+                      card:
+                        - color: var(--contrast20)
+                        - font-size: 13px
+                        - background: none
+                        - opacity: "0.7"
+                btn:
+                  card:
+                    type: custom:mushroom-chips-card
+                    chips:
+                      - type: entity
+                        tap_action:
+                          action: more-info
+                        entity: sensor.iphone_van_marit_battery_level
+                        content_info: none
+                        card_mod:
+                          style: |
+                            ha-card {
+                              --chip-background: {{ 'var(--contrast1)' if states('sensor.iphone_van_marit_battery_level') | float > 10  else 'var(--red)' }};
+                              --color: {{ 'var(--contrast20)' if states('sensor.iphone_van_marit_battery_level') | float > 10  else 'var(--black)' }};
+                              padding: 0px!important;
+                              border-radius: 100px!impportant;
+                              --primary-text-color: var(--contrast20);
+                      - type: entity
+                        tap_action:
+                          action: navigate
+                          navigation_path: steps
+                        entity: sensor.marit_garmin_total_steps
+                        content_info: none
+                        card_mod:
+                          style: |
+                            ha-card {
+                              --chip-background: {{ 'var(--green)' if states('sensor.marit_garmin_total_steps') | float > states('sensor.ruben_garmin_total_steps') | float  else 'var(--red)' }};
+                              --color: var(--black);
+                              padding: 0px!important;
+                              border-radius: 100px!impportant;
+                              --primary-text-color: var(--contrast20);
+                      - type: entity
+                        tap_action:
+                          action: more-info
+                        entity: sensor.iphone_van_marit_distance
+                        content_info: none
+                        card_mod:
+                          style: |
+                            ha-card {
+                              --chip-background: var(--contrast1);
+                              padding: 0px!important;
+                              border-radius: 100px!impportant;
+                              --primary-text-color: var(--contrast20);
+
+                            }
+            - type: custom:button-card
+              name: Evi
+              show_name: false
+              show_state: false
+              show_icon: true
+              show_entity_picture: true
+              entity: person.Evi
+              state:
+                - value: not_home
+                  styles:
+                    entity_picture:
+                      - filter: grayscale(100%)
+              tap_action:
+                action: more-info
+              styles:
+                card:
+                  - background-color: var(--contrast2)
+                  - padding: 10px 0px 10px 10px
+                grid:
+                  - grid-template-areas: '"name name btn" "state btn1 btn" "icon btn1 btn"'
+                  - grid-template-columns: 3fr min-content min-content
+                  - grid-template-rows: 1em 1em 1fr
+                img_cell:
+                  - justify-content: start
+                  - position: absolute
+                  - width: 90px
+                  - height: 90px
+                  - left: 0
+                  - bottom: 0
+                  - margin: 0 0 -10px -10px
+                  - border-radius: 500px
+                  - border: |
+                      [[[
+                        if (entity.state == 'home') {
+                          return '2px solid var(--green)';
+                        } else {
+                          return 'none';
+                        }
+                      ]]]
+                entity_picture:
+                  - justify-content: start
+                  - position: absolute
+                  - width: 90px
+                  - height: 90px
+                  - left: 0
+                  - bottom: 0
+                  - margin: 0 0 0 0
+                  - border-radius: 500px
+                  - opacity: |
+                      [[[
+                        if (entity.state == 'not_home') {
+                          return '0.7';
+                        } else {
+                          return '1';
+                        }
+                      ]]]
+                icon:
+                  - width: 45px
+                  - color: var(--contrast1)
+                custom_fields:
+                  name:
+                    - align-self: start
+                    - justify-self: start
+                    - background: none
+                    - padding: 5px
+                  state:
+                    - align-self: start
+                    - justify-self: start
+                    - background: none
+                    - padding: 5px
+                    - margin-top: 5px
+                  btn1:
+                    - align-self: end
+                    - justify-self: end
+                    - padding-right: 8px
+                  btn:
+                    - align-self: end
+                    - justify-self: end
+                    - padding-right: 5px
+                  icon:
+                    - align-self: start
+                    - justify-self: start
+              custom_fields:
+                name:
+                  card:
+                    type: custom:button-card
+                    name: Valentin
+                    styles:
+                      card:
+                        - color: var(--contrast20)
+                        - font-size: 18px
+                        - font-weight: 500
+                        - background: none
+                state:
+                  card:
+                    type: custom:button-card
+                    entity: person.Evi
+                    show_icon: false
+                    name: |
+                      [[[ 
+                        return states['person.Evi'].state;
+                      ]]]
+                    state:
+                      - value: home
+                        name: Home
+                      - value: not_home
+                        name: Away
+                    styles:
+                      card:
+                        - color: var(--contrast20)
+                        - font-size: 13px
+                        - background: none
+                        - opacity: "0.7"
+                btn:
+                  card:
+                    type: custom:mushroom-chips-card
+                    chips:
+                      - type: entity
+                        tap_action:
+                          action: more-info
+                        entity: sensor.valentin_battery_level
+                        content_info: none
+                        card_mod:
+                          style: |
+                            ha-card {
+                              --chip-background: {{ 'var(--contrast1)' if states('sensor.valentin_battery_level') | float > 10  else 'var(--red)' }};
+                              --color: {{ 'var(--contrast20)' if states('sensor.valentin_battery_level') | float > 10  else 'var(--black)' }};
+                              padding: 0px!important;
+                              border-radius: 100px!impportant;
+                              --primary-text-color: var(--contrast20);
+                      - type: entity
+                        tap_action:
+                          action: more-info
+                        entity: sensor.dog_away_time_day
+                        content_info: none
+                        card_mod:
+                          style: |
+                            ha-card {
+                              --chip-background: var(--contrast1);
+                              padding: 0px!important;
+                              border-radius: 100px!impportant;
+                              --primary-text-color: var(--contrast20);
+                      - type: entity
+                        tap_action:
+                          action: more-info
+                        entity: sensor.home_valentin_direction_of_travel
+                        content_info: none
+                        card_mod:
+                          style: |
+                            ha-card {
+                              --chip-background: var(--contrast1);
+                              padding: 0px!important;
+                              border-radius: 100px!impportant;
+                              --primary-text-color: var(--contrast20);
+
+                            }

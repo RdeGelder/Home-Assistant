@@ -1,0 +1,116 @@
+- type: custom:bubble-card
+  card_type: pop-up
+  hash: "#ruben"
+  name: Ruben
+  icon: mdi:face-agent
+  bg_opacity: 100
+  hide_backdrop: true
+  bg_blur: 100
+  bg_color: var(--contrast1)
+  button_type: name
+  sub_button:
+    - entity: sensor.ruben_mobiel_area
+      show_background: false
+      show_state: true
+- type: heading
+  icon: mdi:account
+  heading: Personal
+  heading_style: title
+- square: false
+  type: grid
+  cards:
+    - type: custom:button-card
+      entity: input_boolean.motion_lights
+      name: Motion Lights
+      template: switch_template
+      variables:
+        icon_on: mdi:lightbulb-auto-outline
+        icon_off: mdi:lightbulb-off-outline
+        color: var(--green)
+    - type: custom:button-card
+      entity: input_boolean.text_notify_ruben
+      icon: mdi:cellphone-message-off
+      name: Mijn Meldingen
+      template: switch_template
+      variables:
+        icon_on: mdi:cellphone-message
+        icon_off: mdi:cellphone-message-off
+        color: var(--purple)
+    - type: custom:button-card
+      entity: input_boolean.text_notify_parents
+      icon: mdi:cellphone-message-off
+      name: Meldingen Ouders
+      template: switch_template
+      variables:
+        icon_on: mdi:cellphone-message
+        icon_off: mdi:cellphone-message-off
+        color: var(--pink)
+  columns: 2
+- type: heading
+  icon: mdi:home
+  heading: Home
+  heading_style: title
+- square: false
+  type: grid
+  cards:
+    - type: custom:button-card
+      entity: input_boolean.vacation_mode
+      icon: mdi:weather-sunny-off
+      name: Vacation Mode
+      template: switch_template
+      variables:
+        icon_on: mdi:weather-sunny
+        icon_off: mdi:weather-sunny-off
+        color: var(--orange)
+    - type: custom:button-card
+      entity: input_boolean.audible_notifications
+      icon: mdi:account-tie-voice-off
+      name: Voice Mute Switch
+      template: switch_template
+      variables:
+        icon_on: mdi:account-tie-voice-off
+        icon_off: mdi:account-tie-voice
+        color: var(--red)
+    - type: custom:button-card
+      template: switch_template
+      entity: switch.adguard_home_bescherming
+      name: AdGuard
+      variables:
+        icon_on: mdi:shield-check
+        icon_off: mdi:shield-off
+        color: var(--purple)
+  # TODO guest wifi
+  # - type: custom:button-card
+  #   template: switch_template
+  #   entity: switch.junglemoneyguest
+  #   name: Guest WIFI
+  #   variables:
+  #     icon_on: mdi:wifi
+  #     icon_off: mdi:wifi-off
+  #     color: var(--blue)
+  columns: 2
+- type: heading
+  icon: mdi:bug
+  heading: Debug
+  heading_style: title
+- square: false
+  type: grid
+  cards:
+    - type: custom:button-card
+      entity: input_boolean.debug_rounded
+      name: Rounded
+      template: switch_template
+      variables:
+        icon_on: mdi:bug-play-outline
+        icon_off: mdi:bug-outline
+        color: var(--red)
+    - type: custom:button-card
+      entity: input_boolean.debug_texts
+      name: Debug texts
+      template: switch_template
+      variables:
+        icon_on: mdi:bug-play-outline
+        icon_off: mdi:bug-outline
+        color: var(--red)
+
+  columns: 2

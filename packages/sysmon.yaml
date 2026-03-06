@@ -1,0 +1,69 @@
+command_line:
+  - sensor:
+      name: "Lines of Code"
+      unique_id: lines_of_code
+      command: "find /config -name '*.yaml' | xargs cat | wc -l"
+      scan_interval: 20000
+
+template:
+  - sensor:
+      - name: Critical Battery Count
+        unique_id: critical_battery_count
+        state: >
+          {% set threshold = 20 %}
+          {{ states.sensor 
+            | selectattr('attributes.device_class','defined') 
+            | selectattr('attributes.device_class','eq','battery') 
+            | selectattr('state','is_number') 
+            | map(attribute='entity_id') 
+            | expand 
+            | selectattr('state','lt', threshold|string) 
+            | map(attribute='name') 
+            | list |count}}
+
+script:
+  battery_notification:
+    sequence:
+      - service: script.get_ruben_briefing
+        response_variable: "ruben_briefing"
+      - condition: template
+        value_template: >
+          {{ ruben_briefing.critical_battery_count | int > 0 }}
+      - variables:
+          message: >
+            {% set threshold = 20 %}
+            {{ states.sensor 
+              | selectattr('attributes.device_class','defined') 
+              | selectattr('attributes.device_class','eq','battery') 
+              | selectattr('state','is_number') 
+              | map(attribute='entity_id') 
+              | expand 
+              | selectattr('state','lt', threshold|string) 
+              | map(attribute='name') 
+              | list }}
+      - service: script.cleanup_text
+        data:
+          message: >
+            {{ message }}
+        response_variable: "cleaned_message"
+      - service: script.text_notify
+        data:
+          who: "ruben"
+          message: >
+            {{ cleaned_message.text }}
+          title: "Battery List"
+      - service: persistent_notification.dismiss
+        data:
+          notification_id: "battery_notification"
+      - service: persistent_notification.create
+        data:
+          notification_id: "battery_notification"
+          message: "{{ message }}"
+          title: "Battery List - To Change"
+      # - service: todo.add_item
+      #   target:
+      #     entity_id: todo.ha_tasks
+      #   data:
+      #     item: "Replace Batteries"
+      #     due_date: "{{states('sensor.date')}}"
+      #     description: "Replace these batteries."

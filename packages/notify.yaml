@@ -21,14 +21,17 @@ input_boolean:
     icon: mdi:speaker-message
 
 notify:
+  # Ruben
   - name: ruben
     platform: group
     services:
       - service: mobile_app_ruben_mobiel
+  # Marit
   - name: marit
     platform: group
     services:
       - service: mobile_app_iphone_van_marit
+  # Parents
   - name: parents
     platform: group
     services:

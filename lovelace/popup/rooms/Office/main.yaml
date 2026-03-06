@@ -1,0 +1,186 @@
+- type: custom:bubble-card
+  card_type: pop-up
+  name: Werkkamer
+  icon: mdi:monitor
+  hash: "#office"
+  button_type: name
+  sub_button: []
+- type: custom:mushroom-chips-card
+  chips:
+    # - type: entity
+    #   entity: binary_sensor.office_motion_sensors
+    #   icon_color: yellow
+    #   content_info: last-changed
+    #   icon: mdi:motion-sensor
+    - type: entity
+      entity: binary_sensor.werkkamer_raam_openen
+      icon_color: red
+      icon: mdi:window-closed-variant
+  alignment: center
+# - type: heading
+#   icon: mdi:thermostat
+#   heading: Climate
+#   heading_style: title
+#   badges:
+#     - type: entity
+#       show_state: true
+#       show_icon: true
+#       entity: sensor.technische_ruimte_temperatuur
+#       color: red
+#       tap_action:
+#         action: more-info
+#     - type: entity
+#       show_state: true
+#       show_icon: true
+#       entity: sensor.technische_ruimte_luchtvochtigheid
+#       color: blue
+#       tap_action:
+#         action: more-info
+# - type: custom:bubble-card
+#   card_type: climate
+#   entity: climate.woonkamer
+#   sub_button:
+#     - name: HVAC modes menu
+#       select_attribute: hvac_modes
+#       state_background: false
+#       show_arrow: false
+#   show_state: true
+# Devices
+- type: heading
+  icon: mdi:devices
+  heading: Devices
+  heading_style: title
+  # badges:
+  #   - type: entity
+  #     show_state: false
+  #     show_icon: true
+  #     entity: switch.camera_office_soutlet
+  #   color: red
+  #   tap_action:
+  #     action: toggle
+  # - type: entity
+  #   show_state: false
+  #   show_icon: true
+  #   entity: input_boolean.office_light_brightness
+  #   icon: mdi:light-switch
+  #   color: red
+  #   tap_action:
+  #     action: toggle
+  # - type: entity
+  #   show_state: false
+  #   show_icon: true
+  #   entity: input_boolean.office_night_mode
+  #   color: blue
+  #   tap_action:
+  #     action: toggle
+- square: false
+  columns: 3
+  type: grid
+  cards:
+    # Bureau Ruben
+    - type: custom:button-card
+      entity: switch.bueau_ruben
+      icon: mdi:desktop-tower
+      name: Bureau Ruben
+      label: >-
+        [[[return
+        states["switch.bueau_ruben"].state]]]
+      template: button_template
+      variables:
+        icon2: mdi:desktop-tower
+        icon_off: mdi:desktop-tower
+        icon_on: mdi:desktop-tower
+        background_color_on: var(--orange)
+        color_on: var(--black)
+    # Bureau Marit
+    - type: custom:button-card
+      entity: switch.bureau_marit
+      icon: mdi:desktop-tower
+      name: Bureau Marit
+      label: >-
+        [[[return
+        states["switch.bureau_marit"].state]]]
+      template: button_template
+      variables:
+        icon2: mdi:desktop-tower
+        icon_off: mdi:desktop-tower
+        icon_on: mdi:desktop-tower
+        background_color_on: var(--orange)
+        color_on: var(--black)
+#Lampen
+- square: false
+  type: grid
+  cards:
+    - type: heading
+      icon: mdi:lightbulb-group
+      heading: Lights
+      heading_style: subtitle
+      badges:
+        - type: entity
+          show_state: false
+          show_icon: true
+          entity: light.zigbee_werkkamer
+          color: yellow
+          tap_action:
+            action: toggle
+        # - type: entity
+        #   entity: switch.adaptive_lighting_office
+        #   show_state: false
+        #   show_icon: true
+        #   color: orange
+        #   tap_action:
+        #     action: toggle
+        # - type: entity
+        #   entity: switch.adaptive_lighting_adapt_color_office
+        #   show_state: false
+        #   show_icon: true
+        #   color: pink
+        #   tap_action:
+        #     action: toggle
+        # - type: entity
+        #   entity: switch.adaptive_lighting_adapt_brightness_office
+        #   show_state: false
+        #   show_icon: true
+        #   color: yellow
+        #   tap_action:
+        #     action: toggle
+        # - type: entity
+        #   entity: switch.adaptive_lighting_sleep_mode_office
+        #   show_state: false
+        #   show_icon: true
+        #   color: blue
+        #   tap_action:
+        #     action: toggle
+    - square: false
+      columns: 2
+      type: grid
+      cards:
+        - type: custom:button-card
+          name: Top Light
+          template: light_rgb
+          icon: "[[[ return entity.attributes.icon ]]]"
+          entity: light.zigbee_werkkamer
+
+  columns: 1
+- type: heading
+  icon: mdi:music
+  heading: Media
+  heading_style: title
+- type: custom:swipe-card
+  card_width: calc(100% - 48px)
+  parameters:
+    centeredSlides: true
+    slidesPerView: auto
+    spaceBetween: 16
+    initialSlide: 0
+  cards:
+    - type: conditional
+      conditions:
+        - entity: media_player.office
+          state_not: standby
+        - entity: media_player.office
+          state_not: "off"
+      card:
+        type: custom:button-card
+        entity: media_player.office
+        template: custom_card_mediaplayer_music

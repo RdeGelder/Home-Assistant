@@ -3,10 +3,10 @@ input_select:
     name: Dishwasher Status
     options:
       - Dirty
+      - Idle
       - Running
-      - Drying
       - Clean
-    initial: Dirty
+    initial: Idle
   washing_machine_status:
     name: Washing Machine Status
     options:
@@ -30,3 +30,71 @@ utility_meter:
   dishwasher_weekly_kwh:
     source: sensor.keuken_vaatwasser_opsomming_afgeleverd
     cycle: weekly
+
+automation:
+  - id: washer_running
+    alias: Washingmachine
+    triggers:
+      - above: 1000
+        entity_id:
+          - sensor.technische_ruimte_wasmachine_vermogen
+        trigger: numeric_state
+        id: Verwarmen
+      - entity_id:
+          - sensor.technische_ruimte_wasmachine_vermogen
+        trigger: numeric_state
+        id: klaarVerwarmen
+        below: 500
+      - entity_id:
+          - sensor.technische_ruimte_wasmachine_vermogen
+        trigger: numeric_state
+        id: klaar
+        below: 5
+    conditions: []
+    actions:
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: input_select.washing_machine_status
+                state:
+                  - Idle
+                  - Finishing
+                  - Clean
+              - condition: trigger
+                id:
+                  - Verwarmen
+            sequence:
+              - action: input_select.select_option
+                target:
+                  entity_id: input_select.washing_machine_status
+                data:
+                  option: Running
+          - conditions:
+              - condition: trigger
+                id:
+                  - klaarVerwarmen
+              - condition: state
+                entity_id: input_select.washing_machine_status
+                state:
+                  - Running
+            sequence:
+              - action: input_select.select_option
+                target:
+                  entity_id: input_select.washing_machine_status
+                data:
+                  option: Finishing
+          - conditions:
+              - condition: trigger
+                id:
+                  - klaar
+              - condition: state
+                entity_id: input_select.washing_machine_status
+                state:
+                  - Finishing
+            sequence:
+              - action: input_select.select_option
+                target:
+                  entity_id: input_select.washing_machine_status
+                data:
+                  option: Clean
+    description: ""

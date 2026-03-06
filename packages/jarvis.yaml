@@ -5,13 +5,6 @@
 #   @description    :   Bringing some Jarvis to Home Assistant
 ###############################################################################
 
-
-
-
-
-
-
-
 script:
   get_tts_greetings:
     sequence:
@@ -74,7 +67,7 @@ script:
                 ["Mam.",
                 "Marit.",
                 "Marit."
-                 ] | random }}
+                ] | random }}
           alert: >
             {{ [
               'Emergency Protocol initiated.',
@@ -88,7 +81,7 @@ script:
               'Er is momenteel een waarschuwing van het KNMI: ',
               'Momenteel is er een weer alarm'
               ] | random }}
-          confirmation: >
+          confirmation: >-
             {{ [
               'Okay.', 
               'If you insist.',
@@ -132,25 +125,45 @@ script:
       - stop: "ok, Im done."
         response_variable: "greetings"
 
+  get_weather_info:
+    sequence:
+      - variables:
+          current_temp: >
+            {{ state_attr("weather.forecast_thuis", "temperature") | round}} graden
+          current_humidity: >
+            De luchtvochtigheid is {{ state_attr("weather.forecast_thuis", "humidity") | round }} procent
+      - service: script.cleanup_text
+        data:
+          message: >
+            {{ states('sensor.sun_status') }}
+        response_variable: "cleaned_sun_status"
+      - variables:
+          weather: >
+            {"current_temp":"{{current_temp}}"
+            ,"current_humidity":"{{current_humidity}}"
+            ,"sun_status":"{{cleaned_sun_status.text}}"}
+      - stop: "Alright. Im done."
+        response_variable: "weather"
+
   speech_engine:
     sequence:
       - response_variable: greetings
         action: script.get_tts_greetings
         data: {}
       - variables:
-          type: |
+          type: >
             {% if type is defined and type != 'none' %}
               {{ type }}
             {% else %}
               normal
             {% endif %}
-          summary: |-
+          summary: >-
             {% if msg_summary %}
               {{ msg_summary }}
             {% else %}
               none
             {% endif %}
-          room: |
+          room: >
             {% if who is defined %}
               {{ who }}
             {% elif room is defined %}
@@ -158,7 +171,7 @@ script:
             {% else %}
               NA
             {% endif %}
-          greeting: |
+          greeting: >
             {% if room == 'ruben' %}
               {{ greetings.ruben }}
             {% elif room == 'marit' %}
@@ -170,11 +183,19 @@ script:
             {% else %}
               
             {% endif %}
-          briefing_greeting: |
+          briefing_greeting: >
             {% if type == 'briefing' %}
               {{ greetings.general }}
             {% else %}
             {% endif %}
+
+      - service: script.get_room_audio
+        data:
+          room: >
+            {{room}}
+          type: >
+            {{type}}
+        response_variable: room_services
       - service: script.cleanup_text
         data:
           message: >
@@ -209,21 +230,3 @@ script:
               message: "{{ message }}"
               title: From Jarvis
             action: persistent_notification.create
-    description: ""
-
-  get_weather_info:
-    sequence:
-      - variables:
-          current_temp: >
-            {{state_attr('weather.buienradar','temperature')| round}}
-          current_humidity: >
-            {{ state_attr('weather.buienradar','temperature') | round }}
-          current_conditions: >
-            {{ [
-              "met ",
-              "en ",
-              ] | random }}
-      - stop: "Alright. Im done."
-        response_variable: "weather" 
-          ##TODO hele case when
-
