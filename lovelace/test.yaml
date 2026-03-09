@@ -1,13 +1,11 @@
-kiosk_mode:
-  !include generic/templates/kiosk.yaml
+kiosk_mode: !include generic/templates/kiosk.yaml
 
 # region templates
 button_card_templates: !include_dir_merge_named generic/templates/button_card_templates/
 decluttering_templates: !include generic/templates/decluttering_templates.yaml
 
-
 views:
-# region maindashboard
+  # region maindashboard
   - title: home
     header: !include generic/header/header_card.yaml
     badges: !include generic/header/header_badges.yaml
@@ -18,7 +16,7 @@ views:
     subview: false
     theme: rounded-bubble
     sections:
-# region mobile
+      # region mobile
       - type: grid
         visibility:
           - condition: screen
@@ -449,6 +447,8 @@ views:
             cards: !include popup/ruben.yaml
           - type: vertical-stack
             cards: !include popup/user.yaml
+          - type: vertical-stack
+            cards: !include popup/security.yaml
   ########################################################################################################################
   #################################################Music#############################################################
   ########################################################################################################################
