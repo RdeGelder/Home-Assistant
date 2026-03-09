@@ -22,6 +22,26 @@ input_datetime:
     has_date: false
     has_time: true
 
+automation:
+  - id: aa894d9f-ce6a-420b-bd48-f87165437edd
+    alias: Good Morning Report
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.lumi_lumi_motion_ac02
+        to: 'on'
+    condition:
+      - condition: time
+        after: '06:45:00'
+        before: '08:30:00'
+      - condition: state
+        entity_id: input_boolean.good_morning_report
+        state: 'off'
+    action:
+    - service: script.morning_wakeup_report
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.good_morning_report
+
 script:
   morning_wakeup_report:
     sequence:

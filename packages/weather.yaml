@@ -41,9 +41,9 @@ template:
             {%- set seconds = as_timestamp(states.sun.sun.attributes.next_rising)-now().timestamp() -%}
             {% set hours = seconds / 60 -%}
             {%- if seconds / ( 60 * 60 ) > 1 -%}
-              {{""}} {{ (seconds //  ( 60 * 60 )) | int }} hours
+              {{""}} {{ (seconds //  ( 60 * 60 )) | int }} uur
             {%- else -%}
-              {{""}} {{ (seconds // 60) | int }} minutes
+              {{""}} {{ (seconds // 60) | int }} minuten
             {%- endif -%}
             {{ [
               ' totdat de zon opkomt.',
@@ -55,9 +55,9 @@ template:
             {%- set seconds = as_timestamp(states.sun.sun.attributes.next_setting)-now().timestamp() %}
             {%- set hours = seconds / 60 -%}
             {%- if seconds / ( 60 * 60 ) > 1 -%}
-              {{""}} {{ (seconds //  ( 60 * 60 )) | int }} hours
+              {{""}} {{ (seconds //  ( 60 * 60 )) | int }} uur
             {%- else -%}
-              {{""}} {{ (seconds // 60) | int }} minutes
+              {{""}} {{ (seconds // 60) | int }} minuten
             {%- endif -%}
             {{ [
               ' totdat de zon onder is voor vandaag.',
