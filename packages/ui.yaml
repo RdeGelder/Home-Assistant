@@ -12,6 +12,9 @@ input_boolean:
   room_toggle_office:
     name: "room toggle office"
     icon: "mdi:sofa"
+  room_toggle_kitchen:
+    name: "room toggle kitchen"
+    icon: "mdi:fridge-outline"
   room_toggle_guest_room:
     name: "room toggle guest room"
     icon: "mdi:sofa"
