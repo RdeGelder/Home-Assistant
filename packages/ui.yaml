@@ -32,3 +32,19 @@ input_boolean:
   debug_rounded:
     name: Debug Rounded
     icon: mdi:view-dashboard-edit
+
+# Groups
+group:
+  kitchen_lights:
+    name: keuken lichten
+    entities:
+      - light.keuken_spotjes
+      - light.keuken_ledstrip
+
+  livingroom_lights:
+    name: woonkamer lichten
+    entities:
+      - light.woonkamer_houtspot
+      - light.woonkamer_kleurenspot
+      - light.woonkamer_olielamp
+      - light.woonkamer_servieskast
