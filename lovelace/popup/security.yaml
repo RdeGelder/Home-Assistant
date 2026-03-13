@@ -1,0 +1,103 @@
+- type: custom:bubble-card
+  card_type: pop-up
+  name: Security
+  icon: mdi:door
+  hash: "#security"
+  button_type: name
+  sub_button: []
+
+- type: heading
+  heading: security
+  heading_style: title
+  icon: mdi:security
+  badges:
+    - type: entity
+      show_state: false
+      show_icon: true
+      entity: group.window_sensors
+      color: red
+      tap_action:
+        action: more-info
+    - type: entity
+      show_state: false
+      show_icon: true
+      entity: group.motion_sensors
+      tap_action:
+        action: more-info
+      color: yellow
+
+- type: custom:button-card
+  entity: alarm_control_panel.home_alarm
+  name: Securit System
+  icon: mdi:security
+  show_state: true
+  tap_action:
+    action: more-info
+  state:
+    - value: arming
+      styles:
+        icon:
+          - animation: blink 2s ease infinite
+    - value: disarmed
+      styles:
+        card:
+          - background: var(--red)
+        icon:
+          - animation: blink 2s ease infinite
+          - color: var(--black)
+        name:
+          - color: var(--black)
+        state:
+          - color: var(--black)
+  styles:
+    grid:
+      - grid-template-areas: "'i i' 's tile' 'n tile' 'n tile'"
+      - grid-template-columns: 1fr min-content
+      - grid-template-rows: 1fr min-content min-content min-content
+    card:
+      - padding: 18px
+      - background: var(--popupBG)
+      - height: 100px
+    icon:
+      - color: var(--gray800)
+      - width: 24px
+      - height: 24px
+    state:
+      - justify-self: start
+      - font-size: 14px
+      - margin: 8px 0 2px 0
+      - color: var(--gray800)
+    name:
+      - color: var(--gray700)
+      - justify-self: start
+      - font-size: 12px
+      - margin: 2px 0 2px 0
+    img_cell:
+      - justify-self: start
+      - width: 24px
+      - height: 24px
+  border-width: 0px;
+  custom_fields:
+    tile:
+      card:
+        type: tile
+        entity: "[[[ return entity.entity_id]]]"
+        features:
+          - type: alarm-modes
+            modes:
+              - armed_home
+              - armed_away
+              - disarmed
+        card_mod:
+          style:
+            .: |
+              ha-card .content{
+                display: none;
+                } ha-card {
+                  width: 200px;
+                  border-width: 0px;
+                  background: transparent;
+                  border-radius: 0px;
+                } ha-card.active{
+                  height: 40px;
+              }

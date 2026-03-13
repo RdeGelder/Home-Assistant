@@ -7,9 +7,9 @@ input_select:
   music_controller:
     name: Music Controller
     options:
-      - woonkamer
-      - werkkamer
-      - keuken
+      - living_room
+      - office
+      - kitchen
       - music
     initial: music
 

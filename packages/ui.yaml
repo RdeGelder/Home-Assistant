@@ -12,6 +12,9 @@ input_boolean:
   room_toggle_office:
     name: "room toggle office"
     icon: "mdi:sofa"
+  room_toggle_kitchen:
+    name: "room toggle kitchen"
+    icon: "mdi:fridge-outline"
   room_toggle_guest_room:
     name: "room toggle guest room"
     icon: "mdi:sofa"
@@ -29,3 +32,19 @@ input_boolean:
   debug_rounded:
     name: Debug Rounded
     icon: mdi:view-dashboard-edit
+
+# Groups
+group:
+  kitchen_lights:
+    name: keuken lichten
+    entities:
+      - light.keuken_spotjes
+      - light.keuken_ledstrip
+
+  livingroom_lights:
+    name: woonkamer lichten
+    entities:
+      - light.woonkamer_houtspot
+      - light.woonkamer_kleurenspot
+      - light.woonkamer_olielamp
+      - light.woonkamer_servieskast

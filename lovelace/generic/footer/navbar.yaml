@@ -128,7 +128,9 @@ routes:
         label: TV
   - icon: mdi:shield-outline
     icon_selected: mdi:security
-    url: /dashboard-bubble/security
+    tap_action:
+      action: navigate
+      navigation_path: "#security"
     label: Security
     badge:
       show: true

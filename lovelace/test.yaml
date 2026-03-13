@@ -1,13 +1,11 @@
-kiosk_mode:
-  !include generic/templates/kiosk.yaml
+kiosk_mode: !include generic/templates/kiosk.yaml
 
 # region templates
 button_card_templates: !include_dir_merge_named generic/templates/button_card_templates/
 decluttering_templates: !include generic/templates/decluttering_templates.yaml
 
-
 views:
-# region maindashboard
+  # region maindashboard
   - title: home
     header: !include generic/header/header_card.yaml
     badges: !include generic/header/header_badges.yaml
@@ -18,7 +16,7 @@ views:
     subview: false
     theme: rounded-bubble
     sections:
-# region mobile
+      # region mobile
       - type: grid
         visibility:
           - condition: screen
@@ -191,8 +189,7 @@ views:
                       background-color: ${hass.states['input_boolean.all_rooms'].state === 'on' ? 'var(--purple)' : 'var(--contrast1)'} !important;
                       color: ${hass.states['input_boolean.all_rooms'].state === 'on' ? 'var(--black)' : 'var(--contrast20)'} !important;
                   }
-
-              ################################################################ Quick Access ################################################################################################
+              # region quick access
               - type: custom:bubble-card
                 card_type: empty-column
                 visibility:
@@ -201,7 +198,7 @@ views:
                     state: "on"
               - type: vertical-stack
                 cards:
-                  #werkkamer
+                  ### Werkkamer ###
                   - type: custom:bubble-card
                     card_type: climate
                     button_type: slider
@@ -258,7 +255,7 @@ views:
                       - condition: state
                         entity: sensor.ruben_mobiel_area
                         state: Werkkamer
-                  # Woonkamer
+                  ### Woonkamer ###
                   - type: custom:bubble-card
                     card_type: climate
                     button_type: slider
@@ -315,10 +312,12 @@ views:
                       - condition: state
                         entity: sensor.ruben_mobiel_area
                         state: Woonkamer
+              # region kamers
               - type: grid
                 square: false
                 columns: 2
                 cards:
+                  ### Slaapkamer ###
                   - type: vertical-stack
                     cards:
                       - type: custom:button-card
@@ -333,6 +332,7 @@ views:
                           navigation_path: "#bedroom"
                         entity: input_boolean.room_toggle_bedroom
                         name: Slaapkamer
+                    ### Woonkamer ###
                   - type: vertical-stack
                     cards:
                       - type: custom:button-card
@@ -341,12 +341,28 @@ views:
                           icon: mdi:sofa-outline
                           light: light.zigbee_woonkamer
                           climate: climate.woonkamer
-                          window_sensor: binary_sensor.badkamer
+                          window_sensor: binary_sensor.achterdeur_openen
                           motion_sensor: binary_sensor.gang_beweging
                           media_player: media_player.livingroom
                           navigation_path: "#living-room"
                         entity: input_boolean.room_toggle_living_room
                         name: Woonkamer
+                    ### Evi ###
+                  - type: vertical-stack
+                    cards:
+                      - type: custom:button-card
+                        template: room_template
+                        variables:
+                          icon: mdi:baby
+                          light: light.zigbee_woonkamer
+                          climate: climate.woonkamer
+                          window_sensor: binary_sensor.achterdeur_openen
+                          motion_sensor: binary_sensor.gang_beweging
+                          media_player: media_player.livingroom
+                          navigation_path: "#Evi-room"
+                        entity: input_boolean.room_toggle_room_evi
+                        name: Evi
+                    ### logeerkamer ###
                   - type: conditional
                     conditions:
                       - condition: state
@@ -364,9 +380,10 @@ views:
                             window_sensor: binary_sensor.badkamer
                             motion_sensor: binary_sensor.ikea_of_sweden_vallhorn_wireless_motion_sensor
                             media_player: media_player.office
-                            navigation_path: "#kitchen"
+                            navigation_path: "#guest_room"
                           entity: input_boolean.room_toggle_guest_room
                           name: Logeerkamer
+                    ### Office ###
                   - type: vertical-stack
                     cards:
                       - type: custom:button-card
@@ -378,9 +395,24 @@ views:
                           window_sensor: binary_sensor.werkkamer_raam_openen
                           motion_sensor: binary_sensor.gang_beweging
                           media_player: media_player.office
-                          navigation_path: "#user"
-                        entity: input_boolean.room_toggle_living_room
-                        name: Office
+                          navigation_path: "#Office"
+                        entity: input_boolean.room_toggle_office
+                        name: Werkkamer
+                    ### Kitchen ###
+                  - type: vertical-stack
+                    cards:
+                      - type: custom:button-card
+                        template: room_template
+                        variables:
+                          icon: mdi:fridge-outline
+                          light: group.kitchen_lights
+                          climate: climate.woonkamer
+                          window_sensor: binary_sensor.keuken_raam_openen
+                          motion_sensor: binary_sensor.lumi_lumi_motion_ac02
+                          media_player: media_player.office
+                          navigation_path: "#weather-panel"
+                        entity: input_boolean.room_toggle_kitchen
+                        name: Kitchen
       #region dashboard favorites
       - type: grid
         column_span: 2
@@ -449,6 +481,10 @@ views:
             cards: !include popup/ruben.yaml
           - type: vertical-stack
             cards: !include popup/user.yaml
+          - type: vertical-stack
+            cards: !include popup/security.yaml
+          - type: vertical-stack
+            cards: !include popup/weather.yaml
   ########################################################################################################################
   #################################################Music#############################################################
   ########################################################################################################################
