@@ -1,0 +1,129 @@
+- type: custom:bubble-card
+  card_type: pop-up
+  hash: "#weather-panel"
+  name: Weather Panel
+  icon: mdi:weather-cloudy-arrow-right
+  styles: |-
+    #root {
+            max-height: 100% !important;
+            transition: transform 500ms cubic-bezier(0.38, 1.21, 0.22, 1.00) !important;
+          }
+          .bubble-pop-up-container {
+            padding-bottom: 64px !important;
+
+
+          }
+  button_type: name
+  sub_button:
+    main: []
+    bottom: []
+  slider_fill_orientation: left
+  slider_value_position: right
+- type: custom:simple-tabs
+  pre-load: true
+  active-background: black #var(--md-sys-color-primary)
+  active-text-color: white #var(--md-sys-color-on-primary)
+  text-color: white #var(--primary-text-color)
+  tabs:
+    # - title: Volcano
+    #   icon: m3of:mountain-steam
+    #   conditions:
+    #     - condition: template
+    #       template: |
+    #         {{ states('sensor.volcano_rotorua') | float(0) > 0 }}
+    #   card:
+    #     type: markdown
+    #     content: >
+    #       {{ state_attr('sensor.volcano_taupo', 'activity') |
+    #       default('No warnings') }}
+
+    #       _Issued: {{
+    #         as_datetime(state_attr('sensor.volcano_taupo', 'feed_last_update_successful')).astimezone().strftime('%I:%M%p %A, %d %b')
+    #       }}_
+    #     text_only: true
+    # - title: Earthquake
+    #   icon: m3of:earthquake
+    #   conditions:
+    #     - condition: template
+    #       template: >
+    #         {{
+    #         states('sensor.earthquake')
+    #         | float(0) > 0 }}
+    #   card:
+    #     type: vertical-stack
+    #     cards:
+    # - type: custom:streamline-card
+    #   template: title_card
+    #   variables:
+    #     - title: Latest Earthquake
+    # - type: markdown
+    #   content: >
+
+    #     {% set sensor = states.geo_location |
+    #     selectattr('attributes.source', 'defined') |
+    #     selectattr('attributes.source', 'eq',
+    #     'geonetnz_quakes') | sort(attribute='last_updated',
+    #     reverse=true) | list | first %}
+
+    #     {% if sensor %}
+
+    #     **Locality:** {{ sensor.attributes.locality }}
+
+    #     **Magnitude:** {{ sensor.attributes.magnitude |
+    #     round(2) }}
+
+    #     **Depth:** {{ sensor.attributes.depth }} km
+
+    #     **Time:** {{ as_timestamp(sensor.attributes.time) |
+    #     timestamp_custom('%a, %b %-d at %I:%M %p') }}
+
+    #     {% else %}
+
+    #     No recent earthquakes detected
+
+    #     {% endif %}
+    - title: Forecast
+      icon: mdi:weather-partly-cloudy
+      card:
+        type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: custom:stack-in-card
+                mode: vertical
+                cards:
+                  - type: custom:streamline-card
+                    template: title_subtitle_card
+                    variables:
+                      - title: Forecast
+                      - subtitle: >-
+                          {{ states ('sensor.werkkamer_temperature')
+                          }}
+                    uix:
+                      style: |
+                        ha-card {
+                          padding-right: 120px;
+                        }
+                  - type: custom:mushroom-chips-card
+                    chips:
+                      - type: template
+                        icon: mdi:weather-lightning
+                        content: MetService
+                        tap_action:
+                          action: url
+                          url_path: https://www.metservice.com/warnings/home
+                        uix:
+                          style:
+                            .: |
+                              ha-card {
+                                --text-color: black;
+                                --color: green;
+                                --chip-background: blue;
+                              }
+                    uix:
+                      style: |
+                        ha-card {
+                          position: absolute;
+                          top: 20px;
+                          right: 2px;
+                        }

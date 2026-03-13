@@ -14,7 +14,8 @@ custom_card_user:
   name: '[[[return "Hello, " + user.name +"!"]]]'
   label: |
     [[[
-      if (entity.state == "home") {
+      const s = entity.state;
+      if (s === "home") {
         if (user.name == "Ruben") {
           return "Room: "+ states["sensor.ruben_mobiel_area"].state;
           

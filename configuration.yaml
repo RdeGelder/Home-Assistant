@@ -106,6 +106,10 @@ lovelace:
         url: /hacsfiles/lovelace-paper-buttons-row/paper-buttons-row.js,
         type: module,
       },
+      {
+        url: /hacsfiles/home-assistant-simple-tabs/simple-tabs.js,
+        type: module,
+      },
       { url: /local/community/stack-in-card/stack-in-card.js, type: module },
       {
         url: /local/community/Home-Assistant-Lovelace-Local-Conditional-card/local-conditional-card.js,
@@ -206,7 +210,6 @@ binary_sensor:
     name: Evening
     after: "18:00"
     before: "00:00"
-
 
 #{% set T, RH = states('sensor.temperatuur'), states('sensor.luchtvochtigheid') %}
 #{% if (T == 'unknown')  or (RH == 'unknown') %}

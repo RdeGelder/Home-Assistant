@@ -410,7 +410,7 @@ views:
                           window_sensor: binary_sensor.keuken_raam_openen
                           motion_sensor: binary_sensor.lumi_lumi_motion_ac02
                           media_player: media_player.office
-                          navigation_path: "#kitchen"
+                          navigation_path: "#weather-panel"
                         entity: input_boolean.room_toggle_kitchen
                         name: Kitchen
       #region dashboard favorites
@@ -483,6 +483,8 @@ views:
             cards: !include popup/user.yaml
           - type: vertical-stack
             cards: !include popup/security.yaml
+          - type: vertical-stack
+            cards: !include popup/weather.yaml
   ########################################################################################################################
   #################################################Music#############################################################
   ########################################################################################################################
