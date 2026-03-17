@@ -14,7 +14,7 @@ script:
             {"text":"{{- cleanup(mother_of_all_macros()) | string -}}"}
       - stop: "ok, Im done."
         response_variable: "cleaned"
-
+  #region room services
   get_room_services:
     fields:
       room:
@@ -60,7 +60,7 @@ script:
             {"area":"{{room}}","jarvis_speaker":"{{jarvis_speaker}}","jarvis_tts":"{{tts}}","audio_speaker":"{{audio_speaker}}"}
       - stop: "ok, Im done."
         response_variable: "room_services"
-
+  #region audio services
   get_audio_services:
     fields:
       room:
@@ -191,9 +191,11 @@ script:
           #   "type":"{{type}}"}
       - stop: "ok, Im done."
         response_variable: "room_services"
-
+  #region room audio
   get_room_audio:
     sequence:
+      - service: script.get_room_presence
+        response_variable: "presence"
       - variables:
           type: >
             {% if type in ['alert','priority','briefing','goodnight','weather_alert','weather_advisory','notification','gong','tornado','alarm','intercom'] %}
@@ -213,15 +215,59 @@ script:
             {% else %}
               NA         
             {% endif %}
-          # rooms: >
-          #   {{ presence.occupied_rooms |
-          #     replace('master_bedroom','Master Bedroom') |
-          #     replace('living_room','Living Room') |
-          #     replace('pot_studio','Pottery Studio') |
-          #     replace('skylars_bedroom','Skylars Bedroom') |
-          #     replace('kitchen','Living Room')  }}
+          rooms: >
+            {{ presence.occupied_rooms |
+              replace('master_bedroom','Master Bedroom') |
+              replace('living_room','Living Room') |
+              replace('pot_studio','Pottery Studio') |
+              replace('skylars_bedroom','Skylars Bedroom') |
+              replace('kitchen','kitchen')  }}
           room_services: >
+            {% if type in ['alarm','weather-alert','weather-advisory','tornado'] %}
+              {% set jarvis_speaker = 'media_player.all_rooms' %}
+              {% set audio_speaker = 'media_player.all_rooms' %}
+            {% elif room_priority != 'NA'  %}
+              {% set room = room_priority |
+              replace('master_bedroom','Master Bedroom') |
+              replace('living_room','Living Room') |
+              replace('pot_studio','Pottery Studio') |
+              replace('skylars_bedroom','Skylars Bedroom') |
+              replace('kitchen','kitchen') %}
+            {% set jarvis_speaker = expand(label_entities('Jarvis')) |
+                selectattr('entity_id', 'in', area_entities(room)) |
+                map(attribute='entity_id') |
+              list | first %}
+
+            {% set audio_speaker = expand(label_entities('Jarvis')) |
+                selectattr('entity_id', 'in', area_entities(room)) |
+                map(attribute='entity_id') |
+              list | first %}
+
+            {% set tts = 'ncc' %}
+            {% elif room_priority == 'NA' %}
+              {% set ns = namespace(area_speakers = []) %}
+              {% set nsa = namespace(audio_speakers = []) %}
+              {% for room in rooms %}
+                {% set ns.area_speakers = ns.area_speakers + expand(label_entities('Jarvis')) |
+                  selectattr('entity_id', 'in', area_entities(room)) |
+                  map(attribute='entity_id') | list %}
+                {% set nsa.audio_speakers = nsa.audio_speakers + expand(label_entities('Jarvis')) |
+                  selectattr('entity_id', 'in', area_entities(room)) |
+                  map(attribute='entity_id') | list %}
+              {% endfor %}
+              {% set jarvis_speaker = ns.area_speakers | join(',') %}
+              {% set room = rooms | join(',') %}
+              {% set audio_speaker = nsa.audio_speakers | join(',') %}
+              {% set tts = 'ncc' %}
+            {% else %} 
+              {% set room = 'none' %}
+              {% set jarvis_speaker = 'none' %}
+              {% set audio_speaker = 'none' %}
+              {% set tts = 'none' %}
+            {% endif %}
             {"area":"{{room}}",
+            "jarvis_speaker":"{{jarvis_speaker}}",
+            "audio_speaker":"{{audio_speaker}}",
             "type":"{{type}}",
             "room_priority":"{{room_priority}}"}
       - stop: "ok, Im done."

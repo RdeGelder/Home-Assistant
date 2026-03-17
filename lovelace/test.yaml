@@ -354,7 +354,7 @@ views:
                         template: room_template
                         variables:
                           icon: mdi:baby
-                          light: light.zigbee_woonkamer
+                          light: light.babykamer_plafond
                           climate: climate.woonkamer
                           window_sensor: binary_sensor.achterdeur_openen
                           motion_sensor: binary_sensor.gang_beweging
@@ -375,7 +375,7 @@ views:
                           template: room_template
                           variables:
                             icon: mdi:bed-double-outline
-                            light: light.zigbee_woonkamer
+                            light: light.zigbee_logeerkamer
                             climate: climate.woonkamer
                             window_sensor: binary_sensor.badkamer
                             motion_sensor: binary_sensor.ikea_of_sweden_vallhorn_wireless_motion_sensor
@@ -393,9 +393,9 @@ views:
                           light: light.zigbee_werkkamer
                           climate: climate.woonkamer
                           window_sensor: binary_sensor.werkkamer_raam_openen
-                          motion_sensor: binary_sensor.gang_beweging
+                          #motion_sensor: binary_sensor.gang_beweging
                           media_player: media_player.office
-                          navigation_path: "#Office"
+                          navigation_path: "#office"
                         entity: input_boolean.room_toggle_office
                         name: Werkkamer
                     ### Kitchen ###
@@ -410,7 +410,7 @@ views:
                           window_sensor: binary_sensor.keuken_raam_openen
                           motion_sensor: binary_sensor.lumi_lumi_motion_ac02
                           media_player: media_player.office
-                          navigation_path: "#weather-panel"
+                          navigation_path: "#kitchen"
                         entity: input_boolean.room_toggle_kitchen
                         name: Kitchen
       #region dashboard favorites

@@ -5,6 +5,22 @@
 #   @description    :   Bringing some Jarvis to Home Assistant
 ###############################################################################
 
+input_number:
+  tts_volume:
+    name: tts volume
+    min: 0
+    max: 100
+    initial: 5
+    mode: slider
+    icon: mdi:volume
+  tts_high_volume:
+    name: tts high volume
+    min: 0
+    max: 100
+    initial: 7
+    mode: slider
+    icon: mdi:volume
+
 script:
   get_tts_greetings:
     sequence:
@@ -145,11 +161,13 @@ script:
       - stop: "Alright. Im done."
         response_variable: "weather"
 
+  # region speechengine
   speech_engine:
     sequence:
+      # Get greetings
       - response_variable: greetings
         action: script.get_tts_greetings
-        data: {}
+      # Get variables
       - variables:
           type: >
             {% if type is defined and type != 'none' %}
@@ -217,7 +235,7 @@ script:
             sequence:
               - action: tts.speak
                 data:
-                  media_player_entity_id: media_player.{{room}}
+                  media_player_entity_id: "{{ room_services.audio_speaker | string }}"
                   message: "{{cleaned_message.text}}"
                 target:
                   entity_id: tts.google_translate_nl_nl
