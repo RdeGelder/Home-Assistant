@@ -1,0 +1,54 @@
+group:
+  rooms:
+    - binary_sensor.kitchen_occupied
+
+  occupancy:
+    - binary_sensor.lumi_lumi_motion_ac02
+
+  room_presence:
+    - sensor.ruben_mobiel_area
+
+template:
+  - binary_sensor:
+      - name: kitchen_occupied
+        icon: mdi:account-group
+        state: >
+          {{ states.binary_sensor | 
+          selectattr('entity_id', 'in', area_entities('kitchen')) |
+          rejectattr('attributes.device_class', 'undefined') |
+          selectattr('attributes.device_class', 'search', '(occupancy|motion|door)') | 
+          selectattr('state', 'eq', 'on') | 
+          map(attribute='entity_id') |
+          list | count > 0}}
+
+script:
+  get_room_presence:
+    sequence:
+      - variables:
+          occupied_rooms: >
+            {% set rooms = ['living_room'] %}
+            {% if is_state('input_boolean.audible_notifications', 'on') %}
+            {% if expand('group.rooms')
+            | selectattr('state', 'eq', 'on') | list | count >= 1 %}
+            {% set rooms = expand('group.rooms')
+            | selectattr('state', 'eq', 'on')
+            | sort(attribute='last_changed', reverse=True)
+            | map(attribute='name') | list %}
+            {%- endif -%}
+            {% else -%}
+            {%- if expand('group.rooms')
+            | rejectattr('name', 'search', 'bedroom')
+            | selectattr('state', 'eq', 'on') | list | count >= 1 %}
+            {%- set rooms = expand('group.rooms')
+            | rejectattr('name', 'search', 'bedroom')
+            | selectattr('state', 'eq', 'on')
+            | sort(attribute='last_changed', reverse=True)
+            | map(attribute='name')| list %}
+            {%- endif -%}
+            {% endif %}
+            {{ rooms | replace('_occupied','') }}
+          room_presence: >-
+            {"occupied_rooms":"{{occupied_rooms}}",
+            "occupied_rooms_cnt":"{{occupied_rooms_cnt}}"}
+      - stop: "ok, Im done."
+        response_variable: "room_presence"
