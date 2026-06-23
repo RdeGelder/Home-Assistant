@@ -85,74 +85,58 @@ lovelace_gen:
     - technischeruimte
 
 lovelace:
-  mode: yaml
   dashboards:
-    lovelace-generated: # Needs to contain a hyphen (-)
+    lovelace:
       mode: yaml
       filename: lovelace/ui-lovelace.yaml
-      title: Home
-    dashboard-bubble: # Needs to contain a hyphen (-)
-      mode: yaml
-      filename: lovelace/test.yaml
-      title: rounded-bubble
-  resources:
-    [
-      { url: /local/community/Bubble-Card/bubble-card.js, type: module },
-      { url: /local/community/button-card/button-card.js, type: module },
-      { url: /local/community/my-cards/my-slider-v2.js, type: module },
-      { url: /local/community/kiosk-mode/kiosk-mode.js, type: module },
-      { url: /local/community/swipe-card/swipe-card.js, type: module },
-      {
-        url: /hacsfiles/lovelace-paper-buttons-row/paper-buttons-row.js,
-        type: module,
-      },
-      {
-        url: /hacsfiles/home-assistant-simple-tabs/simple-tabs.js,
-        type: module,
-      },
-      { url: /local/community/stack-in-card/stack-in-card.js, type: module },
-      {
-        url: /local/community/Home-Assistant-Lovelace-Local-Conditional-card/local-conditional-card.js,
-        type: module,
-      },
+      title: home
+      icon: mdi:view-dashboard
+      show_in_sidebar: true
 
-      { url: /local/community/lovelace-card-mod/card-mod.js, type: module },
-      {
-        url: /local/community/ha-sankey-chart/ha-sankey-chart.js,
-        type: module,
-      },
-      {
-        url: /local/community/lovelace-layout-card/layout-card.js,
-        type: module,
-      },
-      {
-        url: /local/community/lovelace-expander-card/expander-card.js,
-        type: module,
-      },
-      {
-        url: local/community/lovelace-auto-entities/auto-entities.js,
-        type: module,
-      },
-      {
-        url: /local/community/decluttering-card/decluttering-card.js,
-        type: module,
-      },
-      {
-        url: /local/community/lovelace-big-slider-card/big-slider-card.js,
-        type: module,
-      },
-      {
-        url: /local/community/mini-graph-card/mini-graph-card-bundle.js,
-        type: module,
-      },
-      { url: /local/community/lovelace-mushroom/mushroom.js, type: module },
-      {
-        url: /hacsfiles/lovelace-plotly-graph-card/plotly-graph-card.js,
-        type: module,
-      },
-      { url: /hacsfiles/apexcharts-card/apexcharts-card.js, type: module },
-      { url: /hacsfiles/lovelace-navbar-card/navbar-card.js, type: module },
-    ]
+  resource_mode: yaml
+  resources:
+    - url: /local/community/Bubble-Card/bubble-card.js
+      type: module
+    - url: /local/community/button-card/button-card.js
+      type: module
+    - url: /local/community/my-cards/my-slider-v2.js
+      type: module
+    - url: /local/community/kiosk-mode/kiosk-mode.js
+      type: module
+    - url: /local/community/swipe-card/swipe-card.js
+      type: module
+    - url: /hacsfiles/lovelace-paper-buttons-row/paper-buttons-row.js
+      type: module
+    - url: /hacsfiles/home-assistant-simple-tabs/simple-tabs.js
+      type: module
+    - url: /local/community/stack-in-card/stack-in-card.js
+      type: module
+    - url: /local/community/Home-Assistant-Lovelace-Local-Conditional-card/local-conditional-card.js
+      type: module
+    - url: /local/community/lovelace-card-mod/card-mod.js
+      type: module
+    - url: /local/community/ha-sankey-chart/ha-sankey-chart.js
+      type: module
+    - url: /local/community/lovelace-layout-card/layout-card.js
+      type: module
+    - url: /local/community/lovelace-expander-card/expander-card.js
+      type: module
+    - url: local/community/lovelace-auto-entities/auto-entities.js
+      type: module
+    - url: /local/community/decluttering-card/decluttering-card.js
+      type: module
+    - url: /local/community/lovelace-big-slider-card/big-slider-card.js
+      type: module
+    - url: /local/community/mini-graph-card/mini-graph-card-bundle.js
+      type: module
+    - url: /local/community/lovelace-mushroom/mushroom.js
+      type: module
+    - url: /hacsfiles/lovelace-plotly-graph-card/plotly-graph-card.js
+      type: module
+    - url: /hacsfiles/apexcharts-card/apexcharts-card.js
+      type: module
+    - url: /hacsfiles/lovelace-navbar-card/navbar-card.js
+      type: module
 # Load frontend themes from the themes folder
 frontend:
   themes: !include_dir_merge_named themes

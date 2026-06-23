@@ -1,0 +1,9 @@
+automation:
+  - id: 0d5cea61-f295-4e5d-87a9-f12dfb5b67d6
+    alias: Good Night
+    initial_state: true
+    trigger:
+      - platform: time
+        at: "22:30:00"
+    action:
+      - service: script.reset_annc_switches

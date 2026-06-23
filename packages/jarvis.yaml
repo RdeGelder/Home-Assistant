@@ -4,31 +4,35 @@
 #   @package        :   Jarvis
 #   @description    :   Bringing some Jarvis to Home Assistant
 ###############################################################################
-
+#region importnumbers
 input_number:
   tts_volume:
     name: tts volume
     min: 0
     max: 100
-    initial: 5
+    initial: 18
     mode: slider
     icon: mdi:volume
   tts_high_volume:
     name: tts high volume
     min: 0
     max: 100
-    initial: 7
+    initial: 20
     mode: slider
     icon: mdi:volume
 
+#region scripts
 script:
+  #endregion
+
+  # region tts greetings
   get_tts_greetings:
     sequence:
       - variables:
           general: >
             {% if now().hour < 12 %}
             {{ ["Goede morgen ",
-                "Morge "
+                "Morgen"
              ] | random }}
             {% elif now().hour >= 12 and now().hour < 17 %}
             {{ ["Goede middag ",
@@ -141,6 +145,7 @@ script:
       - stop: "ok, Im done."
         response_variable: "greetings"
 
+  # region Weather info
   get_weather_info:
     sequence:
       - variables:
@@ -163,6 +168,19 @@ script:
 
   # region speechengine
   speech_engine:
+    ###########################################################################
+    # input:
+    # - message
+    # - who: room or person
+    # - room:
+    # - type:
+    #     * priority
+    #     * weather-advisory
+    #     * weather_alert
+    #     * weather_advisory
+    #     * Weather_cleared
+    #     *
+    ###########################################################################
     sequence:
       # Get greetings
       - response_variable: greetings
@@ -206,7 +224,6 @@ script:
               {{ greetings.general }}
             {% else %}
             {% endif %}
-
       - service: script.get_room_audio
         data:
           room: >
@@ -220,6 +237,7 @@ script:
             {{ briefing }}
             {{ greeting }}
             {{ message }}
+        # kan briefing weg?
         response_variable: cleaned_message
       - condition: state
         entity_id: input_boolean.family_home
@@ -228,11 +246,84 @@ script:
         entity_id: input_boolean.vacation_mode
         state: "off"
       - choose:
+          - conditions: # IF alarm, tornado or important msg
+              - condition: template
+                value_template: "{{ type | string in ['alarm','tornado','important_msg'] }}"
+            sequence:
+              - if: # if type = tornado or important msg
+                  - condition: template
+                    value_template: "{{ type in ['tornado','important_msg'] }}"
+                then:
+                  - if:
+                      - condition: template
+                        value_template: "{{ type not in ['normal'] }}"
+                    then: ## TODO notify ping
+                      - action: tts.speak
+                        data:
+                          media_player_entity_id: "{{ room_services.audio_speaker | string }}"
+                          message: ping
+                        target:
+                          entity_id: tts.google_translate_nl_nl
+                      - delay:
+                          seconds: 5
+              - service: media_player.volume_set
+                data:
+                  entity_id: "{{ room_services.audio_speaker | string }}"
+                  volume_level: >
+                    {{ (states('input_number.tts_high_volume') | float)/100 }}
+              - action: tts.speak
+                data:
+                  media_player_entity_id: "{{ room_services.audio_speaker | string }}"
+                  message: "{{cleaned_message.text}}"
+                target:
+                  entity_id: tts.google_translate_nl_nl
+              - delay:
+                  seconds: 20
+              - service: media_player.volume_set
+                data:
+                  entity_id: "{{ room_services.audio_speaker | string }}"
+                  volume_level: "{{ (states('input_number.tts_volume') | float)/100 }}"
           - conditions:
+              - condition: template
+                value_template: "{{ type | string in ['weather_alert','weather_advisory','weather_cleared'] }}"
               - condition: state
                 entity_id: input_boolean.audible_notifications
                 state: "on"
             sequence:
+              - if:
+                  - condition: template
+                    value_template: "{{ type not in ['normal'] }}"
+                then:
+                  - action: tts.speak
+                    data:
+                      media_player_entity_id: "{{ room_services.audio_speaker | string }}"
+                      message: ping
+                    target:
+                      entity_id: tts.google_translate_nl_nl
+                  - delay:
+                      seconds: 5
+              - service: media_player.volume_set
+                data:
+                  entity_id: "{{ room_services.audio_speaker | string }}"
+                  volume_level: "{{ (states('input_number.tts_volume') | float)/100 }}"
+              - action: tts.speak
+                data:
+                  media_player_entity_id: "{{ room_services.audio_speaker | string }}"
+                  message: "{{cleaned_message.text}}"
+                target:
+                  entity_id: tts.google_translate_nl_nl
+
+          - conditions:
+              - condition: state
+                entity_id: input_boolean.audible_notifications
+                state: "on"
+              # - condition: template
+              #   value_template: "{{ type | string in ['weather_alert','weather_advisory','weather_cleared'] }}"
+            sequence:
+              - service: media_player.volume_set
+                data:
+                  entity_id: "{{ room_services.audio_speaker | string }}"
+                  volume_level: "{{ (states('input_number.tts_volume') | float) / 100 }}"
               - action: tts.speak
                 data:
                   media_player_entity_id: "{{ room_services.audio_speaker | string }}"

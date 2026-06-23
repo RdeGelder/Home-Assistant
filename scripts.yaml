@@ -126,3 +126,27 @@ nieuw_scrip:
       msg_summary: Gave the Jeff briefing.
       type: priority
     action: script.speech_engine
+fieldtest:
+  sequence:
+  - action: light.toggle
+    metadata: {}
+    target:
+      entity_id: light.werkkamer_indicator_1
+    data: {}
+  fields:
+    testing:
+      selector:
+        select:
+          options:
+          - Ruben
+          - Marit
+          - Evi
+          - All
+          - Werkkamer
+          - Parents
+      name: who
+      description: who to send audio
+      required: true
+      default: Ruben
+  alias: fieldtest
+  description: ''

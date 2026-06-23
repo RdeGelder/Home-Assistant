@@ -1,0 +1,104 @@
+input_boolean:
+  follow_music:
+    name: Follow Music
+    initial: off
+
+input_select:
+  music_controller:
+    name: Music Controller
+    options:
+      - living_room
+      - office
+      - kitchen
+      - music
+    initial: music
+
+script:
+  sonos_group_motion:
+    alias: sonos group motion
+    sequence:
+      - condition: template
+        value_template:
+          "{% if target_player is not none and target_player != false and
+          target_player != '' %}\n  true\n{% else %}\n  false\n{% endif %}\n"
+      - condition: template
+        value_template:
+          "{% if states(target_player) != 'playing' %}\n  true\n{% else
+          %}\n  false\n{% endif %}\n"
+      # - service: media_player.volume_set
+      #   data_template:
+      #     entity_id:
+      #       "{% if target_player is not none %}\n  {{ target_player }}\n{% endif
+      #       %}\n"
+      #     volume_level:
+      #       "{% for state in states.media_player if state.entity_id == 'media_player.'
+      #       + states('input_select.music_controller') %}\n  {{state.attributes.volume_level
+      #       }}\n{% endfor %}\n"
+      - service: media_player.join
+        data_template:
+          entity_id: media_player.{{ states('input_select.music_controller') }}
+          group_members:
+            "{% if target_player is not none %}\n  {{ target_player }}\n{%
+            endif %}\n"
+    description: ""
+
+  sonos_ungroup_motion:
+    alias: Sonos Ungroup Motion
+    sequence:
+      - condition: template
+        value_template:
+          "{% if target_player is not none and target_player != false and
+          target_player != '' %}\n  true\n{% else %}\n  false\n{% endif %}\n"
+      - condition: template
+        value_template:
+          "{% if states(target_player) == 'playing' %}\n  true\n{% else
+          %}\n  false\n{% endif %}\n"
+      - condition: template
+        value_template:
+          "{% if target_player != 'media_player.' + states('input_select.music_controller')
+          %}\n  true\n{% else %}\n  false\n{% endif %}\n"
+      - service: media_player.unjoin
+        data_template:
+          entity_id:
+            "{% if target_player is not none %}\n  {{ target_player }}\n{% endif
+            %}\n"
+    description: ""
+
+automation:
+  - alias: Group Player when motion detected
+    id: aac20c1e-cb5b-411b-a429-96e4b14cea5f
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.lumi_lumi_motion_ac02 #Keuken
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.beweging_werkkamer #Werkkamer
+        to: "on"
+    condition:
+      condition: and
+      conditions:
+        - condition: state
+          entity_id: input_boolean.follow_music
+          state: "on"
+        # The controller player must be playing music (not paused)
+        - condition: template
+          value_template: >
+            {% if states('media_player.' + states('input_select.music_controller')) == 'playing' %}
+              true
+            {% else %}
+              false
+            {% endif %}
+    action:
+      - service: script.sonos_group_motion
+        data_template:
+          target_player: >
+            {% if trigger.entity_id == 'binary_sensor.lumi_lumi_motion_ac02'%}
+              {% set player = 'media_player.kitchen' %}
+            {% elif trigger.entity_id == 'binary_sensor.beweging_werkkamer' %}
+              {% set player = 'media_player.office' %}
+            {% endif %}
+            {% if player is not none %}
+              {{ player }}
+            {% else %}
+              false
+            {% endif %}

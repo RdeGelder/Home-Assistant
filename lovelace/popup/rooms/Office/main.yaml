@@ -7,11 +7,11 @@
   sub_button: []
 - type: custom:mushroom-chips-card
   chips:
-    # - type: entity
-    #   entity: binary_sensor.office_motion_sensors
-    #   icon_color: yellow
-    #   content_info: last-changed
-    #   icon: mdi:motion-sensor
+    - type: entity
+      entity: binary_sensor.beweging_werkkamer
+      icon_color: yellow
+      content_info: last-changed
+      icon: mdi:motion-sensor
     - type: entity
       entity: binary_sensor.werkkamer_raam_openen
       icon_color: red

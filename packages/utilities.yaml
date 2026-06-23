@@ -1,4 +1,6 @@
+#region script
 script:
+  #region cleanup text
   cleanup_text:
     sequence:
       - variables:
@@ -14,6 +16,7 @@ script:
             {"text":"{{- cleanup(mother_of_all_macros()) | string -}}"}
       - stop: "ok, Im done."
         response_variable: "cleaned"
+
   #region room services
   get_room_services:
     fields:
@@ -218,7 +221,7 @@ script:
           rooms: >
             {{ presence.occupied_rooms |
               replace('master_bedroom','Master Bedroom') |
-              replace('living_room','Living Room') |
+              replace('living_room','livingroom') |
               replace('pot_studio','Pottery Studio') |
               replace('skylars_bedroom','Skylars Bedroom') |
               replace('kitchen','kitchen')  }}
@@ -229,9 +232,8 @@ script:
             {% elif room_priority != 'NA'  %}
               {% set room = room_priority |
               replace('master_bedroom','Master Bedroom') |
-              replace('living_room','Living Room') |
-              replace('pot_studio','Pottery Studio') |
-              replace('skylars_bedroom','Skylars Bedroom') |
+              replace('livingroom','woonkamer') |
+              replace('office','werkkamer') |
               replace('kitchen','kitchen') %}
             {% set jarvis_speaker = expand(label_entities('Jarvis')) |
                 selectattr('entity_id', 'in', area_entities(room)) |

@@ -20,8 +20,9 @@ template:
             | selectattr('state','lt', threshold|string) 
             | map(attribute='name') 
             | list |count}}
-
+#region script
 script:
+  #region battery notification
   battery_notification:
     sequence:
       - service: script.get_ruben_briefing

@@ -1,0 +1,206 @@
+###############################################################################
+#   @author         :   Ruben
+#   @date           :   14-11-2025
+#   @package        :   Announcements
+#   @description    :   Daily Announcements.
+###############################################################################
+
+###############################
+# input_datetime - So the time report automation fires can be set in the UI
+###############################
+input_datetime:
+  morning_report:
+    name: Morning Report
+    has_date: false
+    has_time: true
+  nightly_report:
+    name: Nightly Report
+    has_date: false
+    has_time: true
+  daily_report:
+    name: Daily Report
+    has_date: false
+    has_time: true
+
+input_boolean:
+  good_morning_report:
+    name: Good Morning Report
+
+automation:
+  - id: aa894d9f-ce6a-420b-bd48-f87165437edd
+    alias: Good Morning Report
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.lumi_lumi_motion_ac02
+        to: "on"
+    condition:
+      - condition: time
+        after: "06:45:00"
+        before: "08:30:00"
+      - condition: state
+        entity_id: input_boolean.good_morning_report
+        state: "off"
+    action:
+      - service: script.morning_wakeup_report
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.good_morning_report
+
+script:
+  morning_wakeup_report:
+    sequence:
+      - service: script.get_tts_greetings
+        response_variable: "greetings"
+      - service: script.get_weather_info
+        response_variable: "weather_info"
+      - service: script.get_briefing_data
+        response_variable: "briefing_data"
+      - variables:
+          message: >
+            {{greetings.general}}
+            {{weather_info.sun_status}}
+            {{briefing_data.bin_day}}
+      - service: script.cleanup_text
+        data:
+          message: >
+            {{ message }}
+        response_variable: "cleaned_briefing"
+      - service: script.speech_engine
+        data:
+          who: livingroom
+          message: >
+            {{ cleaned_briefing.text }}
+
+  get_briefing_data:
+    sequence:
+      - variables:
+          dow: >
+            {{ as_timestamp(now()) | timestamp_custom('%A') }}
+          current_time: >
+            It is {{ now().strftime("%I:%M %p") }}.
+          current_time_full: >
+            Today is {{states.sensor.today_is.state }}, {{ as_timestamp(now()) | timestamp_custom('%B %d %Y') }} .
+          bin_day: >
+            {% if dow == 'Monday' %}
+              {% if is_state('binary_sensor.morning','on') %}
+                  {{ [ 'Vergeet niet de bak binnen te halen vandaag. ',
+                  'De afvalbak voelt zicht een zaam als je hem vandaag niet ophaald. ',
+                  'Ik weet zeker dat je het niet vergeten bent maar voor de zekerheid, haal vandaag de afvalbak binnen.'
+                ] | random }}
+              {% endif %}
+            {% endif %}
+            {% if dow == 'Sunday' %}
+              {% if is_state('binary_sensor.evening','on') %}
+                {{ [ 'Vandaag moet de bak aan de weg gezet worden.',
+                  'De afvalbak moet weggebracht worden vandaag.',
+                  'Vergeet niet om de bak weg te zetten.',
+                  'Je afval wordt niet opgehaald als je hem niet aan de weg zet vandaag.'
+                ] | random }}
+              {% endif %}
+            {% endif %}
+      - variables:
+          briefing: >
+            {"current_time":"{{current_time}}",
+            "current_time_full":"{{current_time_full}}",
+            "bin_day":"{{bin_day}}"}
+      - stop: "Alright. Im done."
+        response_variable: "briefing"
+
+  get_ruben_briefing:
+    sequence:
+      - variables:
+          device_status: >
+            {% set level = states('sensor.ruben_mobiel_battery_level') %}
+            {% set charging = states('sensor.ruben_mobiel_battery_state') %}
+            {% if has_value('sensor.ruben_mobiel_battery_level') %}
+            {{ [
+                    'Je telefoon is momenteel op ' ~ level ~ ' procent.',
+                    'Je hebt nog ' ~ level ~ ' procent over in je telefoon.',
+                    'Je telefoon meldt dat er nog ' ~ level ~ ' procent over is in zijn batterij.',
+                    'Het lijkt dat je telefoon nog ' ~ level ~ ' procent heeft.',
+                    'De batterij van je telefoon is nu op ' ~ level ~ ' procent.'
+                  ] | random }}
+                  {% if level | int <=20 and charging == 'discharging' %}
+                    {{ [
+                    'I suggest you connect it to a power source.',
+                    'You may want to charge it.',
+                    'Charging the battery appears to be best way to avoid loss of power.',
+                    'If you would like to use it I think harging it would be the next step.',
+                    'May I remind you that your pone is not powered by an infinity stone.',
+                    'May I remind you that the device needs power to work.'
+                    ] | random }}
+                  {% elif level | int <=10 and charging == 'discharging' %}
+                    {{ [
+                    'I must insist you connect it to a power source if you want to stay in communication with your family.',
+                    'At that level your device your device will fail in a hour or so.',
+                    'I will be unable to track you if the device loses power.',
+                    'May I remind you that your phone has almost exhausted its power reserves.'
+                    ] | random }}
+                  {% elif level | int <=3 and charging == 'discharging' %}
+                    {{ [
+                    'Your phones power level is critical.',
+                    'Failure due to power loss is imminent.',
+                    'If you would like to remain in communication I suggest dropping what you are doing and finding a power source.',
+                    'Drop what you are doing and find a power source for your phone.'
+                    ] | random }}
+                  {% endif %}
+                {% else %}
+                  {{ [
+                    'Your phone is unresponsive.',
+                    'It appears your phone has loss power.',
+                    'Your phone is no longer reporting its power level.',
+                    'I suspect your phone has had a power failure.',
+                    'Your mobile device is no longer responding.'
+                    ] | random }}
+                    I suggest you locate it. 
+                {% endif %}
+          critical_battery_count: >
+            {{ states('sensor.critical_battery_count') }}
+          critical_battery_info: >-
+            {% if critical_battery_count | int > 0 %}
+              {{ [
+                'En nog een ding.',
+                'En voor als je er nog niet bewust van was.',
+                'Daarnaast heb ik nog iets voor je.'
+                ] | random }}
+              {% if critical_battery_count | int > 1 %}
+                {{ [
+                  'Er zijn ' ~ critical_battery_count ~ ' critische batterijen die je aandacht nodig hebben.',
+                  critical_battery_count ~ ' critische apparaten hebben bijna geen batterij meer.',
+                  'Ik deed een snelle ronde en vond ' ~ critical_battery_count ~ ' batterijen in verschillende plekken in het huis die bijna leeg zijn.',
+                  'Ik raad je aan om tijd te maken om een paar batterijen te vervangen. Want ' ~ critical_battery_count ~ ' batterijen zijn bijna op.'
+                  ] | random }}
+              {% else %}
+                {{ [
+                  'Er is ' ~ critical_battery_count ~ ' critische batterij die je aandacht nodig heeft.',
+                  critical_battery_count ~ ' critische apparaat heeft bijna geen batterij meer.',
+                  'Ik deed een snelle ronde en vond ' ~ critical_battery_count ~ ' batterij in huis die bijna leeg is.',
+                  'Ik raad je aan om tijd te maken om een batterij te vervangen. Want ' ~ critical_battery_count ~ ' batterij is bijna op.'
+                  ] | random }}
+              {% endif %}
+                Ik heb een lijst naar je telefoon gestuurd. 
+            {% else %}
+
+            {% endif %}
+      - service: script.cleanup_text
+        data:
+          message: >
+            {{device_status}}
+        response_variable: "cleaned_device_status"
+      - service: script.cleanup_text
+        data:
+          message: >
+            {{critical_battery_info}}
+        response_variable: "cleaned_critical_battery_info"
+      - variables:
+          briefing: >
+            {"device_status":"{{cleaned_device_status.text}}",
+            "critical_battery_info":"{{cleaned_critical_battery_info.text}}",
+            "critical_battery_count":"{{critical_battery_count}}"}
+      - stop: "Alright. Im done."
+        response_variable: "briefing"
+
+  reset_annc_switches:
+    sequence:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.good_morning_report

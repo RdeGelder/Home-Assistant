@@ -176,6 +176,7 @@
           - light.woonkamer_kleurenspot
           - light.woonkamer_olielamp
           - light.woonkamer_servieskast
+          - light.zigbee_lampje
       - action: switch.turn_off
         metadata: {}
         data: {}
@@ -358,21 +359,22 @@
   conditions: []
   actions:
   - action: media_player.play_media
-    metadata: {}
     data:
-      media_content_type: playlist
-      media_content_id: "{% set trigger = trigger.id %} {% if trigger == 'Matthijn
-        Buwalda'%}\n  https://open.spotify.com/playlist/37i9dQZF1DZ06evO28cpQU?si=3ecac8ac46594e46\n{%
-        elif trigger == 'Matthijn Buwalda Radio' %} \n  https://open.spotify.com/playlist/37i9dQZF1E4BTKDo02No92?si=e2b8eb3289554670\n{%
-        elif trigger == 'Sela' %} \n  https://open.spotify.com/playlist/37i9dQZF1DZ06evO1P6XeT?si=88df28a4cf1b4348\n{%
-        elif trigger == 'Sela Radio' %} \n  https://open.spotify.com/playlist/37i9dQZF1E4sZLoCBiZh4D?si=e7708239fa8e46d4\n{%
-        elif trigger == 't Koffiehuis' %} \n  https://open.spotify.com/playlist/37i9dQZF1DWYPwGkJoztcR?si=68b4bb536d6f4893\n{%
-        elif trigger == 'Love Coffee Love Jesus' %} \n https://open.spotify.com/playlist/6o2E9vkewAblL79cIi4aiB?si=3176cd297c704e15\n{%
-        elif trigger == 'Daily Drive' %} \n https://open.spotify.com/playlist/37i9dQZF1EfOmkAi3kSqLL?si=005c7b4dc7464a9c\n{%
-        elif trigger == 'Good People Good Music' %} \n https://open.spotify.com/playlist/37i9dQZF1DWZy0j22jjWNA?si=Q_Cp-DFZQr-CrqmMa82MTw
-        \n {%else%}\n trigger.id\n{%endif%}\n"
+      media:
+        media_content_id: "{% set trigger = trigger.id %} {% if trigger == 'Matthijn
+          Buwalda'%}\n  https://open.spotify.com/playlist/37i9dQZF1DZ06evO28cpQU?si=3ecac8ac46594e46\n{%
+          elif trigger == 'Matthijn Buwalda Radio' %} \n  https://open.spotify.com/playlist/37i9dQZF1E4BTKDo02No92?si=e2b8eb3289554670\n{%
+          elif trigger == 'Sela' %} \n  https://open.spotify.com/playlist/37i9dQZF1DZ06evO1P6XeT?si=88df28a4cf1b4348\n{%
+          elif trigger == 'Sela Radio' %} \n  https://open.spotify.com/playlist/37i9dQZF1E4sZLoCBiZh4D?si=e7708239fa8e46d4\n{%
+          elif trigger == 't Koffiehuis' %} \n  https://open.spotify.com/playlist/37i9dQZF1DWYPwGkJoztcR?si=68b4bb536d6f4893\n{%
+          elif trigger == 'Love Coffee Love Jesus' %} \n https://open.spotify.com/playlist/6o2E9vkewAblL79cIi4aiB?si=3176cd297c704e15\n{%
+          elif trigger == 'Daily Drive' %} \n https://open.spotify.com/playlist/37i9dQZF1EfOmkAi3kSqLL?si=005c7b4dc7464a9c\n{%
+          elif trigger == 'Good People Good Music' %} \n https://open.spotify.com/playlist/37i9dQZF1DWZy0j22jjWNA?si=Q_Cp-DFZQr-CrqmMa82MTw
+          \n {%else%}\n trigger.id\n{%endif%}\n"
+        media_content_type: playlist
+        metadata: {}
     target:
-      entity_id: media_player.woonkamer
+      entity_id: media_player.office
   mode: single
 - id: '1750677114848'
   alias: HA update
@@ -1120,17 +1122,7 @@
     trigger: state
     entity_id:
     - binary_sensor.night_time
-  conditions:
-  - condition: not
-    conditions:
-    - condition: state
-      entity_id: person.ruben
-      state:
-      - home
-    - condition: state
-      entity_id: person.marit
-      state:
-      - home
+  conditions: []
   actions:
   - choose:
     - conditions:
@@ -1207,7 +1199,7 @@
             position: 74
           alias: Weg
         - conditions:
-          - condition: and
+          - condition: or
             conditions:
             - condition: state
               entity_id: person.ruben
@@ -1717,7 +1709,7 @@
           - metadata: {}
             data: {}
             target:
-              entity_id: media_player.werkkamer
+              entity_id: media_player.office
             action: media_player.media_play_pause
         - conditions:
           - condition: template
@@ -1781,7 +1773,7 @@
               sequence:
               - data: {}
                 target:
-                  entity_id: media_player.werkkamer
+                  entity_id: media_player.office
                 action: media_player.media_next_track
             - conditions:
               - condition: template
@@ -1816,7 +1808,7 @@
       - metadata: {}
         data: {}
         target:
-          entity_id: media_player.werkkamer
+          entity_id: media_player.office
         action: media_player.volume_down
     - conditions:
       - condition: template
@@ -1866,7 +1858,7 @@
       - metadata: {}
         data: {}
         target:
-          entity_id: media_player.werkkamer
+          entity_id: media_player.office
         action: media_player.volume_up
     - conditions:
       - condition: template
@@ -2040,15 +2032,17 @@
     entity_id: c6b18449a9c7968355ec2f9f4559add1
     domain: light
     trigger: device
-  - trigger: state
-    entity_id:
-    - binary_sensor.overloop1_beweging
-    to: 'on'
-    id: Beweging
-  - trigger: state
-    entity_id:
-    - binary_sensor.overloop1_beweging
-    to: 'off'
+  - type: motion
+    device_id: 8389fde5eabdeefaea35308e569a0ada
+    entity_id: 4da371320f59213156f6e3fc0dccae4a
+    domain: binary_sensor
+    trigger: device
+    id: is beweging
+  - type: no_motion
+    device_id: 8389fde5eabdeefaea35308e569a0ada
+    entity_id: 4da371320f59213156f6e3fc0dccae4a
+    domain: binary_sensor
+    trigger: device
     for:
       hours: 0
       minutes: 1
@@ -2058,10 +2052,10 @@
   actions:
   - choose:
     - conditions:
-      - condition: trigger
+      - alias: is bewegen
+        condition: trigger
         id:
-        - Beweging
-        alias: is bewegen
+        - is beweging
       - condition: or
         conditions:
         - condition: numeric_state
@@ -2441,7 +2435,7 @@
       - condition: and
         conditions:
         - condition: numeric_state
-          entity_id: climate.woonkamer
+          entity_id: climate.livingroom
           below: 21.5
         - condition: numeric_state
           entity_id: sensor.test_mean
@@ -2451,12 +2445,12 @@
       - action: climate.turn_on
         metadata: {}
         target:
-          entity_id: climate.woonkamer
+          entity_id: climate.livingroom
         data: {}
       - action: climate.set_temperature
         metadata: {}
         target:
-          entity_id: climate.woonkamer
+          entity_id: climate.livingroom
         data:
           temperature: 21.1
       alias: Start met verwarmen
@@ -2469,18 +2463,18 @@
       - choose:
         - conditions:
           - condition: numeric_state
-            entity_id: climate.woonkamer
+            entity_id: climate.livingroom
             above: 20.9
           sequence:
           - action: climate.turn_off
             metadata: {}
             target:
-              entity_id: climate.woonkamer
+              entity_id: climate.livingroom
             data: {}
       - action: climate.set_temperature
         metadata: {}
         target:
-          entity_id: climate.woonkamer
+          entity_id: climate.livingroom
         data:
           temperature: 20.5
       alias: Boven 200w
@@ -2627,3 +2621,66 @@
           entity_id: input_select.washing_machine_status
         data:
           option: Clean
+- id: '1774959369233'
+  alias: Werkkamer
+  description: ''
+  triggers:
+  - type: turned_on
+    device_id: 455b84275821f43d9483d821330dedef
+    entity_id: c6b18449a9c7968355ec2f9f4559add1
+    domain: light
+    trigger: device
+  - trigger: state
+    entity_id:
+    - binary_sensor.beweging_werkkamer
+    to:
+    - 'on'
+    id: Beweging
+  - trigger: state
+    entity_id:
+    - binary_sensor.beweging_werkkamer
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 2
+      seconds: 0
+    id: geen beweging
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - Beweging
+      - condition: or
+        conditions:
+        - condition: numeric_state
+          entity_id: sensor.blind_tilt_0050_lichtsterkte
+          below: 2
+        - condition: state
+          entity_id: binary_sensor.night_time
+          state: 'on'
+      sequence:
+      - action: light.turn_on
+        metadata: {}
+        data:
+          brightness_pct: 82
+          color_temp_kelvin: 2659
+        target:
+          entity_id:
+          - light.werkkamer_rechts
+          - light.werkkamer_links
+          - light.werkkamer_midden
+    - conditions:
+      - condition: trigger
+        id:
+        - geen beweging
+      sequence:
+      - action: light.turn_off
+        metadata: {}
+        target:
+          entity_id:
+          - light.werkkamer_rechts
+          - light.werkkamer_links
+          - light.werkkamer_midden
+  mode: single

@@ -68,7 +68,7 @@
 # - square: false
 #   type: grid
 #   cards:
-
+#region lights
 - square: false
   type: grid
   cards:
@@ -120,24 +120,24 @@
           name: Top Light
           entity: light.slaapkamer_plafond
           template: light_rgb
-        # - square: false
-        #   columns: 2
-        #   type: grid
-        #   cards:
-            # - type: custom:button-card
-            #   name: Bed Lamp
-            #   entity: light.bed_lamp
-            #   template: light_rgb
-            #   double_tap_action:
-            #     action: call-service
-            #     service: script.turn_light_to_random_color
-            #     data:
-            #       target: "[[[ return entity.entity_id ]]]"
-            #     haptic: success
-            # - type: custom:button-card
-            #   name: Bed Lamp
-            #   template: light_rgb
-            #   entity: light.bed_lamp_2
+        - square: false
+          columns: 2
+          type: grid
+          cards:
+            - type: custom:button-card
+              name: Marit
+              entity: light.nachtkastje_marit
+              template: light_rgb
+              # double_tap_action:
+              #   action: call-service
+              #   service: script.turn_light_to_random_color
+              #   data:
+              #     target: "[[[ return entity.entity_id ]]]"
+              #   haptic: success
+            - type: custom:button-card
+              name: Ruben
+              template: switch_template
+              entity: switch.nachtkastje_ruben
             #   double_tap_action:
             #     action: call-service
             #     service: script.turn_light_to_random_color

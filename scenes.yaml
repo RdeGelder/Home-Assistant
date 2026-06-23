@@ -172,9 +172,6 @@
       friendly_name: Woonkamer servieskast
       supported_features: 40
       state: 'on'
-    switch.woonkamer_pompoen:
-      friendly_name: Woonkamer pompoen
-      state: 'off'
   metadata: {}
 - id: '1756833050091'
   name: Woonkamer dag
@@ -182,14 +179,11 @@
     light.woonkamer_houtspot:
       min_color_temp_kelvin: 2202
       max_color_temp_kelvin: 4000
-      min_mireds: 250
-      max_mireds: 454
       supported_color_modes:
       - color_temp
       color_mode: color_temp
       brightness: 254
       color_temp_kelvin: 2717
-      color_temp: 368
       hs_color:
       - 28.358
       - 65.183
@@ -202,14 +196,12 @@
       - 0.387
       off_with_transition: false
       off_brightness:
-      friendly_name: Woonkamer houtspot
+      friendly_name: Houtspot
       supported_features: 40
       state: 'on'
     light.woonkamer_kleurenspot:
       min_color_temp_kelvin: 2202
       max_color_temp_kelvin: 4000
-      min_mireds: 250
-      max_mireds: 454
       effect_list:
       - 'off'
       - colorloop
@@ -220,7 +212,6 @@
       color_mode: color_temp
       brightness: 254
       color_temp_kelvin: 2564
-      color_temp: 390
       hs_color:
       - 28.711
       - 70.253
@@ -233,6 +224,7 @@
       - 0.389
       off_with_transition: false
       off_brightness:
+      icon: mdi:light-flood-up
       friendly_name: Woonkamer kleurenspot
       supported_features: 44
       state: 'on'
@@ -240,9 +232,10 @@
       supported_color_modes:
       - brightness
       color_mode: brightness
-      brightness: 254
+      brightness: 171
       off_with_transition: false
       off_brightness:
+      icon: mdi:lightbulb-outline
       friendly_name: Woonkamer olielamp
       supported_features: 40
       state: 'on'
@@ -256,8 +249,89 @@
       friendly_name: Woonkamer servieskast
       supported_features: 40
       state: 'on'
-    switch.woonkamer_pompoen:
-      friendly_name: Woonkamer pompoen
+    light.ikea_of_sweden_tradfri_bulb_gu10_cws_345lm:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      effect_list:
+      - 'off'
+      - colorloop
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect: 'off'
+      color_mode: color_temp
+      brightness: 209
+      color_temp_kelvin: 2724
+      hs_color:
+      - 28.343
+      - 64.962
+      rgb_color:
+      - 255
+      - 168
+      - 89
+      xy_color:
+      - 0.523
+      - 0.388
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Lampje boven
+      supported_features: 44
+      state: 'on'
+    light.ikea_of_sweden_tradfri_bulb_gu10_cws_345lm_3:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      effect_list:
+      - 'off'
+      - colorloop
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect: 'off'
+      color_mode: color_temp
+      brightness: 38
+      color_temp_kelvin: 2724
+      hs_color:
+      - 28.343
+      - 64.962
+      rgb_color:
+      - 255
+      - 168
+      - 89
+      xy_color:
+      - 0.523
+      - 0.388
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Lampje midden
+      supported_features: 44
+      state: 'on'
+    light.ikea_of_sweden_tradfri_bulb_gu10_cws_345lm_2:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      effect_list:
+      - 'off'
+      - colorloop
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect: 'off'
+      color_mode: color_temp
+      brightness: 89
+      color_temp_kelvin: 2724
+      hs_color:
+      - 28.343
+      - 64.962
+      rgb_color:
+      - 255
+      - 168
+      - 89
+      xy_color:
+      - 0.523
+      - 0.388
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Lampje onder
+      supported_features: 44
       state: 'on'
   metadata: {}
 - id: '1756904456054'

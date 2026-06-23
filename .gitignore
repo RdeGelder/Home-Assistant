@@ -10,6 +10,8 @@
 .cloud
 .google.token
 
+*/tts/
+
 # Ensure these YAML files are ignored, otherwise your secret data/credentials will leak.
 ip_bans.yaml
 secrets.yaml
@@ -29,6 +31,18 @@ secrets.yaml
 secrets.yaml
 
 # extensions
+*.DS_Store
+*._*
+*.HA_VERSION
+*.ini
+*.pyc
+*.conf
+*.uuid
+*.txt
+*.log*
+*.xml
+*.sqlite
+
 *.log.1
 *.fault
 *.log
