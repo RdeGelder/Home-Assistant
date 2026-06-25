@@ -210,25 +210,21 @@
   alias: keuken licht beweging
   description: ''
   triggers:
-  - type: motion
-    device_id: 218bf4e29ea2fb6bfe9c99b9e91db680
-    entity_id: 8411400df35c752762047f0d8f942acf
-    domain: binary_sensor
-    trigger: device
-    id: Beweging
-  - type: no_motion
-    device_id: 218bf4e29ea2fb6bfe9c99b9e91db680
-    entity_id: 8411400df35c752762047f0d8f942acf
-    domain: binary_sensor
-    trigger: device
-    for:
-      hours: 0
-      minutes: 1
-      seconds: 0
-    id: Geen beweging 5min
   - trigger: state
     entity_id:
     - binary_sensor.night_time
+  - trigger: state
+    entity_id:
+    - binary_sensor.kitchen_occupied
+    id: Occupied
+    to:
+    - 'on'
+  - trigger: state
+    entity_id:
+    - binary_sensor.kitchen_occupied
+    id: Not Occupied
+    to:
+    - 'off'
   conditions: []
   actions:
   - choose:
@@ -243,11 +239,9 @@
           - condition: numeric_state
             entity_id: sensor.blind_tilt_0050_lichtsterkte
             below: 2
-        - type: is_motion
-          condition: device
-          device_id: 218bf4e29ea2fb6bfe9c99b9e91db680
-          entity_id: 8411400df35c752762047f0d8f942acf
-          domain: binary_sensor
+        - condition: trigger
+          id:
+          - Occupied
       sequence:
       - choose:
         - conditions:
@@ -279,7 +273,7 @@
           state: 'off'
         - condition: trigger
           id:
-          - Geen beweging 5min
+          - Not Occupied
       sequence:
       - action: light.turn_off
         metadata: {}
@@ -820,25 +814,21 @@
   alias: licht logeerkamer beweging
   description: ''
   triggers:
-  - type: occupied
-    device_id: cc4caf7562aa6a457b169173473407b4
-    entity_id: 512f924aa7da54400ed93d7eef83d80d
-    domain: binary_sensor
-    trigger: device
-    id: Beweging
-  - type: not_occupied
-    device_id: cc4caf7562aa6a457b169173473407b4
-    entity_id: 512f924aa7da54400ed93d7eef83d80d
-    domain: binary_sensor
-    trigger: device
-    id: Geen beweging 5min
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 5
   - trigger: state
     entity_id:
     - binary_sensor.night_time
+  - trigger: state
+    entity_id:
+    - binary_sensor.guest_bedroom_occupied
+    from:
+    - 'on'
+    id: Occupied
+  - trigger: state
+    entity_id:
+    - binary_sensor.guest_bedroom_occupied
+    from:
+    - 'off'
+    id: Not Occupied
   conditions: []
   actions:
   - choose:
@@ -848,14 +838,13 @@
         - condition: state
           entity_id: binary_sensor.night_time
           state: 'on'
-        - type: is_occupied
-          condition: device
-          device_id: cc4caf7562aa6a457b169173473407b4
-          entity_id: 512f924aa7da54400ed93d7eef83d80d
-          domain: binary_sensor
         - condition: state
           entity_id: input_boolean.slapen
           state: 'off'
+        - condition: state
+          entity_id: binary_sensor.guest_bedroom_occupied
+          state:
+          - 'on'
       sequence:
       - action: light.turn_on
         metadata: {}
@@ -869,9 +858,10 @@
         - condition: state
           entity_id: input_boolean.logeerkamer_by_knop
           state: 'off'
-        - condition: trigger
-          id:
-          - Geen beweging 5min
+        - condition: state
+          entity_id: binary_sensor.guest_bedroom_occupied
+          state:
+          - 'off'
       sequence:
       - action: light.turn_off
         metadata: {}
@@ -2632,26 +2622,23 @@
     trigger: device
   - trigger: state
     entity_id:
-    - binary_sensor.beweging_werkkamer
+    - binary_sensor.office_occupied
     to:
-    - 'on'
-    id: Beweging
+    - 'off'
+    id: Not Occupied
   - trigger: state
     entity_id:
-    - binary_sensor.beweging_werkkamer
-    to: 'off'
-    for:
-      hours: 0
-      minutes: 2
-      seconds: 0
-    id: geen beweging
+    - binary_sensor.office_occupied
+    to:
+    - 'on'
+    id: Occupied
   conditions: []
   actions:
   - choose:
     - conditions:
       - condition: trigger
         id:
-        - Beweging
+        - Occupied
       - condition: or
         conditions:
         - condition: numeric_state
@@ -2674,7 +2661,7 @@
     - conditions:
       - condition: trigger
         id:
-        - geen beweging
+        - Not Occupied
       sequence:
       - action: light.turn_off
         metadata: {}

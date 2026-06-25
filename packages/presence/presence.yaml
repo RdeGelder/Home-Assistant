@@ -2,12 +2,14 @@ group:
   rooms:
     - binary_sensor.kitchen_occupied
     - binary_sensor.living_room_occupied
+    - binary_sensor.office_occupied
+    - binary_sensor.guest_bedroom_occupied
 
   occupancy:
-    - binary_sensor.lumi_lumi_motion_ac02
+    - binary_sensor.kitchen_motion
 
   room_presence:
-    - sensor.ruben_mobiel_area
+    - sensor.ruben_room
 
 #region template
 template:
@@ -16,7 +18,7 @@ template:
         icon: mdi:account-group
         state: >
           {{ states.binary_sensor | 
-          selectattr('entity_id', 'in', area_entities('kitchen')) |
+          selectattr('entity_id', 'in', area_entities('keuken')) |
           rejectattr('attributes.device_class', 'undefined') |
           selectattr('attributes.device_class', 'search', '(occupancy|motion|door)') | 
           selectattr('state', 'eq', 'on') | 
@@ -41,7 +43,7 @@ template:
         icon: mdi:account-group
         state: >
           {{ states.binary_sensor | 
-          selectattr('entity_id', 'in', area_entities('bedroom')) |
+          selectattr('entity_id', 'in', area_entities('slaapkamer')) |
           rejectattr('attributes.device_class', 'undefined') |
           selectattr('attributes.device_class', 'search', '(occupancy|motion|door)') | 
           selectattr('state', 'eq', 'on') | 
@@ -51,7 +53,7 @@ template:
         icon: mdi:account-group
         state: >
           {{ states.binary_sensor | 
-          selectattr('entity_id', 'in', area_entities('office')) |
+          selectattr('entity_id', 'in', area_entities('werkkamer')) |
           rejectattr('attributes.device_class', 'undefined') |
           selectattr('attributes.device_class', 'search', '(occupancy|motion|door)') | 
           selectattr('state', 'eq', 'on') | 
@@ -62,6 +64,16 @@ template:
         state: >
           {{ states.binary_sensor | 
           selectattr('entity_id', 'in', area_entities('evi')) |
+          rejectattr('attributes.device_class', 'undefined') |
+          selectattr('attributes.device_class', 'search', '(occupancy|motion|door)') | 
+          selectattr('state', 'eq', 'on') | 
+          map(attribute='entity_id') |
+          list | count > 0}}
+      - name: guest_bedroom_occupied
+        icon: mdi:account-group
+        state: >
+          {{ states.binary_sensor | 
+          selectattr('entity_id', 'in', area_entities('logeerkamer')) |
           rejectattr('attributes.device_class', 'undefined') |
           selectattr('attributes.device_class', 'search', '(occupancy|motion|door)') | 
           selectattr('state', 'eq', 'on') | 
@@ -96,6 +108,15 @@ script:
             {%- endif -%}
             {% endif %}
             {{ rooms | replace('_occupied','') }}
+          occupied_rooms_cnt: >
+            {% if is_state('input_boolean.audible_notifications', 'on') %}
+              {{ expand('group.rooms') 
+                | selectattr('state', 'eq', 'on') | list | count }}
+            {% else %}
+              {{ expand('group.rooms') 
+                | rejectattr('name', 'search', 'bedroom') 
+                | selectattr('state', 'eq', 'on') | list | count }}
+            {% endif %}
           room_presence: >-
             {"occupied_rooms":"{{occupied_rooms}}",
             "occupied_rooms_cnt":"{{occupied_rooms_cnt}}"}

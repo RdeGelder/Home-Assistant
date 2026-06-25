@@ -98,8 +98,8 @@ script:
         required: true
         default: normal
     sequence:
-      # - service: script.get_room_presence
-      #   response_variable: "presence"
+      - service: script.get_room_presence
+        response_variable: "presence"
       - variables:
           room_priority: >
             {% if room is defined %}
@@ -111,87 +111,87 @@ script:
             {% else %}
               NA         
             {% endif %}
-          # rooms: >
-          #   {{ presence.occupied_rooms |
-          #     replace('master_bedroom','Master Bedroom') |
-          #     replace('living_room','Living Room') |
-          #     replace('pot_studio','Pottery Studio') |
-          #     replace('skylars_bedroom','Skylars Bedroom') |
-          #     replace('kitchen','Living Room')  }}
-          # room_services: >
-          #   {% if type == 'alert'%}
-          #     {% set jarvis_speaker = states.media_player |
-          #       rejectattr('attributes.last_called', 'undefined') |
-          #       rejectattr('entity_id', 'search', '(skyman|this_device|everywhere|skylars)') |
-          #       map(attribute='entity_id') |
-          #       list | join(',') %}
-          #     {% set audio_speaker = 'none' %}
-          #     {% set tts = 'amp' %}
-          #     {% set room = 'all' %}
-          #   {% elif is_state('input_boolean.audible_notifications', 'off')%}
-          #     {% set room = 'text' %}
-          #     {% set jarvis_speaker = 'none' %}
-          #     {% set audio_speaker = 'none' %}
-          #     {% set tts = 'text' %}
-          #   {% elif is_state('input_boolean.vacation_mode', 'on')%}
-          #     {% set room = 'text' %}
-          #     {% set jarvis_speaker = 'none' %}
-          #     {% set audio_speaker = 'none' %}
-          #     {% set tts = 'text' %}
-          #   {% elif type == 'normal'%}
-          #     {% set jarvis_speaker = states.media_player |
-          #       rejectattr('attributes.last_called', 'undefined') |
-          #       rejectattr('entity_id', 'search', '(skyman|this_device|everywhere|bedroom|skylars)') |
-          #       map(attribute='entity_id') |
-          #       list | join(',') %}
-          #     {% set audio_speaker = 'none' %}
-          #     {% set tts = 'amp' %}
-          #     {% set room = 'all' %}
-          #   {% elif room in ['jeff','kat','skylar'] %}
-          #     {% set room = room_priority |
-          #     replace('master_bedroom','Master Bedroom') |
-          #     replace('living_room','Living Room') |
-          #     replace('pot_studio','Pottery Studio') |
-          #     replace('skylars_bedroom','Skylars Bedroom') |
-          #     replace('kitchen','Living Room') %}
+          rooms: >
+            {{ presence.occupied_rooms |
+              replace('office','Werkkamer') |
+              replace('living_room','Living Room') |
+              replace('pot_studio','Pottery Studio') |
+              replace('skylars_bedroom','Skylars Bedroom') |
+              replace('kitchen','Living Room')  }}
+          room_services: >
+            {% if type == 'alert'%}
+              {% set jarvis_speaker = states.media_player |
+                rejectattr('attributes.last_called', 'undefined') |
+                rejectattr('entity_id', 'search', '(skyman|this_device|everywhere|skylars)') |
+                map(attribute='entity_id') |
+                list | join(',') %}
+              {% set audio_speaker = 'none' %}
+              {% set tts = 'amp' %}
+              {% set room = 'all' %}
+            {% elif is_state('input_boolean.audible_notifications', 'off')%}
+              {% set room = 'text' %}
+              {% set jarvis_speaker = 'none' %}
+              {% set audio_speaker = 'none' %}
+              {% set tts = 'text' %}
+            {% elif is_state('input_boolean.vacation_mode', 'on')%}
+              {% set room = 'text' %}
+              {% set jarvis_speaker = 'none' %}
+              {% set audio_speaker = 'none' %}
+              {% set tts = 'text' %}
+            {% elif type == 'normal'%}
+              {% set jarvis_speaker = states.media_player |
+                rejectattr('attributes.last_called', 'undefined') |
+                rejectattr('entity_id', 'search', '(skyman|this_device|everywhere|bedroom|skylars)') |
+                map(attribute='entity_id') |
+                list | join(',') %}
+              {% set audio_speaker = 'none' %}
+              {% set tts = 'amp' %}
+              {% set room = 'all' %}
+            {% elif room in ['marit','ruben','evi'] %}
+              {% set room = room_priority |
+              replace('office','Werkkamer') |
+              replace('living_room','Living Room') |
+              replace('pot_studio','Pottery Studio') |
+              replace('skylars_bedroom','Skylars Bedroom') |
+              replace('kitchen','Living Room') %}
 
-          #     {% set jarvis_speaker = states.media_player |
-          #         rejectattr('attributes.last_called', 'undefined') |
-          #         selectattr('entity_id', 'in', area_entities(room)) |
-          #         map(attribute='entity_id') |
-          #       list | first %}
+              {% set jarvis_speaker = states.media_player |
+                  rejectattr('attributes.last_called', 'undefined') |
+                  selectattr('entity_id', 'in', area_entities(room)) |
+                  map(attribute='entity_id') |
+                list | first %}
 
-          #     {% set audio_speaker = states.media_player |
-          #         rejectattr('attributes.device_class', 'undefined') |
-          #         selectattr('attributes.device_class', 'search', '(speaker)') |
-          #         selectattr('entity_id', 'in', area_entities(room)) |
-          #         map(attribute='entity_id') |
-          #       list | first %}
+              {% set audio_speaker = states.media_player |
+                  rejectattr('attributes.device_class', 'undefined') |
+                  selectattr('attributes.device_class', 'search', '(speaker)') |
+                  selectattr('entity_id', 'in', area_entities(room)) |
+                  map(attribute='entity_id') |
+                list | first %}
 
-          #     {% set tts = 'amp' %}
-          #   {% elif type in ['normal','weather-alert','weather-advisory'] %}
-          #     {% set ns = namespace(area_speakers = []) %}
-          #     {% for room in rooms %}
-          #       {% set ns.area_speakers = ns.area_speakers + states.media_player |
-          #       rejectattr('attributes.last_called', 'undefined') |
-          #       selectattr('entity_id', 'in', area_entities(room))|
-          #       map(attribute='entity_id') | list %}
-          #     {% endfor %}
-          #     {% set jarvis_speaker = ns.area_speakers | join(',') %}
-          #     {% set room = rooms | join(',') %}
-          #     {% set audio_speaker = '' %}
-          #     {% set tts = 'amp' %}
-          #   {% else %}
-          #     {% set room = 'none' %}
-          #     {% set jarvis_speaker = 'none' %}
-          #     {% set audio_speaker = 'none' %}
-          #     {% set tts = 'none' %}
-          #   {% endif %}
-          #   {"area":"{{room}}",
-          #   "jarvis_speaker":"{{jarvis_speaker}}",
-          #   "jarvis_tts":"{{tts}}",
-          #   "audio_speaker":"{{audio_speaker}}",
-          #   "type":"{{type}}"}
+              {% set tts = 'amp' %}
+            {% elif type in ['normal','weather-alert','weather-advisory'] %}
+              {% set ns = namespace(area_speakers = []) %}
+              {% for room in rooms %}
+                {% set ns.area_speakers = ns.area_speakers + states.media_player |
+                rejectattr('attributes.last_called', 'undefined') |
+                selectattr('entity_id', 'in', area_entities(room))|
+                map(attribute='entity_id') | list %}
+              {% endfor %}
+              {% set jarvis_speaker = ns.area_speakers | join(',') %}
+              {% set room = rooms | join(',') %}
+              {% set audio_speaker = '' %}
+              {% set tts = 'amp' %}
+            {% else %}
+              {% set room = 'none' %}
+              {% set jarvis_speaker = 'none' %}
+              {% set audio_speaker = 'none' %}
+              {% set tts = 'none' %}
+            {% endif %}
+            {"area":"{{room}}",
+            "jarvis_speaker":"{{jarvis_speaker}}",
+            "jarvis_tts":"{{tts}}",
+            "audio_speaker":"{{audio_speaker}}",
+            "type":"{{type}}"}
       - stop: "ok, Im done."
         response_variable: "room_services"
   #region room audio

@@ -25,20 +25,20 @@
     - type: entity
       show_state: true
       show_icon: true
-      entity: sensor.buitenmeter_voor_temperatuur
+      entity: sensor.livingroom_temperatuur
       color: red
       tap_action:
         action: more-info
     - type: entity
       show_state: true
       show_icon: true
-      entity: sensor.buitenmeter_voor_luchtvochtigheid
+      entity: sensor.livingroom_luchtvochtigheid
       color: blue
       tap_action:
         action: more-info
 - type: custom:bubble-card
   card_type: climate
-  entity: climate.woonkamer
+  entity: climate.livingroom
   sub_button:
     - name: HVAC modes menu
       select_attribute: hvac_modes

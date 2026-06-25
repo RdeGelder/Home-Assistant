@@ -9,7 +9,7 @@
   bg_color: var(--contrast1)
   button_type: name
   sub_button:
-    - entity: sensor.ruben_mobiel_area
+    - entity: sensor.ruben_room
       show_background: false
       show_state: true
 - type: heading
@@ -19,14 +19,6 @@
 - square: false
   type: grid
   cards:
-    - type: custom:button-card
-      entity: input_boolean.motion_lights
-      name: Motion Lights
-      template: switch_template
-      variables:
-        icon_on: mdi:lightbulb-auto-outline
-        icon_off: mdi:lightbulb-off-outline
-        color: var(--green)
     - type: custom:button-card
       entity: input_boolean.text_notify_ruben
       icon: mdi:cellphone-message-off

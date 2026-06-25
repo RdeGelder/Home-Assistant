@@ -214,13 +214,14 @@ binary_sensor:
 #{% endif %}
 template:
   - sensor:
-      - name: powerload
-        unique_id: powerload
+      - name: Load Power
+        unique_id: Load Power
         unit_of_measurement: "W"
         device_class: power
         state: >
           {{states('sensor.solar_power')|float + states('sensor.p1_meter_vermogen')|float}}
-      - name: "AirQuality"
+
+          - name: "AirQuality"
         unique_id: "airquality"
         state: >
           {% set co2_value = states('sensor.klimaat_sensor_kooldioxide') | float(default=4500) %}
@@ -257,28 +258,6 @@ template:
           {# Final weighted score - adjusted weights to include VOC #}
           {{ ((co2_score * 0.25 +  temp_score * 0.125 + humidity_score * 0.125) | round(1)) }}
 
-      - name: "AirQuality Alt"
-        unique_id: "airquality_alt"
-        state: >
-          {% set co2 = states('sensor.klimaat_sensor_kooldioxide') | float %}
-
-          {% set scores = [] %}
-
-          {# CO2 Score #}
-          {% if co2 <= 599 %}
-            {% set scores = scores + [90] %}
-          {% elif co2 <= 999 %}
-            {% set scores = scores + [70] %}
-          {% elif co2 <= 1499 %}
-            {% set scores = scores + [50] %}
-          {% elif co2 <= 2499 %}
-            {% set scores = scores + [30] %}
-          {% else %}
-            {% set scores = scores + [10] %}
-          {% endif %}
-
-          {{ (scores | sum / scores | length) | round(1) }}
-
       ################################################################################
       ##################################### ENERGY ###################################
       ################################################################################
@@ -292,6 +271,7 @@ template:
             {% else %}
               0
             {% endif%}
+
       - name: Export Power
         unit_of_measurement: "W"
         device_class: power

@@ -26,9 +26,6 @@ views:
             cards:
               - type: custom:button-card
                 template: custom_card_user
-              - type: custom:bubble-card
-                card_type: empty-column
-
       - type: grid
         column_span: 2
         cards:
@@ -201,7 +198,7 @@ views:
                   - type: custom:bubble-card
                     card_type: climate
                     button_type: slider
-                    entity: climate.woonkamer
+                    entity: climate.livingroom
                     icon: mdi:lightbulb-group
                     tap_action:
                       action: perform-action
@@ -256,13 +253,13 @@ views:
                         entity: input_boolean.rooms_quick_access
                         state: "on"
                       - condition: state
-                        entity: sensor.ruben_mobiel_area
+                        entity: sensor.ruben_room
                         state: Werkkamer
                   ### Woonkamer ###
                   - type: custom:bubble-card
                     card_type: climate
                     button_type: slider
-                    entity: climate.woonkamer
+                    entity: climate.livingroom
                     icon: mdi:lightbulb-group
                     tap_action:
                       action: perform-action
@@ -313,7 +310,7 @@ views:
                         entity: input_boolean.rooms_quick_access
                         state: "on"
                       - condition: state
-                        entity: sensor.ruben_mobiel_area
+                        entity: sensor.ruben_room
                         state: Woonkamer
               # region kamers
               - type: grid
@@ -328,8 +325,8 @@ views:
                         variables:
                           icon: mdi:bed-king-outline
                           light: light.slaapkamer_plafond
-                          climate: climate.woonkamer
-                          window_sensor: binary_sensor.badkamer
+                          climate: climate.livingroom
+                          window_sensor: binary_sensor.badkamer_deur_openen
                           motion_sensor: binary_sensor.gang_beweging
                           media_player: media_player.livingroom
                           navigation_path: "#bedroom"
@@ -343,8 +340,8 @@ views:
                         variables:
                           icon: mdi:sofa-outline
                           light: light.zigbee_woonkamer
-                          climate: climate.woonkamer
-                          window_sensor: binary_sensor.achterdeur_openen
+                          climate: climate.livingroom
+                          window_sensor: binary_sensor.woonkamer_backdoor_openen
                           motion_sensor: binary_sensor.gang_beweging
                           media_player: media_player.livingroom
                           navigation_path: "#living-room"
@@ -358,8 +355,8 @@ views:
                         variables:
                           icon: mdi:baby
                           light: light.babykamer_plafond
-                          climate: climate.woonkamer
-                          window_sensor: binary_sensor.achterdeur_openen
+                          climate: climate.livingroom
+                          window_sensor: binary_sensor.woonkamer_backdoor_openen
                           motion_sensor: binary_sensor.gang_beweging
                           media_player: media_player.livingroom
                           navigation_path: "#Evi-room"
@@ -379,8 +376,8 @@ views:
                           variables:
                             icon: mdi:bed-double-outline
                             light: light.zigbee_logeerkamer
-                            climate: climate.woonkamer
-                            window_sensor: binary_sensor.badkamer
+                            climate: climate.livingroom
+                            window_sensor: binary_sensor.badkamer_deur_openen
                             motion_sensor: binary_sensor.ikea_of_sweden_vallhorn_wireless_motion_sensor
                             media_player: media_player.office
                             navigation_path: "#guest_room"
@@ -394,7 +391,7 @@ views:
                         variables:
                           icon: mdi:monitor
                           light: light.zigbee_werkkamer
-                          climate: climate.woonkamer
+                          climate: climate.livingroom
                           window_sensor: binary_sensor.werkkamer_raam_openen
                           motion_sensor: binary_sensor.beweging_werkkamer
                           media_player: media_player.office
@@ -409,10 +406,10 @@ views:
                         variables:
                           icon: mdi:fridge-outline
                           light: group.kitchen_lights
-                          climate: climate.woonkamer
+                          climate: climate.livingroom
                           window_sensor: binary_sensor.keuken_raam_openen
-                          motion_sensor: binary_sensor.lumi_lumi_motion_ac02
-                          media_player: media_player.office
+                          motion_sensor: binary_sensor.kitchen_occupied
+                          media_player: media_player.kitchen
                           navigation_path: "#kitchen"
                         entity: input_boolean.room_toggle_kitchen
                         name: Kitchen
@@ -444,14 +441,14 @@ views:
                       rows: 2
                       columns: 6
                   - type: custom:button-card
-                    entity: switch.solar_optimizer_test
+                    entity: light.woonkamer_kleurenspot
                     template: light_rgb
                     section_mode: true
                     grid_options:
                       rows: 2
                       columns: 6
                   - type: custom:button-card
-                    entity: switch.solar_optimizer_test
+                    entity: light.woonkamer_kleurenspot
                     template: light_rgb
                     section_mode: true
                     grid_options:

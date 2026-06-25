@@ -3,7 +3,7 @@ room_template:
   variables:
     icon: mdi:monitor
     light: light.zigbee_werkkamer
-    climate: climate.woonkamer
+    climate: climate.livingroom
     window_sensor: binary_sensor.badkamer
     motion_sensor: binary_sensor.gang_beweging
     media_player: media_player.woonkamer
