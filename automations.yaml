@@ -305,23 +305,6 @@
       title: Horloge datum
       message: Datum hologe doordraaien
   mode: single
-- id: '1750601884272'
-  alias: afvalcontainer
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - sensor.afvalinfo_thuis_trash_type_tomorrow
-    from: geen
-  conditions: []
-  actions:
-  - action: notify.mobile_app_ruben_mobiel
-    metadata: {}
-    data:
-      title: Container buitenzetten!
-      message: Morgen wordt {{states("sensor.afvalinfo_thuis_trash_type_tomorrow")}}
-        opgehaald
-  mode: single
 - id: '1725019681975'
   alias: Music tags
   description: ''
@@ -2194,48 +2177,6 @@
   conditions: []
   actions:
   - action: script.morning_wakeup_report
-- id: '1763130989428'
-  alias: Afvalbak
-  description: ''
-  triggers:
-  - type: turned_off
-    device_id: 6bd64ee16ce71818f1c3c838b21d2c19
-    entity_id: 662e8218266f82bdb611c882b48dc33a
-    domain: light
-    trigger: device
-  conditions:
-  - condition: time
-    after: '21:00:00'
-  - condition: not
-    conditions:
-    - condition: state
-      entity_id: sensor.afvalinfo_thuis_trash_type_tomorrow
-      state:
-      - geen
-  actions:
-  - sequence:
-    - response_variable: greetings
-      action: script.get_tts_greetings
-      data: {}
-    - variables:
-        message: '{{ greetings.general }}, Morgen wordt de afvalbak opgehaald zet
-          de {{states("sensor.afvalinfo_thuis_trash_type_tomorrow")}} buiten
-
-          '
-    - data:
-        message: '{{ message }}
-
-          '
-      response_variable: cleaned_briefing
-      action: script.cleanup_text
-    - data:
-        who: kitchen
-        message: '{{ cleaned_briefing.text }}
-
-          '
-        msg_summary: the Morning Wakeup Report
-        type: briefing
-      action: script.speech_engine
 - id: '1767607622666'
   alias: Lampen uit slapen
   description: ''

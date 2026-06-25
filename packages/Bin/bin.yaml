@@ -1,0 +1,80 @@
+input_boolean:
+  bin_moved:
+    name: bin_moved
+    initial: off
+
+automation:
+  - alias: Bin has been moved
+    id: aac20c1e-cb5b-411b-a429-96e4b14cea5d
+    description: "This automation is used to show that the bin has been moved."
+    mode: single
+    triggers:
+      - trigger: tag
+        tag_id: ee534ef3-63ba-4cd7-8329-7e208b5a336e
+    conditions: []
+    actions:
+      - action: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.bin_moved
+
+  - alias: Bin notification
+    id: aac20c1e-cb5b-411b-a429-96e4b16cea5d
+    description: ""
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.afvalinfo_thuis_trash_type_tomorrow
+        from: geen
+    conditions: []
+    actions:
+      - action: notify.mobile_app_ruben_mobiel
+        metadata: {}
+        data:
+          title: Container buitenzetten!
+          message: >-
+            Morgen wordt {{states("sensor.afvalinfo_thuis_trash_type_tomorrow")}}
+            opgehaald
+    mode: single
+
+    # Voor nu nog zo
+  - alias: Bin message
+    id: aac20c1e-cb5b-411b-a429-96e4b14cea5w
+    description: ""
+    triggers:
+      - type: turned_off
+        device_id: 6bd64ee16ce71818f1c3c838b21d2c19
+        entity_id: 662e8218266f82bdb611c882b48dc33a
+        domain: light
+        trigger: device
+    conditions:
+      - condition: time
+        after: "21:00:00"
+      - condition: not
+        conditions:
+          - condition: state
+            entity_id: sensor.afvalinfo_thuis_trash_type_tomorrow
+            state:
+              - geen
+    actions:
+      - sequence:
+          - response_variable: greetings
+            action: script.get_tts_greetings
+            data: {}
+          - response_variable: briefing_data
+            action: script.get_briefing_data
+            data: {}
+          - variables:
+              message: >
+                {{ greetings.general }}, {{briefing_data.bin_day}}
+          - data:
+              message: |
+                {{ message }}
+            response_variable: cleaned_briefing
+            action: script.cleanup_text
+          - data:
+              who: kitchen
+              message: |
+                {{ cleaned_briefing.text }}
+              msg_summary: the Morning Wakeup Report
+              type: briefing
+            action: script.speech_engine

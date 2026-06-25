@@ -81,21 +81,18 @@ script:
           current_time_full: >
             Today is {{states.sensor.today_is.state }}, {{ as_timestamp(now()) | timestamp_custom('%B %d %Y') }} .
           bin_day: >
-            {% if dow == 'Monday' %}
-              {% if is_state('binary_sensor.morning','on') %}
+            {% if is_state('input_boolean.bin_moved', 'off') %}
+              {% if states('sensor.afvalinfo_thuis_trash_type_today') != 'geen' %}
                   {{ [ 'Vergeet niet de bak binnen te halen vandaag. ',
                   'De afvalbak voelt zicht een zaam als je hem vandaag niet ophaald. ',
                   'Ik weet zeker dat je het niet vergeten bent maar voor de zekerheid, haal vandaag de afvalbak binnen.'
-                ] | random }}
+                  ] | random }}
               {% endif %}
-            {% endif %}
-            {% if dow == 'Sunday' %}
-              {% if is_state('binary_sensor.evening','on') %}
-                {{ [ 'Vandaag moet de bak aan de weg gezet worden.',
-                  'De afvalbak moet weggebracht worden vandaag.',
-                  'Vergeet niet om de bak weg te zetten.',
-                  'Je afval wordt niet opgehaald als je hem niet aan de weg zet vandaag.'
-                ] | random }}
+              {% if states('sensor.afvalinfo_thuis_trash_type_tomorrow') != 'geen' %}
+                  {{ [ 'Vergeet niet de bak binnen te halen vandaag. ',
+                  'De afvalbak voelt zicht een zaam als je hem vandaag niet ophaald. ',
+                  'Ik weet zeker dat je het niet vergeten bent maar voor de zekerheid, haal vandaag de afvalbak binnen.'
+                  ] | random }}
               {% endif %}
             {% endif %}
       - variables:
