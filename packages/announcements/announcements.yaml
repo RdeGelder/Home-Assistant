@@ -32,7 +32,7 @@ automation:
     initial_state: true
     trigger:
       - platform: state
-        entity_id: binary_sensor.lumi_lumi_motion_ac02
+        entity_id: binary_sensor.kitchen_occupied
         to: "on"
     condition:
       - condition: time
@@ -109,6 +109,7 @@ script:
           device_status: >
             {% set level = states('sensor.ruben_mobiel_battery_level') %}
             {% set charging = states('sensor.ruben_mobiel_battery_state') %}
+            {% set time = states('sensor.ruben_mobiel_remaining_charge_time')  %}
             {% if has_value('sensor.ruben_mobiel_battery_level') %}
             {{ [
                     'Je telefoon is momenteel op ' ~ level ~ ' procent.',
@@ -139,6 +140,11 @@ script:
                     'Failure due to power loss is imminent.',
                     'If you would like to remain in communication I suggest dropping what you are doing and finding a power source.',
                     'Drop what you are doing and find a power source for your phone.'
+                    ] | random }}
+                  {% endif %}
+                  {% charging == 'charging'%}
+                    {{ [
+                    'En je telefoon is aan het opladen en is over '~ time ~' minuten vol',
                     ] | random }}
                   {% endif %}
                 {% else %}
