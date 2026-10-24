@@ -11,8 +11,7 @@ card:
       media_query: "(min-width: 768px)"
 layout: responsive
 badges_position: top
-badges_wrap:
-  scroll
+badges_wrap: scroll
   # {% if (states("sensor.time_of_day") == "morning") %}
   #   # Good Morning, {{user}}!
   #   {{ states("input_text.ai_morning_brief") }}

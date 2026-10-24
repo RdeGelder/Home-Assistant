@@ -1,0 +1,268 @@
+Black-Minimalist:
+  ########################################################
+  ############### Default global variables ###############
+  ########################################################
+
+  card-mod-theme: Black-Minimalist
+
+  # Fonts
+  primary-font-family: "Sora"
+  secondary-font-family: "Sora"
+  paper-font-common-base_-_font-family: "var(--secondary-font-family)"
+  paper-font-common-code_-_font-family: "var(--secondary-font-family)"
+  paper-font-body1_-_font-family: "var(--secondary-font-family)"
+  paper-font-subhead_-_font-family: "var(--secondary-font-family)"
+  paper-font-headline_-_font-family: "var(--primary-font-family)"
+  paper-font-caption_-_font-family: "var(--secondary-font-family)"
+  paper-font-title_-_font-family: "var(--primary-font-family)"
+  ha-card-header-font-family: "var(--primary-font-family)"
+  ha-font-family-body: "var(--secondary-font-family)"
+  ha-font-family-heading: "var(--primary-font-family)"
+
+  ## Bubble Card
+  bubble-border-radius: var(--ha-card-border-radius)
+  bubble-main-background-color: var(--contrast2)
+  bubble-secondary-background-color: var(--contrast3)
+  bubble-pop-up-main-background-color: var(--contrast1)
+  bubble-accent-color: var(--accent-color)
+  bubble-icon-background-color: var(--contrast4)
+  bubble-button-icon-background-color: var(--contrast1)
+  bubble-line-background-color: var(--contrast6)
+
+  # Spacings and radius
+  horizontal-stack-card-margin: 0px 8px
+  vertical-stack-card-margin: 8px 0px
+  grid-card-gap: 12px
+  ha-card-border-width: "0px"
+  ha-card-border-radius: 28px
+  ha-card-box-shadow: none
+  masonry-view-card-margin: 10px 0px
+  # Main Interface Colors
+  primary-color: var(--green)
+  accent-color: var(--green)
+  primary-background-color: var(--contrast1)
+  secondary-background-color: var(--contrast2)
+  divider-color: var(--contrast3)
+  # Text
+  primary-text-color: var(--contrast20)
+  secondary-text-color: var(--contrast10)
+  text-primary-color: var(--contrast20)
+  disabled-text-color: var(--contrast6)
+  text-accent-color: var(--contrast1)
+  # Header
+  app-header-background-color: var(--contrast1)
+  app-header-text-color: var(--contrast20)
+  app-header-selection-bar-color: transparent
+  app-header-edit-background-color: var(--contrast2)
+  app-header-edit-text-color: var(--contrast20)
+  # Cards
+  card-background-color: var(--contrast2)
+  ha-card-background: var(--contrast2)
+  ha-card-border-color: var(--contrast6)
+  paper-listbox-background-color: var(--contrast3)
+  # Tile card
+  state-unavailable-color: var(--contrast6)
+  state-light-off-color: var(--contrast10)
+  state-light-on-color: var(--yellow)
+  # Sidebar Menu
+  sidebar-icon-color: var(--contrast8)
+  sidebar-text-color: var(--contrast20)
+  sidebar-background-color: var(--contrast1)
+  sidebar-selected-icon-color: var(--contrast20)
+  sidebar-selected-text-color: var(--contrast20)
+  # Buttons
+  paper-item-icon-color: var(--contrast10)
+  mdc-button-outline-color: var(--contrast6)
+  # States and Badges
+  state-icon-color: var(--contrast10)
+  # Sliders
+  paper-slider-knob-color: var(--contrast20)
+  paper-slider-knob-start-color: var(--contrast15)
+  paper-slider-pin-color: var(--contrast5)
+  paper-slider-pin-start-color: var(--contrast4)
+  paper-slider-active-color: var(--contrast15)
+  paper-slider-secondary-color: var(--contrast7)
+  paper-slider-container-color: var(--contrast5)
+  # Switches
+  switch-checked-button-color: var(--green)
+  switch-checked-track-color: var(--contrast6)
+  switch-unchecked-button-color: var(--contrast10)
+  switch-unchecked-track-color: var(--contrast5)
+  # Toggles
+  paper-toggle-button-checked-button-color: var(--switch-checked-button-color)
+  paper-toggle-button-checked-bar-color: var(--switch-checked-track-color)
+  paper-toggle-button-unchecked-button-color: var(--switch-unchecked-button-color)
+  paper-toggle-button-unchecked-bar-color: var(--switch-unchecked-track-color)
+  # Table
+  table-row-background-color: var(--contrast2)
+  table-row-alternative-background-color: var(--contrast3)
+  data-table-background-color: var(--contrast1)
+  mdc-text-field-fill-color: var(--contrast3)
+  # Input
+  input-fill-color: var(--contrast3)
+  input-dropdown-icon-color: var(--contrast10)
+  material-background-color: var(--contrast2)
+  input-ink-color: var(--contrast20)
+  input-label-ink-color: var(--contrast10)
+  input-idle-line-color: var(--contrast7)
+  input-hover-line-color: var(--contrast20)
+  mdc-select-fill-color: var(--input-fill-color)
+  mdc-select-ink-color: var(--input-ink-color)
+  mdc-select-label-ink-color: var(--input-label-ink-color)
+  mdc-select-idle-line-color: var(--input-idle-line-color)
+  mdc-select-dropdown-icon-color: var(--input-dropdown-icon-color)
+  mdc-select-hover-line-color: var(--input-hover-line-color)
+  mdc-text-field-disabled-fill-color: var(--contrast3)
+  # Modal screen
+  mdc-theme-surface: var(--contrast2)
+  ha-dialog-border-radius: 28px
+  # Checkboxes
+  mdc-checkbox-unchecked-color: var(--contrast15)
+  # Colors
+  orange-color: var(--orange)
+  green-color: var(--green)
+  blue-color: var(--blue)
+  red-color: var(--red)
+  purple-color: var(--purple)
+  yellow-color: var(--yellow)
+  grey-color: var(--contrast10)
+  teal-color: var(--teal)
+  pink-color: var(--pink)
+
+  #######################################################
+  ############### Custom global variables ###############
+  #######################################################
+
+  # Black / White
+  black: "#000000"
+  white: "#FFFFFF"
+  darker: rgba(0, 0, 0, 0.35)
+  # Colors (soft pastels on black, like the reference design)
+  purple: rgb(var(--purple-rgb))
+  purple-dark: rgb(var(--purple-dark-rgb))
+  yellow: rgb(var(--yellow-rgb))
+  yellow-dark: rgb(var(--yellow-dark-rgb))
+  orange: rgb(var(--orange-rgb))
+  orange-dark: rgb(var(--orange-dark-rgb))
+  red: rgb(var(--red-rgb))
+  red-dark: rgb(var(--red-dark-rgb))
+  green: rgb(var(--green-rgb))
+  green-dark: rgb(var(--green-dark-rgb))
+  blue: rgb(var(--blue-rgb))
+  blue-dark: rgb(var(--blue-dark-rgb))
+  teal: rgb(var(--teal-rgb))
+  teal-dark: rgb(var(--teal-dark-rgb))
+  pink: rgb(var(--pink-rgb))
+  pink-dark: rgb(var(--pink-dark-rgb))
+  # Color tints
+  purple-tint: rgba(var(--purple-rgb),var(--color-tint))
+  yellow-tint: rgba(var(--yellow-rgb),var(--color-tint))
+  orange-tint: rgba(var(--orange-rgb),var(--color-tint))
+  red-tint: rgba(var(--red-rgb),var(--color-tint))
+  green-tint: rgba(var(--green-rgb),var(--color-tint))
+  blue-tint: rgba(var(--blue-rgb),var(--color-tint))
+  teal-tint: rgba(var(--teal-rgb),var(--color-tint))
+  pink-tint: rgba(var(--pink-rgb),var(--color-tint))
+  # Gradients
+  brightness: linear-gradient(90deg, rgba(var(--brightness-low-rgb), 0.4) 0%, rgba(var(--brightness-high-rgb), 1) 100%)
+  brightness-tint: linear-gradient(90deg, rgba(var(--brightness-low-rgb), 0.06) 0%, rgba(var(--brightness-high-rgb), var(--color-tint)) 100%)
+  temperature: linear-gradient(90deg, rgba(var(--temperature-low-rgb), 1) 0%, rgba(var(--temperature-high-rgb), 1) 100%)
+  temperature-tint: linear-gradient(90deg, rgba(var(--temperature-low-rgb), var(--color-tint)) 0%, rgba(var(--temperature-high-rgb), var(--color-tint)) 100%)
+  # Color RGB variables
+  green-rgb: 191, 240, 220
+  green-dark-rgb: 24, 96, 64
+  blue-rgb: 207, 220, 236
+  blue-dark-rgb: 36, 70, 120
+  pink-rgb: 244, 190, 206
+  pink-dark-rgb: 160, 44, 84
+  purple-rgb: 205, 196, 236
+  purple-dark-rgb: 84, 64, 150
+  yellow-rgb: 252, 228, 128
+  yellow-dark-rgb: 112, 88, 0
+  orange-rgb: 253, 210, 170
+  orange-dark-rgb: 170, 84, 12
+  red-rgb: 248, 180, 180
+  red-dark-rgb: 176, 40, 40
+  teal-rgb: 180, 228, 228
+  teal-dark-rgb: 0, 100, 100
+  # Gradient RGB variables
+  brightness-low-rgb: 191, 240, 220
+  brightness-high-rgb: 255, 255, 255
+  temperature-low-rgb: 207, 220, 236
+  temperature-high-rgb: 253, 210, 170
+  # Contrast variables (neutral greys, warm-free)
+  black1: "#0A0A0A"
+  black2: "#161616"
+  black3: "#1B1B1B"
+  black4: "#222222"
+  black5: "#2A2A2A"
+  black6: "#333333"
+  black7: "#3D3D3D"
+  black8: "#484848"
+  black9: "#555555"
+  black10: "#666666"
+  white10: "#7A7A7A"
+  white9: "#8C8C8C"
+  white8: "#9E9E9E"
+  white7: "#B0B0B0"
+  white6: "#C2C2C2"
+  white5: "#D4D4D4"
+  white4: "#E4E4E4"
+  white3: "#EEEEEE"
+  white2: "#F5F5F5"
+  white1: "#FFFFFF"
+
+  ########################################################
+  ############### Variables based on modes ###############
+  ########################################################
+
+  modes:
+    dark:
+      contrast1: var(--black1)
+      contrast2: var(--black2)
+      contrast3: var(--black3)
+      contrast4: var(--black4)
+      contrast5: var(--black5)
+      contrast6: var(--black6)
+      contrast7: var(--black7)
+      contrast8: var(--black8)
+      contrast9: var(--black9)
+      contrast10: var(--black10)
+      contrast11: var(--white10)
+      contrast12: var(--white9)
+      contrast13: var(--white8)
+      contrast14: var(--white7)
+      contrast15: var(--white6)
+      contrast16: var(--white5)
+      contrast17: var(--white4)
+      contrast18: var(--white3)
+      contrast19: var(--white2)
+      contrast20: var(--white1)
+      color-tint: "0.15"
+      contrast1-RGB: 10,10,10
+      contrast20-RGB: 255,255,255
+
+    light:
+      contrast1: var(--white1)
+      contrast2: var(--white2)
+      contrast3: var(--white3)
+      contrast4: var(--white4)
+      contrast5: var(--white5)
+      contrast6: var(--white6)
+      contrast7: var(--white7)
+      contrast8: var(--white8)
+      contrast9: var(--white9)
+      contrast10: var(--white10)
+      contrast11: var(--black10)
+      contrast12: var(--black9)
+      contrast13: var(--black8)
+      contrast14: var(--black7)
+      contrast15: var(--black6)
+      contrast16: var(--black5)
+      contrast17: var(--black4)
+      contrast18: var(--black3)
+      contrast19: var(--black2)
+      contrast20: var(--black1)
+      color-tint: "0.20"
+      contrast1-RGB: 255,255,255
+      contrast20-RGB: 10,10,10

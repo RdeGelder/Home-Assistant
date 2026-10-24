@@ -222,8 +222,6 @@ script:
             {{ presence.occupied_rooms |
               replace('master_bedroom','Master Bedroom') |
               replace('living_room','livingroom') |
-              replace('pot_studio','Pottery Studio') |
-              replace('skylars_bedroom','Skylars Bedroom') |
               replace('kitchen','kitchen')  }}
           room_services: >
             {% if type in ['alarm','weather-alert','weather-advisory','tornado'] %}
@@ -231,7 +229,6 @@ script:
               {% set audio_speaker = 'media_player.all_rooms' %}
             {% elif room_priority != 'NA'  %}
               {% set room = room_priority |
-              replace('master_bedroom','Master Bedroom') |
               replace('livingroom','woonkamer') |
               replace('office','werkkamer') |
               replace('kitchen','kitchen') %}

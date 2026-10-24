@@ -132,8 +132,8 @@ automation:
           message: Warmtepomp aan
     mode: single
   - id: "1762080396470"
-    alias: Legionella setpoint
-    description: ""
+    alias: Klimaat - Warmtepomp - Legionella Run
+    description: "Verhoogt de temperatuur van de warmtepomp bij een Legionella run zodat deze langer op de compressor werkt"
     triggers:
       - trigger: state
         entity_id:
@@ -156,7 +156,7 @@ automation:
               - action: climate.set_temperature
                 metadata: {}
                 data:
-                  temperature: 59
+                  temperature: 60
                 target:
                   entity_id: climate.ecodan_heatpump_dhw_thermostaat
           - conditions:

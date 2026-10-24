@@ -27,13 +27,8 @@ play_favorite_playlist:
   fields:
     entity:
       selector:
-        entity:
-          domain:
-          - media_player
-          multiple: false
-      default: media_player.werkkamer_music
-      name: Entity
-      description: Entity you want the music to start playing on
+        entity: {}
+      default: media_player.office
     playlist:
       selector:
         text:
@@ -68,23 +63,16 @@ set_playlist_and_play:
         entity_id: media_player.music
         state: playing
       sequence:
-      - action: music_assistant.play_media
-        metadata: {}
-        data:
-          media_type: playlist
-          media_id: '{{states("input_text.music_playlist")| string}}
-
-            '
-          enqueue: replace
-        target:
-          entity_id: '{{state_attr("media_player.music", "active_child")|string}}
-
-            '
+      - action: media_player.play_media
+        data_template:
+          entity_id: '{{state_attr("media_player.music", "active_child")|string}}'
+          media_content_id: '{{playlist}}'
+          media_content_type: playlist
   fields:
     playlist:
       selector:
         text:
-      default: https://open.spotify.com/playlist/1C4xhQw4BRYlK075PRUhzP
+      default: spotify:user:spotify:playlist:37i9dQZF1DWYPwGkJoztcR
       name: Playlist
       description: Playlist Media ID for example a Spotify URI
   alias: Set Playlist and Play
@@ -126,27 +114,3 @@ nieuw_scrip:
       msg_summary: Gave the Jeff briefing.
       type: priority
     action: script.speech_engine
-fieldtest:
-  sequence:
-  - action: light.toggle
-    metadata: {}
-    target:
-      entity_id: light.werkkamer_indicator_1
-    data: {}
-  fields:
-    testing:
-      selector:
-        select:
-          options:
-          - Ruben
-          - Marit
-          - Evi
-          - All
-          - Werkkamer
-          - Parents
-      name: who
-      description: who to send audio
-      required: true
-      default: Ruben
-  alias: fieldtest
-  description: ''

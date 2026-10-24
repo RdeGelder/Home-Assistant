@@ -134,16 +134,8 @@
     path: Bekkie/robb-smarrt-8-switch-ROB_200-007-0.yaml
     input:
       remote: 66977239fe4b26ac633649ec2e0aef76
-      off_button_4_short:
-      - type: turn_off
-        device_id: 7dc99805f23efc5296cecd2e9284bb35
-        entity_id: fdf8d5c4cebbbf692f1aba805d1bc08f
-        domain: switch
-      on_button_4_short:
-      - type: turn_on
-        device_id: 7dc99805f23efc5296cecd2e9284bb35
-        entity_id: fdf8d5c4cebbbf692f1aba805d1bc08f
-        domain: switch
+      off_button_4_short: []
+      on_button_4_short: []
       on_button_3_short:
       - choose:
         - conditions:
@@ -207,24 +199,27 @@
         target:
           entity_id: input_boolean.keuken_by_knop
 - id: '1750190117331'
-  alias: keuken licht beweging
+  alias: Kitchen lighting
   description: ''
   triggers:
   - trigger: state
     entity_id:
     - binary_sensor.night_time
+    alias: Zon op/ondergang
   - trigger: state
     entity_id:
-    - binary_sensor.kitchen_occupied
+    - binary_sensor.kitchen_motion
     id: Occupied
     to:
     - 'on'
+    alias: Kitchen occupied
   - trigger: state
     entity_id:
-    - binary_sensor.kitchen_occupied
+    - binary_sensor.kitchen_motion
     id: Not Occupied
     to:
     - 'off'
+    alias: Kitchen not occupied
   conditions: []
   actions:
   - choose:
@@ -254,6 +249,7 @@
             data: {}
             target:
               entity_id: scene.keuken_nacht
+          alias: slapen aan
         - conditions:
           - condition: state
             entity_id: input_boolean.slapen
@@ -264,6 +260,7 @@
             data: {}
             target:
               entity_id: scene.keuken_dag
+          alias: Slapen uit
       alias: Aan beweging savonds
     - conditions:
       - condition: and
@@ -935,7 +932,7 @@
   mode: single
 - id: light_gang
   alias: licht gang
-  description: ''
+  description: Waar komt dit te staan?
   triggers:
   - type: motion
     device_id: 5d3600b4ecfda5743176803a6a26915b
@@ -1072,8 +1069,10 @@
           entity_id: light.overloop_plafond
   mode: single
 - id: '1756481961703'
-  alias: Blinds weg
-  description: ''
+  alias: Beneden - luxaflex - weg
+  description: "**ALS** de zon ondergaat of het is nacht\n  |└─ Luxaflex naar **0%**
+    (volledig dicht)\n**ALS** overdag en iemand is thuis\n  |└─ luxaflex naar **100%**
+    (open)\n**ALS** overdag en niemand is thuis\n  └─ luxaflex naar **30%** \n"
   triggers:
   - alias: Weggaan
     trigger: state
@@ -1130,81 +1129,65 @@
         position: 100
       alias: '''s Avonds'
     - conditions:
-      - condition: or
-        conditions:
-        - condition: state
-          entity_id: binary_sensor.night_time
-          state:
-          - 'off'
+      - condition: state
+        entity_id: binary_sensor.night_time
+        state:
+        - 'off'
+      - condition: numeric_state
+        entity_id: zone.home
+        below: 2
       sequence:
-      - choose:
-        - conditions:
-          - condition: not
-            conditions:
-            - condition: state
-              entity_id: person.ruben
-              state:
-              - home
-            - condition: state
-              entity_id: person.marit
-              state:
-              - home
-          sequence:
-          - device_id: 05bb0420b59b00fb67da52c5dafc0c4b
-            domain: cover
-            entity_id: f5c7b2ed3f4fd9084cb311b1110f6dc4
-            type: set_tilt_position
-            position: 79
-          - device_id: fcba6f1f5a9aa51e702881f05deded7a
-            domain: cover
-            entity_id: ee7a267441f733c08ab1690302d59f3c
-            type: set_tilt_position
-            position: 65
-          - device_id: 90bd8f51f1ffa5af0b278cb46f4aa66f
-            domain: cover
-            entity_id: b15083de6a43edb56ccd5a245c778d93
-            type: set_tilt_position
-            position: 74
-          - device_id: 1c8f2ec0eb7ccbfd3bfc36eda836b8ec
-            domain: cover
-            entity_id: 15d27d500112aa305424c1384130e272
-            type: set_tilt_position
-            position: 74
-          alias: Weg
-        - conditions:
-          - condition: or
-            conditions:
-            - condition: state
-              entity_id: person.ruben
-              state:
-              - home
-            - condition: state
-              entity_id: person.marit
-              state:
-              - home
-          sequence:
-          - device_id: 05bb0420b59b00fb67da52c5dafc0c4b
-            domain: cover
-            entity_id: f5c7b2ed3f4fd9084cb311b1110f6dc4
-            type: set_tilt_position
-            position: 50
-          - device_id: fcba6f1f5a9aa51e702881f05deded7a
-            domain: cover
-            entity_id: ee7a267441f733c08ab1690302d59f3c
-            type: set_tilt_position
-            position: 50
-          - device_id: 90bd8f51f1ffa5af0b278cb46f4aa66f
-            domain: cover
-            entity_id: b15083de6a43edb56ccd5a245c778d93
-            type: set_tilt_position
-            position: 50
-          - device_id: 1c8f2ec0eb7ccbfd3bfc36eda836b8ec
-            domain: cover
-            entity_id: 15d27d500112aa305424c1384130e272
-            type: set_tilt_position
-            position: 50
-          alias: Thuis
-      alias: Overdag
+      - device_id: 05bb0420b59b00fb67da52c5dafc0c4b
+        domain: cover
+        entity_id: f5c7b2ed3f4fd9084cb311b1110f6dc4
+        type: set_tilt_position
+        position: 50
+      - device_id: fcba6f1f5a9aa51e702881f05deded7a
+        domain: cover
+        entity_id: ee7a267441f733c08ab1690302d59f3c
+        type: set_tilt_position
+        position: 50
+      - device_id: 90bd8f51f1ffa5af0b278cb46f4aa66f
+        domain: cover
+        entity_id: b15083de6a43edb56ccd5a245c778d93
+        type: set_tilt_position
+        position: 50
+      - device_id: 1c8f2ec0eb7ccbfd3bfc36eda836b8ec
+        domain: cover
+        entity_id: 15d27d500112aa305424c1384130e272
+        type: set_tilt_position
+        position: 50
+      alias: Overdag en thuis
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.night_time
+        state:
+        - 'off'
+      - condition: numeric_state
+        entity_id: zone.home
+        below: 0
+      sequence:
+      - device_id: 1c8f2ec0eb7ccbfd3bfc36eda836b8ec
+        domain: cover
+        entity_id: 15d27d500112aa305424c1384130e272
+        type: set_tilt_position
+        position: 74
+      - device_id: fcba6f1f5a9aa51e702881f05deded7a
+        domain: cover
+        entity_id: ee7a267441f733c08ab1690302d59f3c
+        type: set_tilt_position
+        position: 65
+      - device_id: 90bd8f51f1ffa5af0b278cb46f4aa66f
+        domain: cover
+        entity_id: b15083de6a43edb56ccd5a245c778d93
+        type: set_tilt_position
+        position: 74
+      - device_id: 05bb0420b59b00fb67da52c5dafc0c4b
+        domain: cover
+        entity_id: f5c7b2ed3f4fd9084cb311b1110f6dc4
+        type: set_tilt_position
+        position: 79
+      alias: Overdag en weg
   mode: single
 - id: '1757512567293'
   alias: Opstaan
@@ -1409,473 +1392,6 @@
         sort(attribute='costs') %} \nstart de vaatwasser om {{sorted_list[1].start}}
         dan kost het {{sorted_list[1].costs}}\n"
   mode: single
-- id: '1721203134218'
-  alias: Cube2
-  description: ''
-  triggers:
-  - event_type: zha_event
-    event_data:
-      device_id: 9138f5df8d4edb5bc0aa9f4ba36a77b3
-    trigger: event
-  actions:
-  - variables:
-      command: '{{ trigger.event.data.command }}'
-      value: '{{ trigger.event.data.args.value | default(0) }}'
-      flip_degrees: '{{ trigger.event.data.args.flip_degrees | default(0) }}'
-      flip_any: false
-      flip_90: false
-      flip_180: false
-      slide_any_side: false
-      knock_any_side: false
-      rotate_any_side: false
-      flip90: 64
-      flip180: 128
-      slide: 256
-      knock: 512
-      shake: 0
-      drop: 3
-      active_face_entity: input_number.cube
-      active_face: '{{ states(active_face_entity) | int }}'
-      activated_face: "\n{% if command == \"slide\" or command == \"knock\" %}\n\n
-        \ {% if trigger.event.data.args.activated_face == 1 %} 1\n\n  {% elif trigger.event.data.args.activated_face
-        == 2 %} 2\n\n  {% elif trigger.event.data.args.activated_face == 3 %} 3\n\n
-        \ {% elif trigger.event.data.args.activated_face == 4 %} 4\n\n  {% elif trigger.event.data.args.activated_face
-        == 5 %} 5\n\n  {% elif trigger.event.data.args.activated_face == 6 %} 6\n\n
-        \ {% endif %}\n\n{% elif command == 'flip' %}\n\n  {{ trigger.event.data.args.activated_face
-        | int }}\n\n{% endif %}\n"
-      from_face: "\n{% if command == \"flip\" and flip_degrees == 90 %}\n\n  {{ ((value
-        - flip90 - (trigger.event.data.args.activated_face - 1)) / 8) + 1 | int }}\n\n{%
-        endif %}\n"
-      relative_degrees: "\n{% if command == \"rotate_right\" or command == \"rotate_left\"
-        %}\n\n  {{ trigger.event.data.args.relative_degrees | float }}\n\n{% endif
-        %}\n"
-  - choose:
-    - conditions:
-      - condition: template
-        value_template: '{{ command == ''checkin'' }}'
-      sequence: []
-    - conditions:
-      - condition: template
-        value_template: '{{ command == ''flip'' }}'
-      sequence:
-      - target:
-          entity_id: '{{ active_face_entity }}'
-        data:
-          value: '{{ activated_face | int }}'
-        action: input_number.set_value
-      - choose:
-        - conditions:
-          - condition: template
-            value_template: '{{ flip_any }}'
-          sequence:
-          - choose:
-            - conditions:
-              - condition: template
-                value_template: '{{ activated_face == 1 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ activated_face == 2 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ activated_face == 3 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ activated_face == 4 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ activated_face == 5 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ activated_face == 6 }}'
-              sequence: []
-        - conditions:
-          - condition: template
-            value_template: '{{ flip_degrees == 90 and flip_90 }}'
-          sequence: []
-        - conditions:
-          - condition: template
-            value_template: '{{ flip_degrees == 180 and flip_180 }}'
-          sequence: []
-        - conditions:
-          - condition: template
-            value_template: '{{ flip_degrees == 90 and activated_face == 1 }}'
-          sequence:
-          - choose:
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 2 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 3 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 5 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 6 }}'
-              sequence: []
-        - conditions:
-          - condition: template
-            value_template: '{{ flip_degrees == 90 and activated_face == 2 }}'
-          sequence:
-          - choose:
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 1 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 3 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 4 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 6 }}'
-              sequence: []
-        - conditions:
-          - condition: template
-            value_template: '{{ flip_degrees == 90 and activated_face == 3 }}'
-          sequence:
-          - choose:
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 1 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 2 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 4 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 5 }}'
-              sequence: []
-        - conditions:
-          - condition: template
-            value_template: '{{ flip_degrees == 90 and activated_face == 4 }}'
-          sequence:
-          - choose:
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 2 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 3 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 5 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 6 }}'
-              sequence: []
-        - conditions:
-          - condition: template
-            value_template: '{{ flip_degrees == 90 and activated_face == 5 }}'
-          sequence:
-          - choose:
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 1 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 3 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 4 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 6 }}'
-              sequence: []
-        - conditions:
-          - condition: template
-            value_template: '{{ flip_degrees == 90 and activated_face == 6 }}'
-          sequence:
-          - choose:
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 1 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 2 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 4 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ from_face == 5 }}'
-              sequence: []
-        - conditions:
-          - condition: template
-            value_template: '{{ value == flip180 + activated_face - 1 }}'
-          sequence:
-          - choose:
-            - conditions:
-              - condition: template
-                value_template: '{{ activated_face == 1 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ activated_face == 2 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ activated_face == 3 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ activated_face == 4 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ activated_face == 5 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ activated_face == 6 }}'
-              sequence: []
-    - conditions:
-      - condition: template
-        value_template: '{{ command == ''knock'' }}'
-        alias: knock
-      sequence:
-      - target:
-          entity_id: '{{ active_face_entity }}'
-        data:
-          value: '{{ activated_face | int }}'
-        action: input_number.set_value
-      - choose:
-        - conditions:
-          - condition: template
-            value_template: '{{ knock_any_side }}'
-          sequence: []
-        - conditions:
-          - condition: template
-            value_template: '{{ activated_face == 1 }}'
-          sequence: []
-        - conditions:
-          - condition: template
-            value_template: '{{ activated_face == 2 }}'
-          sequence:
-          - metadata: {}
-            data: {}
-            target:
-              entity_id: media_player.office
-            action: media_player.media_play_pause
-        - conditions:
-          - condition: template
-            value_template: '{{ activated_face == 3 }}'
-          sequence:
-          - action: switch.toggle
-            metadata: {}
-            data: {}
-            target:
-              entity_id: switch.bureau_marit
-        - conditions:
-          - condition: template
-            value_template: '{{ activated_face == 4 }}'
-          sequence:
-          - action: switch.toggle
-            metadata: {}
-            data: {}
-            target:
-              entity_id: switch.bueau_ruben
-        - conditions:
-          - condition: template
-            value_template: '{{ activated_face == 5 }}'
-          sequence:
-        - conditions:
-          - condition: template
-            value_template: '{{ activated_face == 6 }}'
-          sequence:
-          - action: light.toggle
-            metadata: {}
-            data: {}
-            target:
-              entity_id: light.zigbee_werkkamer
-    - conditions:
-      - condition: template
-        value_template: '{{ command == ''slide'' }}'
-        alias: slide
-      sequence:
-      - target:
-          entity_id: '{{ active_face_entity }}'
-        data:
-          value: '{{ activated_face | int }}'
-        action: input_number.set_value
-      - choose:
-        - conditions:
-          - condition: template
-            value_template: '{{ slide_any_side }}'
-            alias: slide
-          sequence: []
-        - conditions:
-          - condition: template
-            value_template: '{{ value == slide + activated_face - 1 }}'
-          sequence:
-          - choose:
-            - conditions:
-              - condition: template
-                value_template: '{{ activated_face == 1 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ activated_face == 2 }}'
-              sequence:
-              - data: {}
-                target:
-                  entity_id: media_player.office
-                action: media_player.media_next_track
-            - conditions:
-              - condition: template
-                value_template: '{{ activated_face == 3 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ activated_face == 4 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ activated_face == 5 }}'
-              sequence: []
-            - conditions:
-              - condition: template
-                value_template: '{{ activated_face == 6 }}'
-              sequence: []
-    - conditions:
-      - condition: template
-        value_template: '{{ command ==  ''rotate_left'' and rotate_any_side }}'
-      sequence: []
-    - conditions:
-      - condition: template
-        value_template: '{{ command == ''rotate_left'' and active_face == 1 }}'
-        alias: Rotate left 1
-      sequence: []
-    - conditions:
-      - condition: template
-        value_template: '{{ command == ''rotate_left'' and active_face == 2 }}'
-        alias: Rotate left 2
-      sequence:
-      - metadata: {}
-        data: {}
-        target:
-          entity_id: media_player.office
-        action: media_player.volume_down
-    - conditions:
-      - condition: template
-        value_template: '{{ command == ''rotate_left'' and active_face == 3 }}'
-        alias: Rotate left 3
-      sequence: []
-    - conditions:
-      - condition: template
-        value_template: '{{ command == ''rotate_left'' and active_face == 4 }}'
-        alias: Rotate left 4
-      sequence: []
-    - conditions:
-      - condition: template
-        value_template: '{{ command == ''rotate_left'' and active_face == 5 }}'
-        alias: Rotate left 5
-      sequence: []
-    - conditions:
-      - condition: template
-        value_template: '{{ command == ''rotate_left'' and active_face == 6 }}'
-        alias: Rotate left 6
-      sequence:
-      - action: light.turn_on
-        metadata: {}
-        data:
-          brightness_step_pct: -5
-        target:
-          entity_id: light.zigbee_werkkamer
-      - action: mqtt.publish
-        data:
-          topic: Werkkamer/notify
-          payload: "{\"icon\": 49301,\n \"duration\": 1,\n \"text\": \"{{(state_attr('light.zigbee_werkkamer',
-            'brightness')/254*100) |round(1)}}%\"\n }"
-    - conditions:
-      - condition: template
-        value_template: '{{ command == ''rotate_right'' and rotate_any_side }}'
-      sequence: []
-    - conditions:
-      - condition: template
-        value_template: '{{ command == ''rotate_right'' and active_face == 1 }}'
-        alias: Rotate right 1
-      sequence: []
-    - conditions:
-      - condition: template
-        value_template: '{{ command == ''rotate_right'' and active_face == 2 }}'
-        alias: Rotate right 2
-      sequence:
-      - metadata: {}
-        data: {}
-        target:
-          entity_id: media_player.office
-        action: media_player.volume_up
-    - conditions:
-      - condition: template
-        value_template: '{{ command == ''rotate_right'' and active_face == 3 }}'
-        alias: Rotate right 3
-      sequence: []
-    - conditions:
-      - condition: template
-        value_template: '{{ command == ''rotate_right'' and active_face == 4 }}'
-        alias: Rotate right 4
-      sequence: []
-    - conditions:
-      - condition: template
-        value_template: '{{ command == ''rotate_right'' and active_face == 5 }}'
-        alias: Rotate right 5
-      sequence: []
-    - conditions:
-      - condition: template
-        value_template: '{{ command == ''rotate_right'' and active_face == 6 }}'
-        alias: Rotate right 6
-      sequence:
-      - action: light.turn_on
-        metadata: {}
-        data:
-          brightness_step_pct: 5
-        target:
-          entity_id: light.zigbee_werkkamer
-      - action: mqtt.publish
-        data:
-          topic: Werkkamer/notify
-          payload: "{\"icon\": 49301,\n \"duration\": 1,\n \"text\": \"{{(state_attr('light.zigbee_werkkamer',
-            'brightness')/254*100) |round(1)}}%\"\n }"
-    - conditions:
-      - condition: template
-        value_template: '{{ command == ''shake'' or value == shake }}'
-        alias: shake
-      sequence: []
-    - conditions:
-      - condition: template
-        value_template: '{{ command == ''drop'' or value == drop }}'
-        alias: drop
-      sequence: []
-  mode: restart
-  max_exceeded: silent
 - id: '1758917240346'
   alias: slaapkamer afstandsbediening ruben
   description: ''
@@ -2199,217 +1715,6 @@
     target:
       label_id: slapen
   mode: single
-- id: '1767635174622'
-  alias: Badkamer licht
-  description: ''
-  triggers:
-  - type: not_opened
-    device_id: 76edde770268a29cf8391d479d688099
-    entity_id: 1d8733dd03ff686fbb093def6132cc09
-    domain: binary_sensor
-    trigger: device
-    id: Deur dicht
-  - type: opened
-    device_id: 76edde770268a29cf8391d479d688099
-    entity_id: 1d8733dd03ff686fbb093def6132cc09
-    domain: binary_sensor
-    trigger: device
-    id: Deur open
-  - type: no_motion
-    device_id: 8389fde5eabdeefaea35308e569a0ada
-    entity_id: 4da371320f59213156f6e3fc0dccae4a
-    domain: binary_sensor
-    trigger: device
-    id: geen beweging
-  - type: motion
-    device_id: 8389fde5eabdeefaea35308e569a0ada
-    entity_id: 4da371320f59213156f6e3fc0dccae4a
-    domain: binary_sensor
-    trigger: device
-    id: beweging
-  conditions: []
-  actions:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - Deur dicht
-      sequence:
-      - alias: Licht aan als het uit is
-        if:
-        - condition: device
-          type: is_off
-          device_id: 70953d558bc2f51623a437d5ea170b26
-          entity_id: 3aca527b7cd8c0f3b3813bc2cf9d8898
-          domain: light
-        then:
-        - type: turn_on
-          device_id: 70953d558bc2f51623a437d5ea170b26
-          entity_id: 3aca527b7cd8c0f3b3813bc2cf9d8898
-          domain: light
-      alias: Wanneer badkamer deur dicht is
-    - conditions:
-      - condition: and
-        conditions:
-        - type: is_no_motion
-          condition: device
-          device_id: 8389fde5eabdeefaea35308e569a0ada
-          entity_id: 4da371320f59213156f6e3fc0dccae4a
-          domain: binary_sensor
-        - condition: trigger
-          id:
-          - Deur open
-      sequence:
-      - alias: Licht uit als het aan is
-        if:
-        - condition: device
-          type: is_on
-          device_id: 70953d558bc2f51623a437d5ea170b26
-          entity_id: 3aca527b7cd8c0f3b3813bc2cf9d8898
-          domain: light
-        then:
-        - type: turn_off
-          device_id: 70953d558bc2f51623a437d5ea170b26
-          entity_id: 3aca527b7cd8c0f3b3813bc2cf9d8898
-          domain: light
-      alias: Wanneer badkamer deur open is en geen beweging
-    - conditions:
-      - condition: trigger
-        id:
-        - beweging
-      sequence:
-      - alias: Licht aan als het uit is
-        if:
-        - condition: device
-          type: is_off
-          device_id: 70953d558bc2f51623a437d5ea170b26
-          entity_id: 3aca527b7cd8c0f3b3813bc2cf9d8898
-          domain: light
-        then:
-        - type: turn_on
-          device_id: 70953d558bc2f51623a437d5ea170b26
-          entity_id: 3aca527b7cd8c0f3b3813bc2cf9d8898
-          domain: light
-    - conditions:
-      - condition: and
-        conditions:
-        - condition: trigger
-          id:
-          - geen beweging
-        - type: is_open
-          condition: device
-          device_id: 76edde770268a29cf8391d479d688099
-          entity_id: 1d8733dd03ff686fbb093def6132cc09
-          domain: binary_sensor
-      sequence:
-      - alias: Licht uit als het aan is
-        if:
-        - condition: device
-          type: is_on
-          device_id: 70953d558bc2f51623a437d5ea170b26
-          entity_id: 3aca527b7cd8c0f3b3813bc2cf9d8898
-          domain: light
-        then:
-        - type: turn_off
-          device_id: 70953d558bc2f51623a437d5ea170b26
-          entity_id: 3aca527b7cd8c0f3b3813bc2cf9d8898
-          domain: light
-      alias: Geen beweging en deur open
-  mode: single
-- id: '1767636988416'
-  alias: Morning light
-  description: ''
-  triggers:
-  - trigger: time
-    at: 06:25:00
-    weekday:
-    - tue
-    - wed
-    - thu
-    - mon
-    - fri
-  conditions: []
-  actions:
-  - action: light.turn_on
-    metadata: {}
-    target:
-      entity_id: light.robb_smarrt_rob_200_014_0
-    data:
-      brightness_pct: 0
-  - action: light.turn_on
-    metadata: {}
-    target:
-      entity_id:
-      - light.robb_smarrt_rob_200_014_0
-    data:
-      brightness_pct: 100
-      transition: 600
-  mode: single
-- id: '1772028614936'
-  alias: Warmtepomp energie
-  description: ''
-  triggers:
-  - alias: zonproductie
-    trigger: numeric_state
-    entity_id:
-    - sensor.test_mean
-    above: 200
-  - trigger: numeric_state
-    entity_id:
-    - sensor.test_mean
-    below: -500
-    alias: zonproductie
-  conditions: []
-  actions:
-  - choose:
-    - conditions:
-      - condition: and
-        conditions:
-        - condition: numeric_state
-          entity_id: climate.livingroom
-          below: 21.5
-        - condition: numeric_state
-          entity_id: sensor.test_mean
-          below: -500
-          alias: Vermogen -500
-      sequence:
-      - action: climate.turn_on
-        metadata: {}
-        target:
-          entity_id: climate.livingroom
-        data: {}
-      - action: climate.set_temperature
-        metadata: {}
-        target:
-          entity_id: climate.livingroom
-        data:
-          temperature: 21.1
-      alias: Start met verwarmen
-    - conditions:
-      - alias: Vermogen 200
-        condition: numeric_state
-        entity_id: sensor.test_mean
-        above: 200
-      sequence:
-      - choose:
-        - conditions:
-          - condition: numeric_state
-            entity_id: climate.livingroom
-            above: 20.9
-          sequence:
-          - action: climate.turn_off
-            metadata: {}
-            target:
-              entity_id: climate.livingroom
-            data: {}
-      - action: climate.set_temperature
-        metadata: {}
-        target:
-          entity_id: climate.livingroom
-        data:
-          temperature: 20.5
-      alias: Boven 200w
-  mode: single
 - id: '1772180209386'
   alias: technischeruimte
   description: ''
@@ -2563,13 +1868,13 @@
     trigger: device
   - trigger: state
     entity_id:
-    - binary_sensor.office_occupied
+    - binary_sensor.beweging_werkkamer
     to:
     - 'off'
     id: Not Occupied
   - trigger: state
     entity_id:
-    - binary_sensor.office_occupied
+    - binary_sensor.beweging_werkkamer
     to:
     - 'on'
     id: Occupied
@@ -2612,3 +1917,81 @@
           - light.werkkamer_links
           - light.werkkamer_midden
   mode: single
+- id: '1790342830089'
+  alias: Slaapkamer - licht - beweging
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.night_time
+    alias: Zon op/ondergang
+  - trigger: state
+    entity_id:
+    - binary_sensor.bedroom_motion
+    id: Occupied
+    to:
+    - 'on'
+    alias: Kitchen occupied
+  - trigger: state
+    entity_id:
+    - binary_sensor.bedroom_motion
+    id: Not Occupied
+    to:
+    - 'off'
+    alias: Kitchen not occupied
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: and
+        conditions:
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.night_time
+            state: 'on'
+          - condition: numeric_state
+            entity_id: sensor.blind_tilt_0050_lichtsterkte
+            below: 2
+        - condition: trigger
+          id:
+          - Occupied
+        - condition: switch.is_off
+          target:
+            entity_id: input_boolean.slapen
+          options:
+            behavior: any
+            for: 00:00:00
+      sequence:
+      - action: light.turn_on
+        metadata: {}
+        target:
+          entity_id: light.slaapkamer_plafond
+        data: {}
+      alias: Aan beweging savonds
+    - conditions:
+      - condition: and
+        conditions:
+        - condition: trigger
+          id:
+          - Not Occupied
+      sequence:
+      - action: light.turn_off
+        metadata: {}
+        target:
+          entity_id: light.slaapkamer_plafond
+        data: {}
+      alias: uit nacht
+  mode: single
+- id: '1792742891889'
+  alias: 'Awtrix: Live Update Zonnepanelen'
+  description: Zorgt voor een vloeiende, live update van het vermogen
+  triggers:
+  - trigger: state
+    entity_id: sensor.p1_meter_vermogen
+  actions:
+  - action: mqtt.publish
+    data:
+      topic: Werkkamer/custom/lampen
+      payload: "{\n  \"text\": \"{{ states('sensor.p1_meter_vermogen') | round(0)
+        }} W\"\n}\n"

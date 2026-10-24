@@ -1,3 +1,5 @@
+
+#region light_slider
 light_slider:
   card:
     type: vertical-stack
@@ -52,6 +54,7 @@ light_slider:
             - margin-right: 14px
           track:
             - background: var(--active-light-off)
+# region light toggle
 light_toggle:
   card:
     type: custom:button-card
@@ -115,6 +118,7 @@ light_toggle:
         - color: var(--black)
         - opacity: 0.7
         - padding-bottom: 2px
+# region humidity comparison stack
 humidity_comparison_stack:
   description: Indoor vs Outdoor humidity with chart
   variables:

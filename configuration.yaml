@@ -1,36 +1,6 @@
 # Loads default set of integrations. Do not remove.
 default_config:
 
-# {# state_attr('sensor.solcast_pv_forecast_forecast_today', 'detailedForecast')#}
-# {%- set values = state_attr('sensor.solcast_pv_forecast_forecast_today', 'detailedForecast')  + state_attr('sensor.solcast_pv_forecast_forecast_tomorrow', 'detailedForecast')%}
-# {%- set opwek = namespace(numbers=[]) %}
-# {%- for a in values -%}
-# {%- set opwek.numbers = opwek.numbers +  [a.pv_estimate] %}
-# {%- endfor %}
-# {{opwek}}
-# {% set kwh_pattern = [0.16, 0.04, 0.01, 0.03, 0.02, 2.0] %}
-# {% set resolution_in_minutes = 5 %}
-# {# create the whole hour #}
-# {% set start_time = now().replace(minute=0).replace(second=0).replace(microsecond=0) %}
-# {% set list = namespace(expected_costs=[], solar=[], totalenergy = [], time=start_time) %}
-# {# Calculating until 20:30 #}
-# {%- set amount_of_calculations = (24) * (60 // resolution_in_minutes) -%}
-# {%- for _ in range(0, amount_of_calculations) -%}
-#   {%- set time_loop = list.time -%}
-#   {%- set ns = namespace(costs=0, solar=0, time=time_loop) %}
-#   {%- for kwh in kwh_pattern %}
-#     {# {%- set ns.costs = ns.costs + (kwh-opwek[1]) * 0.9 %} #}
-#     {# {%- set ns.solar = ns.solar + kwh - opwek[(ns.time.minute/5)|round(0)] -%} #}
-#     {%- set ns.time = ns.time + timedelta(minutes=resolution_in_minutes) %}
-#   {%- endfor %}
-#   {%- set start_time = time_loop %}
-#   {%- set add_item = {'start': start_time, 'solar': ns.solar, 'costs': ns.costs | round(2)} %}
-#   {%- set list.expected_costs = list.expected_costs + [add_item] %}
-#   {%- set list.time = list.time + timedelta(minutes=resolution_in_minutes) %}
-# {% endfor %}
-# {% set sorted_list = list.expected_costs | sort(attribute='costs') %}
-# {{sorted_list}}
-
 homeassistant:
   name: Martinbaan
   latitude: !secret lat
@@ -51,50 +21,19 @@ http:
     - 192.168.68.55
     - 172.16.0.0/12
 
-lovelace_gen:
-  rooms_most_used:
-    - woonkamer
-    - keuken
-    - werkkamer
-    - slaapkamer
-  rooms_all:
-    - keuken
-    - wc
-    - woonkamer
-    - badkamer
-    - overloop
-    - slaapkamer
-    - werkkamer
-    - berging
-    - home
-    - meterkast
-  rooms_bg:
-    - woonkamer
-    - keuken
-    - warmtepomp
-    - wc
-    - meterkast
-  rooms_1ste:
-    - slaapkamer
-    - babykamer
-    - badkamer
-    - overloop
-  rooms_2de:
-    - werkkamer
-    - logeerkamer
-    - technischeruimte
-
 lovelace:
   dashboards:
     lovelace:
       mode: yaml
-      filename: lovelace/ui-lovelace.yaml
+      filename: lovelace/UI-dashboard/ui-lovelace.yaml
       title: home
       icon: mdi:view-dashboard
       show_in_sidebar: true
 
   resource_mode: yaml
   resources:
+    - url: /local/community/Helios/helios.js
+      type: module
     - url: /local/community/Bubble-Card/bubble-card.js
       type: module
     - url: /local/community/button-card/button-card.js
@@ -137,6 +76,13 @@ lovelace:
       type: module
     - url: /hacsfiles/lovelace-navbar-card/navbar-card.js
       type: module
+    - url: /local/community/clock-weather-card/clock-weather-card.js
+      type: module
+    - url: /local/community/calendar-card-pro/calendar-card-pro.js
+      type: module
+    - url: /local/community/timer-bar-card/timer-bar-card.js
+      type: module
+
 # Load frontend themes from the themes folder
 frontend:
   themes: !include_dir_merge_named themes
@@ -215,7 +161,7 @@ binary_sensor:
 template:
   - sensor:
       - name: Load Power
-        unique_id: Load Power
+        unique_id: load_power
         unit_of_measurement: "W"
         device_class: power
         state: >
@@ -317,9 +263,9 @@ media_player:
     name: music
     unique_id: musicuniversal
     children:
-      - media_player.kitchen
-      - media_player.office
-      - media_player.livingroom
+      - media_player.kitchen_music
+      - media_player.office_music
+      - media_player.livingroom_music
 
 input_text:
   music_playlist:

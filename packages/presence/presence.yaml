@@ -3,6 +3,7 @@ group:
     - binary_sensor.kitchen_occupied
     - binary_sensor.living_room_occupied
     - binary_sensor.office_occupied
+    - binary_sensor.evi_bedroom_occupied
     - binary_sensor.guest_bedroom_occupied
 
   occupancy:
@@ -14,6 +15,9 @@ group:
 #region template
 template:
   - binary_sensor:
+      ######################
+      #     kitchen        #
+      ######################
       - name: kitchen_occupied
         icon: mdi:account-group
         state: >
@@ -39,6 +43,9 @@ template:
                 selectattr('attributes.device_class', 'search', '(occupancy|motion|door|running)') |
                 selectattr('state', 'eq', 'on') | 
                 map(attribute='entity_id') | list | count > 0 )}}
+        ######################
+        #     bedroom        #
+        ######################
       - name: bedroom_occupied
         icon: mdi:account-group
         state: >
@@ -49,6 +56,22 @@ template:
           selectattr('state', 'eq', 'on') | 
           map(attribute='entity_id') |
           list | count > 0}}
+        ######################
+        #     toilet        #
+        ######################
+      - name: toilet_occupied
+        icon: mdi:account-group
+        state: >
+          {{ states.binary_sensor | 
+          selectattr('entity_id', 'in', area_entities('wc')) |
+          rejectattr('attributes.device_class', 'undefined') |
+          selectattr('attributes.device_class', 'search', '(occupancy|motion|door)') | 
+          selectattr('state', 'eq', 'on') | 
+          map(attribute='entity_id') |
+          list | count > 0}}
+        ######################
+        #     office        #
+        ######################
       - name: office_occupied
         icon: mdi:account-group
         state: >
@@ -59,6 +82,9 @@ template:
           selectattr('state', 'eq', 'on') | 
           map(attribute='entity_id') |
           list | count > 0}}
+        ######################
+        #     evi_bedroom    #
+        ######################
       - name: evi_bedroom_occupied
         icon: mdi:account-group
         state: >
@@ -69,6 +95,9 @@ template:
           selectattr('state', 'eq', 'on') | 
           map(attribute='entity_id') |
           list | count > 0}}
+        ######################
+        #     guest bedroom  #
+        ######################
       - name: guest_bedroom_occupied
         icon: mdi:account-group
         state: >

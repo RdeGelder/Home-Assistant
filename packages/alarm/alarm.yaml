@@ -14,3 +14,46 @@ alarm_control_panel:
     armed_home:
       arming_time: 0
       delay_time: 0
+
+template:
+  - sensor:
+    - name: Security Score
+      unique_id: security_score
+      icon: mdi:shield-home
+      state: >
+        {% set alarm_panels = states.alarm_control_panel |list %}
+        {% set windows = states.binary_sensor | selectattr('attributes.device_class', 'eq','window')|list%}
+        {% set doors = states.binary_sensor | selectattr('attributes.device_class', 'eq','door')|list %}
+        {% if alarm_panels | count > 0 %}
+          {% set armed_count = alarm_panels | selectattr('state', 'in', ['armed_away', 'armed_home', 'armed_night', 'armed_vacation', 'armed_custom_bypass'])|list|count %}
+          {% set alarm_score = (armed_count / alarm_panels |count )*25 %}
+        {% else %}
+          {% set alarm_score = 25 %}
+        {% endif %}
+        {% set closed = windows | selectattr('state','eq','off')|list|count%}
+        {% if windows | count > 0 %}
+          {% set closed_windows = windows | selectattr('state', 'eq', 'off')|list|count %}
+          {% set window_score = (closed_windows / windows |count )*25 %}
+        {% else %}
+          {% set window_score = 25 %}
+        {% endif %}
+        {% if doors | count > 0 %}
+          {% set closed_doors = doors | selectattr('state', 'eq', 'off')|list|count %}
+          {% set door_score = (closed_doors / doors |count )*25 %}
+        {% else %}
+          {% set window_score = 25 %}
+        {% endif %}
+        {{ (alarm_score + window_score + door_score + 25)|round(0) | int}}
+      attributes:
+        alarm_score: >
+            {% set alarm_panels = states.alarm_control_panel |list %}
+            {% set armed_count = alarm_panels | selectattr('state', 'in', ['armed_away', 'armed_home', 'armed_night', 'armed_vacation', 'armed_custom_bypass'])|list|count %}
+            {{armed_count}}/{{alarm_panels |count}} armed
+        window_score: >
+            {% set windows = states.binary_sensor | selectattr('attributes.device_class', 'eq','window')|list%}
+            {% set closed_windows = windows | selectattr('state', 'eq', 'off')|list|count %}
+            {{closed_windows}}/{{windows|count}} closed
+        door_score : >
+            {% set doors = states.binary_sensor | selectattr('attributes.device_class', 'eq','door')|list %}
+            {% set closed_doors = doors | selectattr('state', 'eq', 'off')|list|count %}
+            {{closed_doors}}/{{doors|count}} closed

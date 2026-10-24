@@ -23,7 +23,83 @@
   icon: mdi:thermostat
   heading: Climate
   heading_style: title
-  badges: null
+  badges:
+    - type: entity
+      show_state: true
+      show_icon: true
+      entity: sensor.livingroom_temperatuur
+      color: red
+      tap_action:
+        action: more-info
+    - type: entity
+      show_state: true
+      show_icon: true
+      entity: sensor.livingroom_luchtvochtigheid
+      color: blue
+      tap_action:
+        action: more-info
+- type: custom:bubble-card
+  card_type: climate
+  entity: climate.livingroom
+  sub_button:
+    - name: HVAC modes menu
+      select_attribute: hvac_modes
+      state_background: false
+      show_arrow: false
+- square: false
+  type: grid
+  cards:
+    - type: heading
+      icon: mdi:lightbulb-group
+      heading: Lights
+      heading_style: title
+      badges:
+        - type: entity
+          show_state: false
+          show_icon: true
+          entity: light.bathroom_lights
+          color: yellow
+          tap_action:
+            action: toggle
+        - type: entity
+          entity: switch.adaptive_lighting_bathroom
+          show_state: false
+          show_icon: true
+          color: orange
+          tap_action:
+            action: toggle
+        - type: entity
+          entity: switch.adaptive_lighting_adapt_color_bathroom
+          show_state: false
+          show_icon: true
+          color: pink
+          tap_action:
+            action: toggle
+        - type: entity
+          entity: switch.adaptive_lighting_adapt_brightness_bathroom
+          show_state: false
+          show_icon: true
+          color: yellow
+          tap_action:
+            action: toggle
+        - type: entity
+          entity: switch.adaptive_lighting_sleep_mode_bathroom
+          show_state: false
+          show_icon: true
+          color: blue
+          tap_action:
+            action: toggle
+    - square: false
+      columns: 2
+      type: grid
+      cards:
+        - type: custom:button-card
+          entity: light.keuken_spotjes
+          template: light_rgb
+        - type: custom:button-card
+          entity: light.keuken_ledstrip
+          template: light_rgb
+  columns: 1
 - type: heading
   icon: mdi:devices
   heading: Devices

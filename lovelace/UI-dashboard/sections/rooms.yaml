@@ -1,0 +1,271 @@
+- type: vertical-stack
+  cards:
+    # region Title
+    ########################################################################################
+    ######################################### Title ########################################
+    ########################################################################################
+
+    - type: custom:bubble-card
+      card_type: separator
+      name: Rooms
+      icon: mdi:floor-plan
+      sub_button:
+        - entity: input_boolean.rooms_quick_access
+          tap_action:
+            action: toggle
+          visibility:
+            - condition: user
+              users:
+                - fb506dcbb14a480f936e12028d53db9c
+        - entity: input_boolean.all_rooms
+          name: Show all
+          show_name: true
+          tap_action:
+            action: toggle
+      styles: |-
+        .bubble-sub-button-1 {
+            background-color: ${hass.states['input_boolean.rooms_quick_access'].state === 'on' ? 'var(--green)' : 'var(--contrast1)'} !important;
+            color: ${hass.states['input_boolean.rooms_quick_access'].state === 'on' ? 'var(--black)' : 'var(--contrast20)'} !important;
+        }
+        .bubble-sub-button-2 {
+            background-color: ${hass.states['input_boolean.all_rooms'].state === 'on' ? 'var(--purple)' : 'var(--contrast1)'} !important;
+            color: ${hass.states['input_boolean.all_rooms'].state === 'on' ? 'var(--black)' : 'var(--contrast20)'} !important;
+        }
+
+    # region Quick Access
+    ########################################################################################
+    ##################################### Quick Access #####################################
+    ########################################################################################
+    ##################################################################### Woonkamer
+    - type: vertical-stack
+      cards:
+        - type: custom:bubble-card
+          card_type: climate
+          button_type: slider
+          entity: climate.livingroom
+          icon: mdi:lightbulb-group
+          tap_action:
+            action: perform-action
+            perform_action: light.toggle
+            target:
+              entity_id: light.zigbee_werkkamer
+          sub_button:
+            main:
+              - entity: switch.bueau_ruben
+                icon: mdi:desk
+                tap_action:
+                  action: toggle
+              - entity: media_player.livingroom
+                icon: mdi:music
+                tap_action:
+                  action: perform-action
+                  perform_action: script.play_on_repeat_on_living_room_nest
+                  target: {}
+            bottom: []
+          force_icon: false
+          show_state: true
+          show_last_changed: false
+          show_attribute: true
+          state_color: false
+          slider_live_update: false
+          name: Werkkamer
+          attribute: current_temperature
+          styles: >-
+            .bubble-icon {
+              color: ${hass.states['light.zigbee_werkkamer'].state === 'on' ? 'var(--black)' : 'var(--contrast20)'} !important;
+            }
+
+            ha-card {
+              --bubble-icon-background-color: ${hass.states['light.zigbee_werkkamer'].state === 'on' ? 'var(--yellow)' : 'var(--contrast1)'} !important;
+            }
+
+            .bubble-sub-button-1 {
+                background-color: ${hass.states['switch.bueau_ruben'].state === 'on' ? 'var(--purple)' : 'var(--contrast3)'} !important;
+                color: ${hass.states['switch.bueau_ruben'].state === 'on' ? 'var(--black)' : 'var(--contrast20)'} !important;
+            }
+
+            .bubble-sub-button-2 {
+                background-color: ${hass.states['media_player.office'].state === 'playing' ? 'var(--green)' : 'var(--contrast3)'} !important;
+                color: ${hass.states['media_player.office'].state === 'playing' ? 'var(--black)' : 'var(--contrast20)'} !important;
+            }
+
+            ${icon.setAttribute("icon", hass.states['light.zigbee_werkkamer'].state
+            === 'on' ? 'mdi:lightbulb-group' : 'mdi:lightbulb-group-outline')}
+
+          visibility:
+            - condition: and
+              conditions:
+                - condition: state
+                  entity: input_boolean.rooms_quick_access
+                  state: "on"
+                - condition: user
+                  users:
+                    - fb506dcbb14a480f936e12028d53db9c
+                - condition: state
+                  entity: sensor.ruben_room
+                  state: Werkkamer
+        ##################################################################### Woonkamer
+        - type: custom:bubble-card
+          card_type: climate
+          button_type: slider
+          entity: climate.livingroom
+          icon: mdi:lightbulb-group
+          tap_action:
+            action: perform-action
+            perform_action: light.toggle
+            target:
+              entity_id: light.zigbee_woonkamer
+          sub_button:
+            - entity: select.technische_ruimte_wasmachine_opstartgedrag
+              icon: mdi:television
+            - entity: media_player.livingroom
+              icon: mdi:music
+              tap_action:
+                action: perform-action
+                perform_action: script.play_on_repeat_on_living_room_nest
+                target: {}
+          force_icon: false
+          show_state: true
+          show_last_changed: false
+          show_attribute: true
+          state_color: false
+          slider_live_update: false
+          name: Living Room
+          attribute: current_temperature
+          styles: >-
+            .bubble-icon {
+              color: ${hass.states['light.zigbee_woonkamer'].state === 'on' ? 'var(--black)' : 'var(--contrast20)'} !important;
+            }
+
+            ha-card {
+              --bubble-icon-background-color: ${hass.states['light.zigbee_woonkamer'].state === 'on' ? 'var(--yellow)' : 'var(--contrast1)'} !important;
+            }
+
+            .bubble-sub-button-1 {
+                background-color: ${hass.states['remote.harmony_hub'].state === 'on' ? 'var(--purple)' : 'var(--contrast3)'} !important;
+                color: ${hass.states['remote.harmony_hub'].state === 'on' ? 'var(--black)' : 'var(--contrast20)'} !important;
+            }
+
+            .bubble-sub-button-2 {
+                background-color: ${hass.states['media_player.livingroom'].state === 'playing' ? 'var(--green)' : 'var(--contrast3)'} !important;
+                color: ${hass.states['media_player.livingroom'].state === 'playing' ? 'var(--black)' : 'var(--contrast20)'} !important;
+            }
+
+            ${icon.setAttribute("icon",
+            hass.states['light.zigbee_woonkamer'].state === 'on' ?
+            'mdi:lightbulb-group' : 'mdi:lightbulb-group-outline')}
+
+          # conditions to show the region quick access
+          visibility:
+            - condition: state
+              entity: input_boolean.rooms_quick_access
+              state: "on"
+              # TODO add rooms that have quick access.
+            - condition: state
+              entity: sensor.ruben_room
+              state: Woonkamer
+
+    # region Rooms
+    ########################################################################################
+    ####################################### Roooms #########################################
+    ########################################################################################
+    - type: grid
+      square: false
+      columns: 2
+      cards:
+        ### Slaapkamer ###
+        - type: vertical-stack
+          cards:
+            - type: custom:button-card
+              template: room_template
+              variables:
+                icon: mdi:bed-king-outline
+                light: light.slaapkamer_plafond
+                climate: climate.livingroom
+                window_sensor: binary_sensor.badkamer_deur_openen
+                motion_sensor: binary_sensor.gang_beweging
+                media_player: media_player.livingroom
+                navigation_path: "#bedroom"
+              entity: input_boolean.room_toggle_bedroom
+              name: Slaapkamer
+        ###################################################################### Woonkamer
+        - type: vertical-stack
+          cards:
+            - type: custom:button-card
+              template: room_template
+              variables:
+                icon: mdi:sofa-outline
+                light: light.zigbee_woonkamer
+                climate: climate.livingroom
+                window_sensor: binary_sensor.woonkamer_backdoor_openen
+                motion_sensor: binary_sensor.gang_beweging
+                media_player: media_player.livingroom
+                navigation_path: "#living-room"
+              entity: input_boolean.room_toggle_living_room
+              name: Woonkamer
+        ############################################################################ Evi
+        - type: vertical-stack
+          cards:
+            - type: custom:button-card
+              template: room_template
+              variables:
+                icon: mdi:baby
+                light: light.babykamer_plafond
+                climate: climate.livingroom
+                window_sensor: binary_sensor.woonkamer_backdoor_openen
+                motion_sensor: binary_sensor.gang_beweging
+                media_player: media_player.livingroom
+                navigation_path: "#Evi-room"
+              entity: input_boolean.room_toggle_room_evi
+              name: Evi
+        #################################################################### logeerkamer
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: input_boolean.all_rooms
+              state: "on"
+          card:
+            type: vertical-stack
+            cards:
+              - type: custom:button-card
+                template: room_template
+                variables:
+                  icon: mdi:bed-double-outline
+                  light: light.zigbee_logeerkamer
+                  climate: climate.livingroom
+                  window_sensor: binary_sensor.badkamer_deur_openen
+                  motion_sensor: binary_sensor.ikea_of_sweden_vallhorn_wireless_motion_sensor
+                  media_player: media_player.office
+                  navigation_path: "#guest_room"
+                entity: input_boolean.room_toggle_guest_room
+                name: Logeerkamer
+        ######################################################################### Office
+        - type: vertical-stack
+          cards:
+            - type: custom:button-card
+              template: room_template
+              variables:
+                icon: mdi:monitor
+                light: light.zigbee_werkkamer
+                climate: climate.livingroom
+                window_sensor: binary_sensor.werkkamer_raam_openen
+                motion_sensor: binary_sensor.beweging_werkkamer
+                media_player: media_player.office
+                navigation_path: "#office"
+              entity: input_boolean.room_toggle_office
+              name: Werkkamer
+        ######################################################################## Kitchen
+        - type: vertical-stack
+          cards:
+            - type: custom:button-card
+              template: room_template
+              variables:
+                icon: mdi:fridge-outline
+                light: group.kitchen_lights
+                climate: climate.livingroom
+                window_sensor: binary_sensor.keuken_raam_openen
+                motion_sensor: binary_sensor.kitchen_occupied
+                media_player: media_player.kitchen
+                navigation_path: "#kitchen"
+              entity: input_boolean.room_toggle_kitchen
+              name: Kitchen

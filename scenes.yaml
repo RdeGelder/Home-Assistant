@@ -96,14 +96,11 @@
     light.woonkamer_houtspot:
       min_color_temp_kelvin: 2202
       max_color_temp_kelvin: 4000
-      min_mireds: 250
-      max_mireds: 454
       supported_color_modes:
       - color_temp
       color_mode: color_temp
-      brightness: 128
+      brightness: 3
       color_temp_kelvin: 2717
-      color_temp: 368
       hs_color:
       - 28.358
       - 65.183
@@ -116,14 +113,13 @@
       - 0.387
       off_with_transition: false
       off_brightness:
+      icon: mdi:light-flood-up
       friendly_name: Houtspot
       supported_features: 40
       state: 'on'
     light.woonkamer_kleurenspot:
       min_color_temp_kelvin: 2202
       max_color_temp_kelvin: 4000
-      min_mireds: 250
-      max_mireds: 454
       effect_list:
       - 'off'
       - colorloop
@@ -132,23 +128,22 @@
       - xy
       effect: 'off'
       color_mode: color_temp
-      brightness: 59
-      color_temp_kelvin: 2564
-      color_temp: 390
+      brightness: 99
+      color_temp_kelvin: 2577
       hs_color:
-      - 28.711
-      - 70.253
+      - 28.679
+      - 69.803
       rgb_color:
       - 255
       - 162
-      - 76
+      - 77
       xy_color:
-      - 0.539
+      - 0.538
       - 0.389
       off_with_transition: false
       off_brightness:
       icon: mdi:light-flood-up
-      friendly_name: Woonkamer kleurenspot
+      friendly_name: Kleurenspot
       supported_features: 44
       state: 'on'
     light.woonkamer_olielamp:
@@ -158,19 +153,97 @@
       brightness: 31
       off_with_transition: false
       off_brightness:
-      icon: mdi:lightbulb-outline
-      friendly_name: Woonkamer olielamp
+      icon: mdi:post-lamp
+      friendly_name: Olielamp
       supported_features: 40
       state: 'on'
     light.woonkamer_servieskast:
       supported_color_modes:
       - brightness
-      color_mode: brightness
-      brightness: 10
+      color_mode:
+      brightness:
+      off_with_transition: false
+      off_brightness: 3
+      icon: mdi:cupboard
+      friendly_name: Servieskast
+      supported_features: 40
+      state: 'off'
+    light.ikea_of_sweden_tradfri_bulb_gu10_cws_345lm:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      effect_list:
+      - 'off'
+      - colorloop
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect: 'off'
+      color_mode: color_temp
+      brightness: 125
+      color_temp_kelvin: 2538
+      hs_color:
+      - 28.776
+      - 71.163
+      rgb_color:
+      - 255
+      - 161
+      - 74
+      xy_color:
+      - 0.541
+      - 0.389
       off_with_transition: false
       off_brightness:
-      friendly_name: Woonkamer servieskast
-      supported_features: 40
+      friendly_name: Lampje boven
+      supported_features: 44
+      state: 'on'
+    light.ikea_of_sweden_tradfri_bulb_gu10_cws_345lm_3:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      effect_list:
+      - 'off'
+      - colorloop
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect:
+      color_mode:
+      brightness:
+      color_temp_kelvin:
+      hs_color:
+      rgb_color:
+      xy_color:
+      off_with_transition: false
+      off_brightness: 3
+      friendly_name: Lampje midden
+      supported_features: 44
+      state: 'off'
+    light.ikea_of_sweden_tradfri_bulb_gu10_cws_345lm_2:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      effect_list:
+      - 'off'
+      - colorloop
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect: 'off'
+      color_mode: color_temp
+      brightness: 76
+      color_temp_kelvin: 2538
+      hs_color:
+      - 28.776
+      - 71.163
+      rgb_color:
+      - 255
+      - 161
+      - 74
+      xy_color:
+      - 0.541
+      - 0.389
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Lampje onder
+      supported_features: 44
       state: 'on'
   metadata: {}
 - id: '1756833050091'
@@ -196,6 +269,7 @@
       - 0.387
       off_with_transition: false
       off_brightness:
+      icon: mdi:light-flood-up
       friendly_name: Houtspot
       supported_features: 40
       state: 'on'
@@ -225,18 +299,18 @@
       off_with_transition: false
       off_brightness:
       icon: mdi:light-flood-up
-      friendly_name: Woonkamer kleurenspot
+      friendly_name: Kleurenspot
       supported_features: 44
       state: 'on'
     light.woonkamer_olielamp:
       supported_color_modes:
       - brightness
       color_mode: brightness
-      brightness: 171
+      brightness: 184
       off_with_transition: false
       off_brightness:
-      icon: mdi:lightbulb-outline
-      friendly_name: Woonkamer olielamp
+      icon: mdi:post-lamp
+      friendly_name: Olielamp
       supported_features: 40
       state: 'on'
     light.woonkamer_servieskast:
@@ -246,7 +320,8 @@
       brightness: 181
       off_with_transition: false
       off_brightness:
-      friendly_name: Woonkamer servieskast
+      icon: mdi:cupboard
+      friendly_name: Servieskast
       supported_features: 40
       state: 'on'
     light.ikea_of_sweden_tradfri_bulb_gu10_cws_345lm:
@@ -260,7 +335,7 @@
       - xy
       effect: 'off'
       color_mode: color_temp
-      brightness: 209
+      brightness: 254
       color_temp_kelvin: 2724
       hs_color:
       - 28.343
@@ -288,7 +363,7 @@
       - xy
       effect: 'off'
       color_mode: color_temp
-      brightness: 38
+      brightness: 112
       color_temp_kelvin: 2724
       hs_color:
       - 28.343
@@ -316,7 +391,7 @@
       - xy
       effect: 'off'
       color_mode: color_temp
-      brightness: 89
+      brightness: 158
       color_temp_kelvin: 2724
       hs_color:
       - 28.343
@@ -565,4 +640,210 @@
       friendly_name: Werkkamer rechts
       supported_features: 40
       state: 'on'
+  metadata: {}
+- id: '1790362232166'
+  name: Woonkamer tv
+  entities:
+    light.ikea_of_sweden_tradfri_bulb_gu10_cws_345lm_2:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      effect_list:
+      - 'off'
+      - colorloop
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect: 'off'
+      color_mode: color_temp
+      brightness: 3
+      color_temp_kelvin: 2724
+      hs_color:
+      - 28.343
+      - 64.962
+      rgb_color:
+      - 255
+      - 168
+      - 89
+      xy_color:
+      - 0.523
+      - 0.388
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Lampje onder
+      supported_features: 44
+      state: 'on'
+    light.ikea_of_sweden_tradfri_bulb_gu10_cws_345lm:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      effect_list:
+      - 'off'
+      - colorloop
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect: 'off'
+      color_mode: color_temp
+      brightness: 128
+      color_temp_kelvin: 2724
+      hs_color:
+      - 28.343
+      - 64.962
+      rgb_color:
+      - 255
+      - 168
+      - 89
+      xy_color:
+      - 0.523
+      - 0.388
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Lampje boven
+      supported_features: 44
+      state: 'on'
+    light.ikea_of_sweden_tradfri_bulb_gu10_cws_345lm_3:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      effect_list:
+      - 'off'
+      - colorloop
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect: 'off'
+      color_mode: color_temp
+      brightness: 3
+      color_temp_kelvin: 2724
+      hs_color:
+      - 28.343
+      - 64.962
+      rgb_color:
+      - 255
+      - 168
+      - 89
+      xy_color:
+      - 0.523
+      - 0.388
+      off_with_transition: false
+      off_brightness:
+      friendly_name: Lampje midden
+      supported_features: 44
+      state: 'on'
+    light.woonkamer_kleurenspot:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      effect_list:
+      - 'off'
+      - colorloop
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect: 'off'
+      color_mode: color_temp
+      brightness: 128
+      color_temp_kelvin: 2564
+      hs_color:
+      - 28.711
+      - 70.253
+      rgb_color:
+      - 255
+      - 162
+      - 76
+      xy_color:
+      - 0.539
+      - 0.389
+      off_with_transition: false
+      off_brightness:
+      icon: mdi:light-flood-up
+      friendly_name: Kleurenspot
+      supported_features: 44
+      state: 'on'
+    light.woonkamer_servieskast:
+      supported_color_modes:
+      - brightness
+      color_mode: brightness
+      brightness: 122
+      off_with_transition: false
+      off_brightness:
+      icon: mdi:cupboard
+      friendly_name: Servieskast
+      supported_features: 40
+      state: 'on'
+    switch.woonkamer_eettafel:
+      friendly_name: Eettafel
+      state: 'off'
+    light.woonkamer_olielamp:
+      supported_color_modes:
+      - brightness
+      color_mode: brightness
+      brightness: 184
+      off_with_transition: false
+      off_brightness:
+      icon: mdi:post-lamp
+      friendly_name: Olielamp
+      supported_features: 40
+      state: 'on'
+    light.woonkamer_houtspot:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      supported_color_modes:
+      - color_temp
+      color_mode: color_temp
+      brightness: 115
+      color_temp_kelvin: 2717
+      hs_color:
+      - 28.358
+      - 65.183
+      rgb_color:
+      - 255
+      - 167
+      - 89
+      xy_color:
+      - 0.524
+      - 0.387
+      off_with_transition: false
+      off_brightness:
+      icon: mdi:light-flood-up
+      friendly_name: Houtspot
+      supported_features: 40
+      state: 'on'
+    light.keuken_ledstrip:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      effect_list:
+      - 'off'
+      - colorloop
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect: 'off'
+      color_mode: color_temp
+      brightness: 133
+      color_temp_kelvin: 2732
+      hs_color:
+      - 28.327
+      - 64.71
+      rgb_color:
+      - 255
+      - 168
+      - 90
+      xy_color:
+      - 0.522
+      - 0.387
+      off_with_transition: false
+      off_brightness:
+      icon: mdi:led-strip-variant
+      friendly_name: Ledstrip
+      supported_features: 44
+      state: 'on'
+    light.keuken_spotjes:
+      supported_color_modes:
+      - brightness
+      color_mode:
+      brightness:
+      off_with_transition: false
+      off_brightness: 254
+      icon: mdi:lightbulb-spot
+      friendly_name: Spotjes
+      supported_features: 40
+      state: 'off'
   metadata: {}
